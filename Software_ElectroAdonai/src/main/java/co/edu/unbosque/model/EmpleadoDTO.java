@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="empleadoDTO")
+@Table(name="empleado")
 public class EmpleadoDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,12 +12,9 @@ public class EmpleadoDTO {
     @Column(name="ID_EMPLEADO", unique = true)
     private int ID_EMPLEADO;
 
-
     private String NOMBRE_EMPLEADO;
 
-
     private String DOCUMENTO_EMPLEADO;
-
 
     private String TELEFONO_EMPLEADO;
 
