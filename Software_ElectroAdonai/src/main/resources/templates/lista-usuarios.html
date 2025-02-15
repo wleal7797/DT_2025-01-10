@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuarios</title>
+</head>
+<body>
+<h2>Lista de Usuarios</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Contraseña</th>
+        <th>ID Empleado</th>
+        <th>Documento</th>
+        <th>Nombre Empleado</th>
+        <th>Teléfono</th>
+    </tr>
+    <tr th:each="usuario : ${usuarios}">
+        <td th:text="${usuario.ID_USUARIO}"></td>
+        <td th:text="${usuario.NOMBRE_USUARIO}"></td>
+        <td th:text="${usuario.CONTRASENA}"></td>
+        <td th:text="${usuario.empleado.ID_EMPLEADO}"></td>
+        <td th:text="${usuario.empleado.N_DOCUMENTO}"></td>
+        <td th:text="${usuario.empleado.NOMBRE_EMPLEADO}"></td>
+        <td th:text="${usuario.empleado.TELEFONO_EMPLEADO}"></td>
+
+    </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

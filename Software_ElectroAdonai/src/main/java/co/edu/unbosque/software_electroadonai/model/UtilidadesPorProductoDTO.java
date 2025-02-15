@@ -1,4 +1,4 @@
-package co.edu.unbosque.model;
+package co.edu.unbosque.software_electroadonai.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

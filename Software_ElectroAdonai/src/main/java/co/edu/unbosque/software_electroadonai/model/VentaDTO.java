@@ -1,4 +1,4 @@
-package co.edu.unbosque.model;
+package co.edu.unbosque.software_electroadonai.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,5 +20,5 @@ public class VentaDTO {
 
     @ManyToOne
     @JoinColumn(name = "ID_EMPLEADO")
-    private EmpleadoDTO ID_EMPLEADO;
+    private Empleado ID_EMPLEADO;
 }
