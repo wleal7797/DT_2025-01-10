@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Productos</title>
+</head>
+<body>
+<h2>Lista de Productos</h2>
+<table border="1">
+  <tr>
+    <th>ID Producto</th>
+    <th>Nombre del Producto</th>
+    <th>Referencia</th>
+    <th>Costo</th>
+    <th>Existencias</th>
+    <th>Tipo de Producto</th>
+  </tr>
+  <tr th:each="producto : ${productos}">
+    <td th:text="${producto.ID_PRODUCTO}"></td>
+    <td th:text="${producto.NOMBRE_PRODUCTO}"></td>
+    <td th:text="${producto.REFERENCIA_PRODUCTO}"></td>
+    <td th:text="${producto.COSTO_PRODUCTO}"></td>
+    <td th:text="${producto.EXISTENCIAS_PRODUCTO}"></td>
+    <td th:text="${producto.tipo_producto.NOMBRE_TIPO}"></td>
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

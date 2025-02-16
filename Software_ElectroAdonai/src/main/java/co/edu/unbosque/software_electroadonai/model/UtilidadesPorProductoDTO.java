@@ -18,7 +18,7 @@ public class UtilidadesPorProductoDTO {
 
     @ManyToOne
     @JoinColumn(name = "ID_PRODUCTO")
-    private ProductoDTO ID_PRODUCTO;
+    private Producto ID_PRODUCTO;
 
     @ManyToOne
     @JoinColumn(name = "ID_DETALLE_VENTA")

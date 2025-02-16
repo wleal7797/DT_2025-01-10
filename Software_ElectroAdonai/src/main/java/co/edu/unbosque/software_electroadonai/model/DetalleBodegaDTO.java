@@ -15,11 +15,11 @@ public class DetalleBodegaDTO {
 
     private int CNT_PRODUCTO_BODEGA;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_PRODUCTO")
-    private ProductoDTO PRODUCTO;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_BODEGA")
-    private BodegaDTO ID_BODEGA;
+    @Column(name = "ID_PRODUCTO")
+    private int PRODUCTO;
+
+
+    @Column(name = "ID_BODEGA")
+    private int ID_BODEGA;
 }

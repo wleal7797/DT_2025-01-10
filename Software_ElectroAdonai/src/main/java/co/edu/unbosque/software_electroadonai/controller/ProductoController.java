@@ -1,7 +1,9 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.Empleado;
+import co.edu.unbosque.software_electroadonai.model.Producto;
 import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
+import co.edu.unbosque.software_electroadonai.services.ProductoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/empleados")
-public class EmpleadoController {
+@RequestMapping("/productos")
+public class ProductoController {
 
     @Autowired
-    private EmpleadoDAO empleadoDAO;
+    private ProductoDAO productoDAO;
 
     @GetMapping("/")
 
@@ -25,16 +27,13 @@ public class EmpleadoController {
 
     @GetMapping("/registro")
     public String formularioRegistro() {
-        return "empleado-form";
+        return "producto-form";
     }
 
     @GetMapping("/listar")
     public String listarEmpleados(Model model) {
-        List<Empleado> empleados = empleadoDAO.getAllEmpleados();
-        model.addAttribute("empleados", empleados);
-        return "lista-empleados";
+        List<Producto> productos = productoDAO.getAllProductos();
+        model.addAttribute("empleados", productos);
+        return "lista-productos";
     }
 }
-
-
-

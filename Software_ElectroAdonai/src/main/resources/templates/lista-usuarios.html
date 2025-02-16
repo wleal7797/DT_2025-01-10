@@ -11,20 +11,16 @@
         <th>ID</th>
         <th>Usuario</th>
         <th>Contraseña</th>
-        <th>ID Empleado</th>
         <th>Documento</th>
-        <th>Nombre Empleado</th>
-        <th>Teléfono</th>
+        <th>Nombre</th>
+
     </tr>
     <tr th:each="usuario : ${usuarios}">
         <td th:text="${usuario.ID_USUARIO}"></td>
         <td th:text="${usuario.NOMBRE_USUARIO}"></td>
         <td th:text="${usuario.CONTRASENA}"></td>
-        <td th:text="${usuario.empleado.ID_EMPLEADO}"></td>
-        <td th:text="${usuario.empleado.N_DOCUMENTO}"></td>
-        <td th:text="${usuario.empleado.NOMBRE_EMPLEADO}"></td>
-        <td th:text="${usuario.empleado.TELEFONO_EMPLEADO}"></td>
-
+        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.N_DOCUMENTO} : 'N/A'"></td>
+        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     </tr>
 </table>
 <br>

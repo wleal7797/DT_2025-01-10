@@ -19,22 +19,17 @@ public class UsuarioController {
     @GetMapping("/")
 
     public String inicio() {
-        System.out.println("⚡ejecutado");
         return "index";
     }
 
     @GetMapping("/registro")
     public String formularioRegistro() {
-        System.out.println("⚡ejecutado");
         return "usuario-form";
     }
 
     @GetMapping("/listar")
-    public String listarEmpleados(Model model) {
-        System.out.println("⚡ejecutado");
-
+    public String listarUsuarios(Model model) {
         List<Usuario> usuarios = usuarioDAO.getAllUsuarios();
-
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
     }
