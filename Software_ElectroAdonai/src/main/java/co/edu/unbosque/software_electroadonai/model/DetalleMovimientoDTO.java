@@ -17,9 +17,9 @@ public class DetalleMovimientoDTO {
 
     @ManyToOne
     @JoinColumn(name = "ID_MOVIMIENTO_BODEGA")
-    private MovimientoBodegaDTO ID_MOVIMIENTO_BODEGA;
+    private MovimientoBodega ID_MOVIMIENTO_BODEGA;
 
     @ManyToOne
     @JoinColumn(name = "ID_DETALLE_BODEGA")
-    private DetalleBodegaDTO ID_DETALLE_BODEGA;
+    private DetalleBodega ID_DETALLE_BODEGA;
 }

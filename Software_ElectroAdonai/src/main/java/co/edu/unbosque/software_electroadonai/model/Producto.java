@@ -14,12 +14,12 @@ public class Producto {
     @Column(name="NOMBRE_PRODUCTO")
     private String NOMBRE_PRODUCTO;
     @Column(name="REFERENCIA")
-    private String REFERENCIA_PRODUCTO;
+    private String REFERENCIA;
     @Column(name="COSTO")
-    private long COSTO_PRODUCTO;
+    private long COSTO;
     @Column(name="EXISTENCIAS")
-    private int EXISTENCIAS_PRODUCTO;
+    private int EXISTENCIAS;
     @ManyToOne
     @JoinColumn(name="ID_TIPO_PRODUCTO")
-    private TipoProducto TIPO_PRODUCTO;
+    private TipoProducto ID_TIPO_PRODUCTO;
 }

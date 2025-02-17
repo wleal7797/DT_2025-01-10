@@ -2,17 +2,134 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .dropdown-container {
+            display: flex;
+            gap: 20px; /* Espacio entre los dos botones desplegables */
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            background-color: #fff;
+            padding: 10px;
+            text-align: left;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .dropdown-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .dropdown-content {
+                position: static;
+            }
+        }
+    </style>
 </head>
 <body>
-<h2>Bienvenido</h2>
-<a href="/empleados/registro">Registrar Empleado</a><br><br>
-<a href="/empleados/listar">Ver Lista de Empleados</a><br><br>
-<a href="/usuarios/registro">Registrar Usuario</a><br><br>
-<a href="/usuarios/listar">Ver Lista de Usuarios</a><br><br>
-<a href="/bodegas/registro">Registrar Bodega</a><br><br>
-<a href="/bodegas/listar">Ver Lista de Bodegas</a><br><br>
-<a href="/productos/registro">Registrar Producto</a><br><br>
-<a href="/productos/listar">Ver Lista de Productos</a><br><br>
+<div class="container">
+    <h2>Bienvenido</h2>
+
+    <div class="dropdown-container">
+        <div class="dropdown">
+            <button class="dropdown-btn">Registros</button>
+            <div class="dropdown-content">
+                <a href="/empleados/registro">Registrar Empleado</a>
+                <a href="/usuarios/registro">Registrar Usuario</a>
+                <a href="/bodegas/registro">Registrar Bodega</a>
+                <a href="/productos/registro">Registrar Producto</a>
+                <a href="/detalleBodega/registro">Registrar Detalle de Bodega</a>
+                <a href="/movimientoBodega/registro">Registrar Movimientos de Bodega</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropdown-btn">Listas</button>
+            <div class="dropdown-content">
+                <a href="/empleados/listar">Ver Lista de Empleados</a>
+                <a href="/usuarios/listar">Ver Lista de Usuarios</a>
+                <a href="/bodegas/listar">Ver Lista de Bodegas</a>
+                <a href="/productos/listar">Ver Lista de Productos</a>
+                <a href="/detalleBodega/listar">Ver Lista de Detalle Bodega</a>
+                <a href="/movimientoBodega/listar">Ver Lista de Movimientos de Bodega</a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

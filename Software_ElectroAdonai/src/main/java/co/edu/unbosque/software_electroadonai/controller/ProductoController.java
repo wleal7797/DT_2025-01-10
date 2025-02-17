@@ -31,9 +31,10 @@ public class ProductoController {
     }
 
     @GetMapping("/listar")
-    public String listarEmpleados(Model model) {
+    public String listarProductos(Model model) {
         List<Producto> productos = productoDAO.getAllProductos();
-        model.addAttribute("empleados", productos);
+        model.addAttribute("productos", productos);
+        System.out.println(productos.toString());
         return "lista-productos";
     }
 }

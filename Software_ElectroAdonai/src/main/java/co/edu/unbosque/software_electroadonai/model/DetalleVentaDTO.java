@@ -23,5 +23,5 @@ public class DetalleVentaDTO {
 
     @ManyToOne
     @JoinColumn(name = "ID_DETALLE_BODEGA")
-    private DetalleBodegaDTO DETALLE_VENTA;
+    private DetalleBodega DETALLE_VENTA;
 }

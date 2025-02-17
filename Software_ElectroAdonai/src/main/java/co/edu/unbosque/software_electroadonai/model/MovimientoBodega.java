@@ -7,19 +7,21 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "movimiento_bodega")
-public class MovimientoBodegaDTO {
+public class MovimientoBodega{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_MOVIMIENTO", unique = true)
     private int ID_MOVIMIENTO;
-
+    @Column(name="FECHA_MOVIMIENTO")
     private LocalDate FECHA_MOVIMIENTO;
 
-
-    private String TIPO_MOVIMIENTO;
+    @ManyToOne
+    @JoinColumn(name="ID_TIPO_MOVIMIENTO")
+    private TipoMovimiento TIPO_MOVIMIENTO;
 
     @ManyToOne
     @JoinColumn(name = "ID_EMPLEADO")
     private Empleado empleado;
 }
+

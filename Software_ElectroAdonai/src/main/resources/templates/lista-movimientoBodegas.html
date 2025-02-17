@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista De Movimientos Por Bodega</title>
+</head>
+<body>
+<h2>Lista De Movimientos Por Bodega</h2>
+<table border="1">
+    <tr>
+        <th>ID Movimiento Bodega</th>
+        <th>Fecha Movimiento</th>
+        <th>Tipo Movimiento</th>
+        <th>Nombre Empleado</th>
+    </tr>
+    <tr th:each="movimiento : ${movimientos}">
+        <td th:text="${movimiento.ID_MOVIMIENTO}"></td>
+        <td th:text="${movimiento.FECHA_MOVIMIENTO}"></td>
+        <td th:text="${movimiento.TIPO_MOVIMIENTO != null} ? ${movimiento.TIPO_MOVIMIENTO.NOMBRE_MOVIMIENTO} : 'N/A'"></td>
+        <td th:text="${movimiento.empleado != null} ? ${movimiento.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+
+    </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

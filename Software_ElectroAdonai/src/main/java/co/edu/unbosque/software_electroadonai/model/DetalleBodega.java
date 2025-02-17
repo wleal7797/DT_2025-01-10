@@ -6,20 +6,20 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "detalle_bodega")
-public class DetalleBodegaDTO {
+public class DetalleBodega {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_DETALLE_BODEGA", unique = true)
     private int ID_DETALLE_BODEGA;
-
+    @Column(name="CNT_PRODUCTO_BODEGA")
     private int CNT_PRODUCTO_BODEGA;
 
+    @ManyToOne
+    @JoinColumn(name = "ID_PRODUCTO")
+    private Producto producto;
 
-    @Column(name = "ID_PRODUCTO")
-    private int PRODUCTO;
-
-
-    @Column(name = "ID_BODEGA")
-    private int ID_BODEGA;
+    @ManyToOne
+    @JoinColumn(name = "ID_BODEGA")
+    private Bodega bodega;
 }

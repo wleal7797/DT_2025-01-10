@@ -11,7 +11,6 @@
         <th>ID</th>
         <th>Usuario</th>
         <th>Contraseña</th>
-        <th>Documento</th>
         <th>Nombre</th>
 
     </tr>
@@ -19,7 +18,6 @@
         <td th:text="${usuario.ID_USUARIO}"></td>
         <td th:text="${usuario.NOMBRE_USUARIO}"></td>
         <td th:text="${usuario.CONTRASENA}"></td>
-        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.N_DOCUMENTO} : 'N/A'"></td>
         <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     </tr>
 </table>

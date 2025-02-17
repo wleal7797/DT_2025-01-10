@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Artículos por Bodega</title>
+</head>
+<body>
+<h2>Lista de Artículos por Bodega</h2>
+<table border="1">
+    <tr>
+        <th>ID Detalle Bodega</th>
+        <th>Cantidad en Bodega</th>
+        <th>Nombre Bodega</th>
+        <th>Nombre Producto</th>
+        <th>Referencia Producto</th>
+        <th>Existencias Producto</th>
+    </tr>
+    <tr th:each="detalle : ${detalles}">
+        <td th:text="${detalle.ID_DETALLE_BODEGA}"></td>
+        <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
+        <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
+        <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+        <td th:text="${detalle.producto != null} ? ${detalle.producto.REFERENCIA} : 'N/A'"></td>
+        <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
+    </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>
