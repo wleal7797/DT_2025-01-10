@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "detalle_movimiento")
-public class DetalleMovimientoDTO {
+public class DetalleMovimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,15 @@ public class DetalleMovimientoDTO {
     private MovimientoBodega ID_MOVIMIENTO_BODEGA;
 
     @ManyToOne
+    @JoinColumn(name = "ID_BODEGA_ORIGEN")
+    private Bodega ID_BODEGA_ORIGEN;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_BODEGA_DESTINO")
+    private Bodega ID_BODEGA_DESTINO;
+
+    @ManyToOne
     @JoinColumn(name = "ID_DETALLE_BODEGA")
     private DetalleBodega ID_DETALLE_BODEGA;
+
 }

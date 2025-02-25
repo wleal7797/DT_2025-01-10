@@ -1,8 +1,6 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.model.DetalleBodega;
 import co.edu.unbosque.software_electroadonai.model.MovimientoBodega;
-import co.edu.unbosque.software_electroadonai.services.DetalleBodegaDAO;
 import co.edu.unbosque.software_electroadonai.services.MovimientoBodegaDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
