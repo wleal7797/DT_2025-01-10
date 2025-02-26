@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Utilidades por Producto</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h2>Lista de Utilidades por Producto</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Comision</th>
+    <th>Adelantos</th>
+    <th>Saldo</th>
+    <th>Estado</th>
+    <th>Fecha</th>
+    <th>Empleado</th>
+  </tr>
+  <tr th:each="pagoComision : ${pagoComisiones}">
+    <td th:text="${pagoComision.ID_COMISIONES}"></td>
+    <td th:text="${pagoComision.COMISION}"></td>
+    <td th:text="${pagoComision.adelantos != null} ? ${pagoComision.adelantos.CNT_ADELANTO} : 'N/A'"></td>
+    <td th:text="${pagoComision.SALDO}"></td>
+    <td th:text="${pagoComision.ESTADO}"></td>
+    <td th:text="${pagoComision.FECHA}"></td>
+    <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

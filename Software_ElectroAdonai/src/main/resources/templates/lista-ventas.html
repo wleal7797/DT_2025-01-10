@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Ventas</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h2>Lista de Ventas</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Precio Total Venta</th>
+    <th>Empleado</th>
+    <th>Número Remisión</th>
+    <th>Fecha</th>
+
+  </tr>
+  <tr th:each="venta : ${ventas}">
+    <td th:text="${venta.ID_VENTA}"></td>
+    <td th:text="${venta.PRECIO_VENTA_TOTAL}"></td>
+    <td th:text="${venta.empleado != null} ? ${venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+    <td th:text="${venta.REMISION}"></td>
+    <td th:text="${venta.FECHA_VENTA}"></td>
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

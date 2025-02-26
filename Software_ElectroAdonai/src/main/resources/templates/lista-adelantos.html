@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Adelantos</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h2>Lista de Adelantos</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Cantidad Adelanto</th>
+    <th>Fecha</th>
+    <th>Estado</th>
+    <th>Empleado</th>
+
+
+
+  </tr>
+  <tr th:each="adelanto : ${adelantos}">
+    <td th:text="${adelanto.ID_ADELANTO}"></td>
+    <td th:text="${adelanto.CNT_ADELANTO}"></td>
+    <td th:text="${adelanto.FECHA_ADELANTO}"></td>
+    <td th:text="${adelanto.ESTADO_ADELANTO}"></td>
+    <td th:text="${adelanto.empleado != null} ? ${adelanto.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Utilidades por Producto</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h2>Lista de Utilidades por Producto</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Utilidad Bruta</th>
+    <th>Utilidad Final</th>
+    <th>Nombre Producto</th>
+    <th>Costo Producto</th>
+    <th>Remisión</th>
+  </tr>
+  <tr th:each="utilidadPorProducto : ${utilidadesPorProductos}">
+    <td th:text="${utilidadPorProducto.ID_UTILIDAD_PR}"></td>
+    <td th:text="${utilidadPorProducto.UTILIDAD_BRUTA}"></td>
+    <td th:text="${utilidadPorProducto.UTILIDAD_FINAL}"></td>
+    <td th:text="${utilidadPorProducto.producto != null} ? ${utilidadPorProducto.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+    <td th:text="${utilidadPorProducto.detalle_venta != null} ? ${utilidadPorProducto.producto.COSTO} : 'N/A'"></td>
+    <td th:text="${utilidadPorProducto.producto != null} ? ${utilidadPorProducto.detalle_venta.venta.REMISION} : 'N/A'"></td>
+
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>

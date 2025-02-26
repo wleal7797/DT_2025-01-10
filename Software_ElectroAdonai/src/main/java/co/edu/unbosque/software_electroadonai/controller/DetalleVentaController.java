@@ -1,7 +1,7 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.model.Bodega;
-import co.edu.unbosque.software_electroadonai.services.BodegaDAO;
+import co.edu.unbosque.software_electroadonai.model.DetalleVenta;
+import co.edu.unbosque.software_electroadonai.services.DetalleVentaDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,29 +11,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/bodegas")
-public class BodegaController {
-
+@RequestMapping("/detallesVenta")
+public class DetalleVentaController {
     @Autowired
-    private BodegaDAO bodegaDAO;
+    private DetalleVentaDAO detalleVentaDAO;
 
     @GetMapping("/")
+
     public String inicio() {
         return "index";
     }
 
     @GetMapping("/registro")
     public String formularioRegistro() {
-
-        return "bodega-form";
+        return "detalleVenta-form";
     }
 
     @GetMapping("/listar")
-    public String listarBodegas(Model model) {
-
-        List<Bodega> bodegas = bodegaDAO.getAllBodegas();
-
-        model.addAttribute("bodegas", bodegas);
-        return "lista-bodegas";
+    public String listarDetallesVentas(Model model) {
+        List<DetalleVenta> detallesVenta = detalleVentaDAO.getAllDetallesVenta();
+        model.addAttribute("detallesVenta", detallesVenta);
+        return "lista-detallesVenta";
     }
 }
+

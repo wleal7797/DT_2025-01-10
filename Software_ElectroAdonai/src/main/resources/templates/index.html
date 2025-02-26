@@ -4,107 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-        }
-
-        h2 {
-            color: #555;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .dropdown-container {
-            display: flex;
-            gap: 20px; /* Espacio entre los dos botones desplegables */
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-btn {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .dropdown-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 200px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            z-index: 1;
-            top: 100%;
-            left: 0;
-        }
-
-        .dropdown-content a {
-            color: #333;
-            background-color: #fff;
-            padding: 10px;
-            text-align: left;
-            display: block;
-            transition: background-color 0.3s ease;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        @media (max-width: 600px) {
-            .dropdown-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .dropdown-content {
-                position: static;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<header class="header">
+    <h1>Sistema de Gestión</h1>
+</header>
 <div class="container">
     <h2>Bienvenido</h2>
+    <p>Seleccione una opción para gestionar registros o listas.</p>
 
     <div class="dropdown-container">
         <div class="dropdown">
@@ -116,7 +24,8 @@
                 <a href="/productos/registro">Registrar Producto</a>
                 <a href="/detalleBodega/registro">Registrar Detalle de Bodega</a>
                 <a href="/movimientoBodega/registro">Registrar Movimientos de Bodega</a>
-                <a href="/detalleMovimiento/registro">Registrar detalles Movimientos de Bodega</a>
+                <a href="/ventas/registro">Registrar Ventas</a>
+                <a href="/adelantos/registro">Registrar Adelanto Empleado</a>
             </div>
         </div>
         <div class="dropdown">
@@ -128,10 +37,32 @@
                 <a href="/productos/listar">Ver Lista de Productos</a>
                 <a href="/detalleBodega/listar">Ver Lista de Detalle Bodega</a>
                 <a href="/movimientoBodega/listar">Ver Lista de Movimientos de Bodega</a>
-                <a href="/detalleMovimiento/listar">Ver Lista de detalles de Movimientos</a>
+                <a href="/detalleMovimiento/listar">Ver Lista de Detalles de Movimientos</a>
+                <a href="/ventas/listar">Ver Lista de Ventas</a>
+                <a href="/adelantos/listar">Ver Lista de Adelantos</a>
+                <a href="/detallesVenta/listar">Ver Lista de Detalles de Venta</a>
+                <a href="/utilidadesPorProducto/listar">Ver Lista de Utilidades por Producto</a>
+                <a href="pagoComisiones/listar">Ver Lista de Comisiones</a>
             </div>
         </div>
     </div>
 </div>
+
+<div class="dashboard">
+    <div class="calendar">
+        <h3>Calendario</h3>
+        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota" style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div class="notifications">
+        <h3>Notificaciones</h3>
+        <ul>
+            <li>🔔 Nueva actualización disponible</li>
+            <li>📅 Próxima reunión el 5 de marzo</li>
+            <li>📢 Recordatorio: Enviar reporte mensual</li>
+        </ul>
+    </div>
+
+</div>
 </body>
 </html>
+

@@ -1,8 +1,6 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.model.Empleado;
 import co.edu.unbosque.software_electroadonai.model.Producto;
-import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
 import co.edu.unbosque.software_electroadonai.services.ProductoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Detalles de Venta</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h2>Lista de Detalles de Venta</h2>
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Cantidad Vendida Producto</th>
+    <th>Precio Venta Producto</th>
+    <th>Serial Producto</th>
+    <th>Remisión</th>
+    <th>Producto</th>
+    <th>Empleado</th>
+    <th>Local de Venta</th>
+
+
+  </tr>
+  <tr th:each="detalleVenta : ${detallesVenta}">
+    <td th:text="${detalleVenta.ID_DETALLE_VENTA}"></td>
+    <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
+    <td th:text="${detalleVenta.PRECIO_VENTA_PRODUCTO}"></td>
+    <td th:text="${detalleVenta.SERIAL_PRODUCTO}"></td>
+    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.REMISION} : 'N/A'"></td>
+    <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+    <td th:text="${detalleVenta.bodega != null} ? ${detalleVenta.bodega.N_BODEGA} : 'N/A'"></td>
+  </tr>
+</table>
+<br>
+<a href="/">Volver al Inicio</a>
+</body>
+</html>
