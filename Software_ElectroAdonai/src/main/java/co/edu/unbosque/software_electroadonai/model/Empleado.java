@@ -11,11 +11,11 @@ public class Empleado {
 
     @Column(name="ID_EMPLEADO", unique = true)
     private int ID_EMPLEADO;
-    @Column(name="N_DOCUMENTO")
+    @Column(name="N_DOCUMENTO", nullable = false)
     private String N_DOCUMENTO;
-    @Column(name="NOMBRE_EMPLEADO")
+    @Column(name="NOMBRE_EMPLEADO", nullable = false)
     private String NOMBRE_EMPLEADO;
-    @Column(name="TELEFONO_EMPLEADO")
+    @Column(name="TELEFONO_EMPLEADO", nullable = false)
     private String TELEFONO_EMPLEADO;
 
 }
