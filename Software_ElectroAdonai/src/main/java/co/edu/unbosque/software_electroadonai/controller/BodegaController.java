@@ -27,7 +27,14 @@ public class BodegaController {
 
         return "bodega-form";
     }
+    @GetMapping("/listarVendedor")
+    public String listarBodegasVendedor(Model model) {
 
+        List<Bodega> bodegas = bodegaDAO.getAllBodegas();
+
+        model.addAttribute("bodegas", bodegas);
+        return "lista-bodegas-vendedor";
+    }
     @GetMapping("/listar")
     public String listarBodegas(Model model) {
 

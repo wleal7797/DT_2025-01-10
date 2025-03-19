@@ -23,6 +23,12 @@ public class SerialVentaProductoController {
     public String inicio() {
         return "main";
     }
+    @GetMapping("/listarVendedor")
+    public String listarDetallesVentasVendedor(Model model) {
+        List<SerialVentaProducto> serialVentaProducto = serialVentaProductoDAO.getAllSerialVentaProducto();
+        model.addAttribute("serialVentaProductos", serialVentaProducto);
+        return "lista-serialVentaProducto-vendedor";
+    }
     @GetMapping("/listar")
     public String listarDetallesVentas(Model model) {
         List<SerialVentaProducto> serialVentaProducto = serialVentaProductoDAO.getAllSerialVentaProducto();

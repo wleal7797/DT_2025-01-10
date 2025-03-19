@@ -27,6 +27,16 @@ public class DetalleVentaController {
         return "detalleVenta-form";
     }
 
+    @GetMapping("/registroVendedor")
+    public String formularioRegistroVendedor() {
+        return "detalleVenta-form-vendedor";
+    }
+    @GetMapping("/listarVendedor")
+    public String listarDetallesVentasVendedor(Model model) {
+        List<DetalleVenta> detallesVenta = detalleVentaDAO.getAllDetallesVenta();
+        model.addAttribute("detallesVenta", detallesVenta);
+        return "lista-detalleVenta-vendedor";
+    }
     @GetMapping("/listar")
     public String listarDetallesVentas(Model model) {
         List<DetalleVenta> detallesVenta = detalleVentaDAO.getAllDetallesVenta();

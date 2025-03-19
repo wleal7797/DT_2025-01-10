@@ -28,6 +28,13 @@ public class ProductoController {
         return "producto-form";
     }
 
+    @GetMapping("/listarVendedor")
+    public String listarProductosVendedor(Model model) {
+        List<Producto> productos = productoDAO.getAllProductos();
+        model.addAttribute("productos", productos);
+        System.out.println(productos.toString());
+        return "lista-productos-vendedor";
+    }
     @GetMapping("/listar")
     public String listarProductos(Model model) {
         List<Producto> productos = productoDAO.getAllProductos();
