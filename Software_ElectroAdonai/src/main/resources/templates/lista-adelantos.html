@@ -9,25 +9,22 @@
 <h2>Lista de Adelantos</h2>
 <table border="1">
   <tr>
-    <th>ID</th>
-    <th>Cantidad Adelanto</th>
     <th>Fecha</th>
-    <th>Estado</th>
     <th>Empleado</th>
-
-
+    <th>Cantidad Adelanto</th>
+    <th>Estado Del Adelanto</th>
 
   </tr>
   <tr th:each="adelanto : ${adelantos}">
-    <td th:text="${adelanto.ID_ADELANTO}"></td>
-    <td th:text="${adelanto.CNT_ADELANTO}"></td>
     <td th:text="${adelanto.FECHA_ADELANTO}"></td>
-    <td th:text="${adelanto.ESTADO_ADELANTO}"></td>
     <td th:text="${adelanto.empleado != null} ? ${adelanto.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+    <td th:text="${adelanto.CNT_ADELANTO}"></td>
+    <td th:text="${adelanto.ESTADO_ADELANTO}"></td>
+
 
   </tr>
 </table>
 <br>
-<a href="/">Volver al Inicio</a>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>

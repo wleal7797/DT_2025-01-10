@@ -20,7 +20,7 @@ public class PagoComisionesController {
     @GetMapping("/")
 
     public String inicio() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/registro")
@@ -32,7 +32,6 @@ public class PagoComisionesController {
     public String listarPagoComisiones(Model model) {
         List<PagoComisiones> pagoComisiones = pagoComisionesDAO.getAllPagoComisiones();
         model.addAttribute("pagoComisiones", pagoComisiones);
-        System.out.println(pagoComisiones.toString());
         return "lista-pagoComisiones";
     }
 }

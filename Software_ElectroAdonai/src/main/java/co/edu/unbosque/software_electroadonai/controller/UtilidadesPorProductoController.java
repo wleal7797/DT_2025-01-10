@@ -20,7 +20,7 @@ public class UtilidadesPorProductoController {
     @GetMapping("/")
 
     public String inicio() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/registro")

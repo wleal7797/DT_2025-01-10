@@ -19,7 +19,7 @@ public class MovimientoBodegaController {
     @GetMapping("/")
 
     public String inicio() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/registro")

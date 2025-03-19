@@ -9,15 +9,13 @@
 <h2>Lista de Ventas</h2>
 <table border="1">
   <tr>
-    <th>ID</th>
     <th>Precio Total Venta</th>
-    <th>Empleado</th>
+    <th>Vendedor</th>
     <th>Número Remisión</th>
     <th>Fecha</th>
 
   </tr>
   <tr th:each="venta : ${ventas}">
-    <td th:text="${venta.ID_VENTA}"></td>
     <td th:text="${venta.PRECIO_VENTA_TOTAL}"></td>
     <td th:text="${venta.empleado != null} ? ${venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     <td th:text="${venta.REMISION}"></td>
@@ -25,6 +23,6 @@
   </tr>
 </table>
 <br>
-<a href="/">Volver al Inicio</a>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>

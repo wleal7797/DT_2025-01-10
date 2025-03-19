@@ -16,8 +16,6 @@ public class DetalleVenta {
     private int CNT_PRODUCTO_VENTA;
     @Column(name="PRECIO_VENTA_PRODUCTO")
     private double PRECIO_VENTA_PRODUCTO;
-    @Column(name="SERIAL_PRODUCTO")
-    private String SERIAL_PRODUCTO;
     @ManyToOne
     @JoinColumn(name = "ID_VENTA")
     private Venta venta;

@@ -2,26 +2,24 @@
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Empleados</title>
+    <title>Lista de Vendedores</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h2>Lista de Empleados</h2>
+<h2>Lista de Vendedores</h2>
 <table border="1">
     <tr>
-        <th>ID</th>
         <th>Documento</th>
         <th>Nombre</th>
         <th>Teléfono</th>
     </tr>
     <tr th:each="empleado : ${empleados}">
-        <td th:text="${empleado.ID_EMPLEADO}"></td>
         <td th:text="${empleado.N_DOCUMENTO}"></td>
         <td th:text="${empleado.NOMBRE_EMPLEADO}"></td>
         <td th:text="${empleado.TELEFONO_EMPLEADO}"></td>
     </tr>
 </table>
 <br>
-<a href="/">Volver al Inicio</a>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>

@@ -9,19 +9,17 @@
 <h2>Lista de Bodegas</h2>
 <table border="1">
     <tr>
-        <th>ID Bodega</th>
-        <th>Número de Bodega</th>
-        <th>Cantidad de Productos</th>
-        <th>Estado</th>
+        <th>Bodega</th>
+        <th>Cantidad De Productos Total</th>
+        <th>Estado De Bodega</th>
     </tr>
     <tr th:each="bodega : ${bodegas}">
-        <td th:text="${bodega.ID_BODEGA}"></td>
         <td th:text="${bodega.N_BODEGA}"></td>
         <td th:text="${bodega.CNT_PRODUCTOS}"></td>
         <td th:text="${bodega.ESTADO}"></td>
     </tr>
 </table>
 <br>
-<a href="/">Volver al Inicio</a>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>

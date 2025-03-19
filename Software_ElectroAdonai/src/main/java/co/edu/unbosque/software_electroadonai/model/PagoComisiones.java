@@ -22,7 +22,6 @@ public class PagoComisiones {
     private String ESTADO;
     @Column(name="FECHA")
     private LocalDate FECHA;
-
     @ManyToOne
     @JoinColumn(name="ID_ADELANTOS")
     private Adelanto adelantos;

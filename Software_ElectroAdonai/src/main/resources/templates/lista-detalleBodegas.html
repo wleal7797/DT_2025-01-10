@@ -4,28 +4,72 @@
     <meta charset="UTF-8">
     <title>Lista de Artículos por Bodega</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const atributo = document.getElementById("atributo").value;
+            const filas = document.querySelectorAll("table tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+                const celdas = fila.getElementsByTagName("td");
+                let contenido = "";
+
+                switch (atributo) {
+                    case "nombre":
+                        contenido = celdas[0].textContent || celdas[0].innerText;
+                        break;
+                    case "referencia":
+                        contenido = celdas[1].textContent || celdas[1].innerText;
+                        break;
+                    case "bodega":
+                        contenido = celdas[2].textContent || celdas[2].innerText;
+                        break;
+                    case "cantidad":
+                        contenido = celdas[3].textContent || celdas[3].innerText;
+                        break;
+                    case "existencias":
+                        contenido = celdas[4].textContent || celdas[4].innerText;
+                        break;
+                }
+                fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
+            });
+        }
+    </script>
 </head>
 <body>
 <h2>Lista de Artículos por Bodega</h2>
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+    <select id="atributo" style="margin-right: 10px;">
+        <option value="nombre">Nombre Producto</option>
+        <option value="referencia">Referencia Producto</option>
+        <option value="bodega">Bodega</option>
+        <option value="cantidad">Cantidad en Bodega</option>
+        <option value="existencias">Existencias Totales</option>
+    </select>
+    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+</div>
 <table border="1">
     <tr>
-        <th>ID Detalle Bodega</th>
-        <th>Cantidad en Bodega</th>
-        <th>Nombre Bodega</th>
         <th>Nombre Producto</th>
         <th>Referencia Producto</th>
-        <th>Existencias Producto</th>
+        <th>Bodega</th>
+        <th>Cantidad Del Producto En Bodega</th>
+        <th>Existencias Totales Del Producto</th>
     </tr>
     <tr th:each="detalle : ${detalles}">
-        <td th:text="${detalle.ID_DETALLE_BODEGA}"></td>
-        <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
-        <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
         <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
         <td th:text="${detalle.producto != null} ? ${detalle.producto.REFERENCIA} : 'N/A'"></td>
+        <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
+        <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
         <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
     </tr>
 </table>
 <br>
-<a href="/">Volver al Inicio</a>
+<div style="text-align: left;">
+    <a href="/main/main">
+        <button>Volver al Inicio</button>
+    </a>
+</div>
 </body>
 </html>

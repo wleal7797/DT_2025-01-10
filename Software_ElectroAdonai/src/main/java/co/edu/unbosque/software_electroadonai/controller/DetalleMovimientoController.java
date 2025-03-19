@@ -19,7 +19,7 @@ public class DetalleMovimientoController {
     @GetMapping("/")
 
     public String inicio() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/registro")

@@ -22,13 +22,14 @@ public class EmpleadoController {
     @GetMapping("/")
 
     public String inicio() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/registro")
     public String formularioRegistro() {
         return "empleado-form";
     }
+
     @PostMapping("/crear")
     public String crearEmpleado(@ModelAttribute Empleado empleado) {
         empleadoDAO.saveOrUpdate(empleado);

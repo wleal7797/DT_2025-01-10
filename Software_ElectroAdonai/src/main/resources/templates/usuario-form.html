@@ -1,11 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Registrar Usuario</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<h2>Registrar Nuevo Usuario</h2>
+<form action="/usuarios/crear" method="post">
+    <label>Nombre:</label>
+    <input type="text" name="NOMBRE_USUARIO" required>
+    <br><br>
 
+    <label>Contraseña:</label>
+    <input type="text" name="CONTRASENA" required>
+    <br><br>
+
+    <label>ID Empleado:</label>
+    <input type="text" name="empleado" required>
+    <br><br>
+
+    <button type="submit">Guardar</button>
+</form>
+<br>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
