@@ -15,6 +15,7 @@ public class Usuario {
     private String NOMBRE_USUARIO;
     @Column(name="CONTRASENA")
     private String CONTRASENA;
+    //private String privilegio;
 
     @ManyToOne
     @JoinColumn(name = "ID_EMPLEADO")

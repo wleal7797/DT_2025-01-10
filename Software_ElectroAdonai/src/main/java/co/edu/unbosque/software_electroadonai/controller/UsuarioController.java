@@ -15,11 +15,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
     @Autowired
     private UsuarioDAO usuarioDAO;
 
     @GetMapping("/")
-
     public String inicio() {
         return "main";
     }
@@ -28,6 +28,7 @@ public class UsuarioController {
     public String formularioRegistro() {
         return "usuario-form";
     }
+
     @PostMapping("/crear")
     public String crearEmpleado(@ModelAttribute Usuario usuario) {
         usuarioDAO.saveOrUpdate(usuario);
