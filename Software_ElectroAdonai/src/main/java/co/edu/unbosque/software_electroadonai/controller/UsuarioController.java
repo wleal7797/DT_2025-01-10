@@ -15,11 +15,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
     @Autowired
     private UsuarioDAO usuarioDAO;
 
     @GetMapping("/")
-
     public String inicio() {
         return "main";
     }
