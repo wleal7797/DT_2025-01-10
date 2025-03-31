@@ -9,17 +9,17 @@
 <h2>Lista de Usuarios</h2>
 <table border="1">
     <tr>
-        <th>ID</th>
+        <!-- <th>ID</th> -->
         <th>Usuario</th>
         <th>Contraseña</th>
-        <th>Nombre</th>
+        <th>Empleado asociado</th>
 
     </tr>
-    <tr th:each="usuario : ${usuarios}">
-        <td th:text="${usuario.ID_USUARIO}"></td>
-        <td th:text="${usuario.NOMBRE_USUARIO}"></td>
-        <td th:text="${usuario.CONTRASENA}"></td>
-        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+    <tr th:each="users : ${users}">
+        <!-- <td th:text="${users.ID_USUARIO}"></td> -->
+        <td th:text="${users.username}"></td>
+        <td th:text="${users.password}"></td>
+        <td th:text="${users.empleado != null} ? ${users.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     </tr>
 </table>
 <br>

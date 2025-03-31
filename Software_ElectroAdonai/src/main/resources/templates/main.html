@@ -9,6 +9,11 @@
 <body>
 <header class="header">
     <h1>Sistema de Gestión</h1>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Salir</button>
+    </form>
+
 </header>
 <div class="container">
     <h2>Bienvenido</h2>
@@ -55,8 +60,8 @@
         <div class="dropdown">
             <button class="dropdown-btn">Gestión De Usuarios</button>
             <div class="dropdown-content">
-                <a href="/usuarios/registro">Registrar Usuario</a>
-                <a href="/usuarios/listar">Ver Lista De Usuarios</a>
+                <a href="/users/registro">Registrar Usuario</a>
+                <a href="/users/listar">Ver Lista De Usuarios</a>
             </div>
         </div>
     </div>
@@ -65,7 +70,8 @@
 <div class="dashboard">
     <div class="calendar">
         <h3>Calendario</h3>
-        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota" style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
+        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
+                style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
     </div>
     <div class="notifications">
         <h3>Notificaciones</h3>

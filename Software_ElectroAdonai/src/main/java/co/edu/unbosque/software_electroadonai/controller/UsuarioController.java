@@ -1,8 +1,9 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 public class UsuarioController {
 
     @Autowired
@@ -25,19 +26,33 @@ public class UsuarioController {
     }
 
     @GetMapping("/registro")
-    public String formularioRegistro() {
+    public String formularioRegistro(Model model) {
+        model.addAttribute(new Users());
         return "usuario-form";
     }
 
     @PostMapping("/crear")
-    public String crearEmpleado(@ModelAttribute Usuario usuario) {
-        usuarioDAO.saveOrUpdate(usuario);
-        return "redirect:/usuarios/listar";
+    public String crearEmpleado(@ModelAttribute Users user) {
+
+        user.setEnabled(true);
+        usuarioDAO.saveOrUpdate(user);
+        return "redirect:/users/listar";
+
     }
+
+    // Registro Login
+    @PostMapping("/registrar")
+    public String registrarEmpleado(@ModelAttribute Users user) {
+        user.setEnabled(true);
+        usuarioDAO.saveOrUpdate(user);
+        System.out.println("\nUsuario registrado\n");
+        return "redirect:/login";
+    }
+
     @GetMapping("/listar")
     public String listarUsuarios(Model model) {
-        List<Usuario> usuarios = usuarioDAO.getAllUsuarios();
-        model.addAttribute("usuarios", usuarios);
+        List<Users> users = usuarioDAO.getAllUsuarios();
+        model.addAttribute("users", users);
         return "lista-usuarios";
     }
 }

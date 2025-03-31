@@ -1,15 +1,14 @@
 package co.edu.unbosque.software_electroadonai.repository;
 
 
-import co.edu.unbosque.software_electroadonai.model.Usuario;
-import org.springframework.data.jdbc.repository.query.Query;
+import co.edu.unbosque.software_electroadonai.model.Users;
+import org.apache.catalina.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface UsuarioRepository extends CrudRepository<Usuario, Integer> {
+public interface UsuarioRepository extends CrudRepository<Users, Integer> {
 
+    Users findByUsername(String username);
 
 }
