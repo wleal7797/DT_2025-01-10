@@ -10,16 +10,10 @@
 <body>
 <h1 class="text-center mt-4">Inicio de sesión</h1>
 
-
 <form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
 
-    <div th:if="${param.error}">
-        Invalid username and password.
-    </div>
-    <div th:if="${param.logout}">
-        You have been logged out.
-    </div>
-    
+    <div th:if="${param.error}">Invalid username and password.</div>
+
     <div class="mb-3">
         <input type="text" class="form-control" name="username" placeholder="Usuario" required>
     </div>
@@ -27,12 +21,14 @@
         <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
     </div>
     <button type="submit" class="btn btn-primary w-100">Entrar</button>
+
 </form>
 
 <form th:action="@{/registrar}" method="get" class="container mt-5 w-25 p-4 bg-light rounded shadow">
     <button type="submit" class="btn btn-primary w-100">Registrar nuevo usuario</button>
 </form>
 
+<div th:if="${msg}" class="alert alert-success">¡Sesión finalizada con éxito!</div>
 
 </body>
 

@@ -6,15 +6,12 @@
     <title>Inicio</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
 <header class="header">
     <h1>Sistema de Gestión</h1>
-
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Salir</button>
-    </form>
-
 </header>
+
 <div class="container">
     <h2>Bienvenido</h2>
     <p>Seleccione una opción para gestionar registros o listas.</p>
@@ -81,8 +78,16 @@
             <li>📢 Recordatorio: Enviar reporte mensual</li>
         </ul>
     </div>
-
 </div>
+
+<hr>
+<form th:action="@{/logout}" method="post" style="display:none;" id="logoutForm">
+    <button type="submit">Cerrar sesión</button>
+</form>
+
+<a href="#" onclick="document.getElementById('logoutForm').submit()">Cerrar sesión</a>
+
+
 </body>
 </html>
 
