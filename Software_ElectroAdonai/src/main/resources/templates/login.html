@@ -8,6 +8,8 @@
 </head>
 
 <body>
+<div th:if="${param.logout}" class="alert alert-success">¡Sesión finalizada con éxito!</div>
+
 <h1 class="text-center mt-4">Inicio de sesión</h1>
 
 <form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
@@ -28,8 +30,5 @@
     <button type="submit" class="btn btn-primary w-100">Registrar nuevo usuario</button>
 </form>
 
-<div th:if="${msg}" class="alert alert-success">¡Sesión finalizada con éxito!</div>
-
 </body>
-
 </html>
