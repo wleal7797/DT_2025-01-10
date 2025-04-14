@@ -8,6 +8,7 @@
 <body>
 <h2>Registrar Nuevo Usuario</h2>
 <form action="/users/crear" method="post">
+
     <label>Usuario:</label>
     <input type="text" name="username" required>
     <br><br>
@@ -16,7 +17,11 @@
     <input type="text" name="password" required>
     <br><br>
 
-    <label>ID Empleado:</label>
+    <label>Rol:</label>
+    <input type="text" name="authority" required>
+    <br><br>
+
+    <label>ID Empleado Asociado:</label>
     <input type="text" name="empleado" required>
     <br><br>
 

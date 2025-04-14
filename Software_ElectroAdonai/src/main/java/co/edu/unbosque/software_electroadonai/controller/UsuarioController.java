@@ -1,8 +1,11 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
+import co.edu.unbosque.software_electroadonai.model.Authorities;
 import co.edu.unbosque.software_electroadonai.model.Users;
+import co.edu.unbosque.software_electroadonai.services.AutoridadesDAO;
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioDAO usuarioDAO;
+    @Autowired
+    private AutoridadesDAO autoridadesDAO;
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @GetMapping("/")
     public String inicio() {
@@ -27,25 +33,20 @@ public class UsuarioController {
     @GetMapping("/registro")
     public String formularioRegistro(Model model) {
         model.addAttribute(new Users());
+        model.addAttribute(new Authorities());
         return "usuario-form";
     }
 
     @PostMapping("/crear")
-    public String crearEmpleado(@ModelAttribute Users user) {
+    public String crearEmpleado(@ModelAttribute Users user, @ModelAttribute Authorities authorities) {
 
+        user.setPassword(encoder.encode(user.getPassword()));
         user.setEnabled(true);
         usuarioDAO.saveOrUpdate(user);
+        authorities.setUsername(user.getUsername());
+        autoridadesDAO.saveOrUpdate(authorities);
         return "redirect:/users/listar";
 
-    }
-
-    // Registro Login
-    @PostMapping("/registrar")
-    public String registrarEmpleado(@ModelAttribute Users user) {
-        user.setEnabled(true);
-        usuarioDAO.saveOrUpdate(user);
-        System.out.println("\nUsuario registrado\n");
-        return "redirect:/login";
     }
 
     @GetMapping("/listar")
