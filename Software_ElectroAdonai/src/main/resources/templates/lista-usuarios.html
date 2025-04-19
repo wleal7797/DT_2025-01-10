@@ -4,24 +4,58 @@
     <meta charset="UTF-8">
     <title>Lista de Usuarios</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function editarUsuario(id,nombre, contrasena) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-nombre").value = nombre;
+            document.getElementById("edit-contrasena").value = contrasena;
+            document.getElementById("edit-form").style.display = "block";
+        }
+
+        function eliminarUsuario(id) {
+            if (confirm("¿Seguro que deseas eliminar este usuario?")) {
+                fetch('/usuarios/eliminar/' + id, { method: 'DELETE' })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
 </head>
 <body>
 <h2>Lista de Usuarios</h2>
 <table border="1">
     <tr>
-        <th>ID</th>
         <th>Usuario</th>
         <th>Contraseña</th>
         <th>Nombre</th>
+        <th>Acciones</th>
 
     </tr>
     <tr th:each="usuario : ${usuarios}">
-        <td th:text="${usuario.ID_USUARIO}"></td>
         <td th:text="${usuario.NOMBRE_USUARIO}"></td>
         <td th:text="${usuario.CONTRASENA}"></td>
         <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+        <td>
+            <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.NOMBRE_USUARIO}', '${usuario.CONTRASENA}')|">Editar</button>
+            <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
+        </td>
     </tr>
 </table>
+<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+    <form th:action="@{/usuarios/editar}" method="post">
+        <h3>Editar Usuario</h3><br>
+        <input type="hidden" id="edit-id" name="ID_USUARIO">
+        <label>Nombre: <input type="text" id="edit-nombre" name="NOMBRE_USUARIO"></label><br>
+        <label>Contraseña: <input type="text" id="edit-contrasena" name="CONTRASENA"></label><br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+    </form>
+</div>
+
 <br>
 <a href="/main/main">Volver al Inicio</a>
 </body>
