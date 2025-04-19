@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Registrar Usuario</title>
@@ -7,6 +7,7 @@
 </head>
 <body>
 <h2>Registrar Nuevo Usuario</h2>
+
 <form action="/usuarios/crear" method="post">
     <label>Nombre:</label>
     <input type="text" name="NOMBRE_USUARIO" required>
@@ -16,13 +17,20 @@
     <input type="text" name="CONTRASENA" required>
     <br><br>
 
-    <label>ID Empleado:</label>
-    <input type="text" name="empleado" required>
+    <label>Empleado:</label>
+    <input list="empleadoList" name="empleado" id="empleado" required>
+    <datalist id="empleadoList">
+        <option th:each="emp : ${empleados}"
+                th:value="${emp.ID_EMPLEADO}"
+                th:text="${emp.NOMBRE_EMPLEADO}"></option>
+    </datalist>
     <br><br>
 
     <button type="submit">Guardar</button>
 </form>
+
 <br>
 <a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
+
