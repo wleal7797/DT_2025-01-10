@@ -17,13 +17,13 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
     @Autowired
     private UsuarioDAO usuarioDAO;
     @Autowired
     private EmpleadoDAO empleadoDAO;
 
     @GetMapping("/")
-
     public String inicio() {
         return "main";
     }
