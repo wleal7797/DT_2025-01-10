@@ -4,27 +4,6 @@
     <meta charset="UTF-8">
     <title>Lista de Vendedores</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <script>
-        function editarEmpleado(id, doc, nombre, telefono) {
-            document.getElementById("edit-id").value = id;
-            document.getElementById("edit-documento").value = doc;
-            document.getElementById("edit-nombre").value = nombre;
-            document.getElementById("edit-telefono").value = telefono;
-            document.getElementById("edit-form").style.display = "block";
-        }
-
-        function eliminarEmpleado(id) {
-            if (confirm("¿Seguro que deseas eliminar este empleado?")) {
-                fetch('/empleados/eliminar/' + id, { method: 'DELETE' })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert(data);
-                        location.reload();
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        }
-    </script>
 </head>
 <body>
 <h2>Lista de Vendedores</h2>
@@ -33,34 +12,14 @@
         <th>Documento</th>
         <th>Nombre</th>
         <th>Teléfono</th>
-        <th>Acciones</th>
     </tr>
     <tr th:each="empleado : ${empleados}">
         <td th:text="${empleado.N_DOCUMENTO}"></td>
         <td th:text="${empleado.NOMBRE_EMPLEADO}"></td>
         <td th:text="${empleado.TELEFONO_EMPLEADO}"></td>
-        <td>
-            <button th:attr="onclick=|editarEmpleado('${empleado.ID_EMPLEADO}', '${empleado.N_DOCUMENTO}', '${empleado.NOMBRE_EMPLEADO}', '${empleado.TELEFONO_EMPLEADO}')|">Editar</button>
-            <button th:attr="onclick=|eliminarEmpleado('${empleado.ID_EMPLEADO}')|">Eliminar</button>
-        </td>
     </tr>
 </table>
-
-
-<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
-    <form th:action="@{/empleados/editar}" method="post">
-        <h3>Editar Empleado</h3><br>
-        <input type="hidden" id="edit-id" name="ID_EMPLEADO">
-        <label>Documento: <input type="text" id="edit-documento" name="N_DOCUMENTO"></label><br>
-        <label>Nombre: <input type="text" id="edit-nombre" name="NOMBRE_EMPLEADO"></label><br>
-        <label>Teléfono: <input type="text" id="edit-telefono" name="TELEFONO_EMPLEADO"></label><br>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-    </form>
-</div>
-
 <br>
 <a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
-
