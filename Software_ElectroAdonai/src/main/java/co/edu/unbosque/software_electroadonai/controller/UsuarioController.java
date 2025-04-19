@@ -28,7 +28,6 @@ public class UsuarioController {
     public String formularioRegistro() {
         return "usuario-form";
     }
-
     @PostMapping("/crear")
     public String crearEmpleado(@ModelAttribute Usuario usuario) {
         usuarioDAO.saveOrUpdate(usuario);
