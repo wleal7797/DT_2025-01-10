@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,12 @@
 </head>
 
 <body>
-<div th:if="${param.logout}" class="alert alert-success">¡Sesión finalizada con éxito!</div>
 
 <h1 class="text-center mt-4">Inicio de sesión</h1>
 
 <form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
 
-    <div th:if="${param.error}">Invalid username and password.</div>
+    <div th:if="${param.error}">Error: Verifique las credenciales.</div>
 
     <div class="mb-3">
         <input type="text" class="form-control" name="username" placeholder="Usuario" required>
@@ -25,10 +24,6 @@
     <button type="submit" class="btn btn-primary w-100">Entrar</button>
 
 </form>
-
-<!--<form th:action="@{/registrar}" method="get" class="container mt-5 w-25 p-4 bg-light rounded shadow">-->
-<!--    <button type="submit" class="btn btn-primary w-100">Registrar nuevo usuario</button>-->
-<!--</form>-->
 
 </body>
 </html>

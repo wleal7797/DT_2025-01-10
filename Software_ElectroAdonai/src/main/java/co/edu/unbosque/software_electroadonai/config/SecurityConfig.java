@@ -3,6 +3,7 @@ package co.edu.unbosque.software_electroadonai.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -24,14 +25,21 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF
                 .authorizeHttpRequests(auth -> auth
-
                         //Permisos:
-                        .requestMatchers("/registrar").permitAll()
-                        .requestMatchers("/users/crear").permitAll()
-                        .requestMatchers("/logout-success").permitAll()
-
                         //.requestMatchers(HttpMethod."METODOS PERMITIDOS", "RUTA EXCLUSIVA PARA ROL").hasRole("ROL")
                         //.requestMatchers("RUTA").hasRole("ROL")
+                        //.requestMatchers("/main/").hasAuthority("ADMIN")
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/index").permitAll()
+                        .requestMatchers("/logout").permitAll()
+                        .requestMatchers("/css/styles.css").permitAll()
+
+                        .requestMatchers("/admin").hasRole("ADMIN")
+
+                        .requestMatchers("/main").hasRole("ADMIN")
+                        .requestMatchers("/main/**").hasRole("ADMIN")
+                        .requestMatchers("/mainVendedor").hasAnyRole("VENDEDOR", "ADMIN")
+                        .requestMatchers("/mainVendedor/**").hasAnyRole("VENDEDOR", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -39,11 +47,15 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                 )
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/index?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/denied?denied")
                 )
                 .build();
     }
@@ -56,10 +68,6 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    public String encriptar(String password) {
-        return passwordEncoder().encode(password);
     }
 
 }

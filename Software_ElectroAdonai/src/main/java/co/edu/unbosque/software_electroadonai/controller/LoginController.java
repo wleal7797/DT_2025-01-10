@@ -4,13 +4,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 // Controlador para el inicio de sesión
-
 @Controller
 class LoginController {
 
     @GetMapping("/")
     String index() {
-        return "main";
+        return "index";
+    }
+
+    @GetMapping("/index")
+    String index2() {
+        return "index";
     }
 
     @GetMapping("/login")
@@ -18,12 +22,9 @@ class LoginController {
         return "login";
     }
 
-    /*
-    @GetMapping("/registrar")
-    String registrar(Model model) {
-        model.addAttribute(new Users());
-        return "registro-usuario";
+    @GetMapping("/denied")
+    String denied() {
+        return "index";
     }
-     */
 
 }
