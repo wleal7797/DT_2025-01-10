@@ -1,7 +1,10 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.Adelanto;
+import co.edu.unbosque.software_electroadonai.model.Empleado;
+import co.edu.unbosque.software_electroadonai.model.Usuario;
 import co.edu.unbosque.software_electroadonai.services.AdelantoDAO;
+import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,8 @@ import java.util.List;
 public class AdelantoController {
     @Autowired
     private AdelantoDAO adelantoDAO;
+    @Autowired
+    private EmpleadoDAO empleadoDAO;
 
     @GetMapping("/")
 
@@ -23,7 +28,10 @@ public class AdelantoController {
     }
 
     @GetMapping("/registro")
-    public String formularioRegistro() {
+    public String formularioRegistro(Model model) {
+        List<Empleado> empleados = empleadoDAO.getAllEmpleados();
+        model.addAttribute("empleados", empleados);
+        model.addAttribute("usuario", new Adelanto());
         return "adelanto-form";
     }
 
