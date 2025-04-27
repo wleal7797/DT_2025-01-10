@@ -28,7 +28,7 @@ public class DetalleMovimiento {
     private Bodega ID_BODEGA_DESTINO;
 
     @ManyToOne
-    @JoinColumn(name = "ID_DETALLE_BODEGA")
-    private DetalleBodega ID_DETALLE_BODEGA;
+    @JoinColumn(name = "ID_PRODUCTO")
+    private Producto producto;
 
 }
