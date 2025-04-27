@@ -7,6 +7,10 @@ import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import co.edu.unbosque.software_electroadonai.model.Authorities;
+import co.edu.unbosque.software_electroadonai.model.Users;
+import co.edu.unbosque.software_electroadonai.services.AutoridadesDAO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +19,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 public class UsuarioController {
 
     @Autowired
     private UsuarioDAO usuarioDAO;
     @Autowired
-    private EmpleadoDAO empleadoDAO;
+    private AutoridadesDAO autoridadesDAO;
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @GetMapping("/")
     public String inicio() {
@@ -30,21 +35,27 @@ public class UsuarioController {
 
     @GetMapping("/registro")
     public String formularioRegistro(Model model) {
-        List<Empleado> empleados = empleadoDAO.getAllEmpleados();
-        model.addAttribute("empleados", empleados);
-        model.addAttribute("usuario", new Usuario());
+        model.addAttribute(new Users());
+        model.addAttribute(new Authorities());
         return "usuario-form";
     }
 
     @PostMapping("/crear")
-    public String crearEmpleado(@ModelAttribute Usuario usuario) {
-        usuarioDAO.saveOrUpdate(usuario);
-        return "redirect:/usuarios/listar";
+    public String crearEmpleado(@ModelAttribute Users user, @ModelAttribute Authorities authorities) {
+
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.setEnabled(true);
+        usuarioDAO.saveOrUpdate(user);
+        authorities.setUsername(user.getUsername());
+        autoridadesDAO.saveOrUpdate(authorities);
+        return "redirect:/users/listar";
+
     }
+
     @GetMapping("/listar")
     public String listarUsuarios(Model model) {
-        List<Usuario> usuarios = usuarioDAO.getAllUsuarios();
-        model.addAttribute("usuarios", usuarios);
+        List<Users> users = usuarioDAO.getAllUsuarios();
+        model.addAttribute("users", users);
         return "lista-usuarios";
     }
     @PostMapping("/editar")

@@ -1,9 +1,12 @@
 package co.edu.unbosque.software_electroadonai.services;
 
-
-import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,20 +18,20 @@ public class UsuarioDAO {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Usuario saveOrUpdate(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public Users saveOrUpdate(Users users) {
+        return usuarioRepository.save(users);
     }
 
-    public List<Usuario> getAllUsuarios() {
-        return (List<Usuario>) usuarioRepository.findAll();
+    public List<Users> getAllUsuarios() {
+        return (List<Users>) usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> getUsuarioById(int id) {
-
+    public Optional<Users> getUsuarioById(int id) {
         return usuarioRepository.findById(id);
     }
 
     public void deleteUsuario(int id) {
         usuarioRepository.deleteById(id);
     }
+
 }
