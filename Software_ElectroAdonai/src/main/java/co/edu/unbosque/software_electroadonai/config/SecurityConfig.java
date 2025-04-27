@@ -31,7 +31,6 @@ public class SecurityConfig {
                         //.requestMatchers("/main/").hasAuthority("ADMIN")
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/index").permitAll()
-                        .requestMatchers("/logout").permitAll()
                         .requestMatchers("/css/styles.css").permitAll()
 
                         .requestMatchers("/admin").hasRole("ADMIN")

@@ -3,10 +3,6 @@ package co.edu.unbosque.software_electroadonai.services;
 import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

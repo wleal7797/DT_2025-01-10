@@ -8,20 +8,22 @@ import lombok.Data;
 @Table(name = "users")
 public class Users {
 
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private int ID_USUARIO;
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_USUARIO", unique = true)
+    private int ID_USUARIO;
+
     @Column(name = "username", unique = true)
     private String username;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "enabled")
     private boolean enabled;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_EMPLEADO")
+    @OneToOne
+    @JoinColumn(name = "ID_EMPLEADO", unique = true)
     private Empleado empleado;
 
 }

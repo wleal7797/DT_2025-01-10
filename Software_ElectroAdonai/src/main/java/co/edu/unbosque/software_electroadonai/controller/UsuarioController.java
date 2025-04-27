@@ -1,8 +1,5 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.model.Empleado;
-import co.edu.unbosque.software_electroadonai.model.Usuario;
-import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,13 +55,14 @@ public class UsuarioController {
         model.addAttribute("users", users);
         return "lista-usuarios";
     }
+
     @PostMapping("/editar")
-    public String editarUsuario(@ModelAttribute Usuario nuevoUsuario) {
-        Optional<Usuario> usuarioExistente = usuarioDAO.getUsuarioById(nuevoUsuario.getID_USUARIO());
+    public String editarUsuario(@ModelAttribute Users nuevoUsuario) {
+        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(nuevoUsuario.getID_USUARIO());
         if (usuarioExistente.isPresent()) {
-            Usuario usuario = usuarioExistente.get();
-            usuario.setNOMBRE_USUARIO (nuevoUsuario.getNOMBRE_USUARIO());
-            usuario.setCONTRASENA (nuevoUsuario.getCONTRASENA());
+            Users usuario = usuarioExistente.get();
+            usuario.setUsername(nuevoUsuario.getUsername());
+            usuario.setPassword(nuevoUsuario.getPassword());
             usuarioDAO.saveOrUpdate(usuario);
         }
         //ResponseEntity.ok("Usuario editado correctamente");
@@ -74,7 +72,7 @@ public class UsuarioController {
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable int id) {
-        Optional<Usuario> usuarioExistente = usuarioDAO.getUsuarioById(id);
+        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(id);
         if (usuarioExistente.isPresent()) {
             usuarioDAO.deleteUsuario(id);
             return ResponseEntity.ok("Usuario eliminado correctamente");
