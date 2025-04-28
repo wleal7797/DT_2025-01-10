@@ -1,7 +1,7 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.Empleado;
-import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 public class UsuarioController {
+
     @Autowired
     private UsuarioDAO usuarioDAO;
+
     @Autowired
     private EmpleadoDAO empleadoDAO;
 
     @GetMapping("/")
-
     public String inicio() {
         return "main";
     }
@@ -32,38 +33,38 @@ public class UsuarioController {
     public String formularioRegistro(Model model) {
         List<Empleado> empleados = empleadoDAO.getAllEmpleados();
         model.addAttribute("empleados", empleados);
-        model.addAttribute("usuario", new Usuario());
+        model.addAttribute("usuario", new Users());
         return "usuario-form";
     }
 
     @PostMapping("/crear")
-    public String crearEmpleado(@ModelAttribute Usuario usuario) {
+    public String crearUsuario(@ModelAttribute Users usuario) {
         usuarioDAO.saveOrUpdate(usuario);
         return "redirect:/usuarios/listar";
     }
+
     @GetMapping("/listar")
     public String listarUsuarios(Model model) {
-        List<Usuario> usuarios = usuarioDAO.getAllUsuarios();
+        List<Users> usuarios = usuarioDAO.getAllUsuarios();
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
     }
+
     @PostMapping("/editar")
-    public String editarUsuario(@ModelAttribute Usuario nuevoUsuario) {
-        Optional<Usuario> usuarioExistente = usuarioDAO.getUsuarioById(nuevoUsuario.getID_USUARIO());
+    public String editarUsuario(@ModelAttribute Users nuevoUsuario) {
+        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(nuevoUsuario.getID_USUARIO());
         if (usuarioExistente.isPresent()) {
-            Usuario usuario = usuarioExistente.get();
-            usuario.setNOMBRE_USUARIO (nuevoUsuario.getNOMBRE_USUARIO());
-            usuario.setCONTRASENA (nuevoUsuario.getCONTRASENA());
+            Users usuario = usuarioExistente.get();
+            usuario.setUsername(nuevoUsuario.getUsername());
+            usuario.setPassword(nuevoUsuario.getPassword());
             usuarioDAO.saveOrUpdate(usuario);
         }
-        //ResponseEntity.ok("Usuario editado correctamente");
         return "redirect:/usuarios/listar";
     }
 
-
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable int id) {
-        Optional<Usuario> usuarioExistente = usuarioDAO.getUsuarioById(id);
+        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(id);
         if (usuarioExistente.isPresent()) {
             usuarioDAO.deleteUsuario(id);
             return ResponseEntity.ok("Usuario eliminado correctamente");
@@ -72,3 +73,4 @@ public class UsuarioController {
         }
     }
 }
+

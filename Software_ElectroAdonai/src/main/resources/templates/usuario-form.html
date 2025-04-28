@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Registrar Usuario</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+
 <h2>Registrar Nuevo Usuario</h2>
 
-<form action="/usuarios/crear" method="post">
+<form th:action="@{/usuarios/crear}" method="post">
     <label>Nombre:</label>
-    <input type="text" name="NOMBRE_USUARIO" required>
+    <input type="text" name="username" required>
     <br><br>
 
     <label>Contraseña:</label>
-    <input type="text" name="CONTRASENA" required>
+    <input type="text" name="password" required>
     <br><br>
 
     <label>Empleado:</label>
-    <input list="empleadoList" name="empleado" id="empleado" required>
+    <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
     <datalist id="empleadoList">
         <option th:each="emp : ${empleados}"
                 th:value="${emp.ID_EMPLEADO}"
-                th:text="${emp.NOMBRE_EMPLEADO}"></option>
+                th:text="${emp.NOMBRE_EMPLEADO}">
+        </option>
     </datalist>
     <br><br>
 
@@ -31,6 +33,6 @@
 
 <br>
 <a href="/main/main">Volver al Inicio</a>
+
 </body>
 </html>
-

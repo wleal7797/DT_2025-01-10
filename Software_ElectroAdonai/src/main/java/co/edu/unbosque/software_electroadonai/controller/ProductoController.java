@@ -3,7 +3,7 @@ package co.edu.unbosque.software_electroadonai.controller;
 import co.edu.unbosque.software_electroadonai.model.Empleado;
 import co.edu.unbosque.software_electroadonai.model.Producto;
 import co.edu.unbosque.software_electroadonai.model.TipoProducto;
-import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.services.ProductoDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

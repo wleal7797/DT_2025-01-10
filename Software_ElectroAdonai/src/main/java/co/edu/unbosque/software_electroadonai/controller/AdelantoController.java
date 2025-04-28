@@ -2,7 +2,7 @@ package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.Adelanto;
 import co.edu.unbosque.software_electroadonai.model.Empleado;
-import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.services.AdelantoDAO;
 import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
