@@ -1,40 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registrar Detalle de Bodega</title>
+    <title>Title</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<h2>Registrar Detalle de Bodega</h2>
 
-<form action="/detalleBodega/crear" method="post">
-    <label>Cantidad de Producto en Bodega:</label>
-    <input type="number" name="CNT_PRODUCTO_BODEGA" min="0" required>
-    <br><br>
-
-    <label>Producto:</label>
-    <input list="productoList" name="producto.ID_PRODUCTO" required>
-    <datalist id="productoList">
-        <option th:each="p : ${productos}"
-                th:value="${p.ID_PRODUCTO}"
-                th:text="${p.NOMBRE_PRODUCTO}"></option>
-    </datalist>
-    <br><br>
-
-    <label>Bodega:</label>
-    <input list="bodegaList" name="bodega.ID_BODEGA" required>
-    <datalist id="bodegaList">
-        <option th:each="b : ${bodegas}"
-                th:value="${b.ID_BODEGA}"
-                th:text="${b.N_BODEGA}"></option>
-    </datalist>
-    <br><br>
-
-    <button type="submit">Guardar</button>
-</form>
-
-<br>
-<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>

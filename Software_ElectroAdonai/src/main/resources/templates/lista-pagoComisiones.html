@@ -4,44 +4,27 @@
   <meta charset="UTF-8">
   <title>Lista De Comisiones</title>
   <link rel="stylesheet" href="/css/styles.css">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
   <script>
-    function editarPago(id, fecha, comision, saldo, estado) {
-      document.getElementById("edit-id").value = id;
-      document.getElementById("edit-fecha").value = fecha;
-      document.getElementById("edit-comision").value = comision;
-      document.getElementById("edit-saldo").value = saldo;
-      document.getElementById("edit-estado").value = estado;
-      document.getElementById("edit-form").style.display = "block";
-    }
-
-    function eliminarPago(id) {
-      if (confirm("¿Seguro que deseas eliminar este registro?")) {
-        fetch('/pagoComisiones/eliminar/' + id, { method: 'DELETE' })
-                .then(response => response.text())
-                .then(data => {
-                  alert(data);
-                  location.reload();
-                })
-                .catch(error => console.error('Error:', error));
-      }
-    }
-
     function actualizarFiltro() {
       const atributo = document.getElementById("atributo").value;
       const filtroContainer = document.getElementById("filtroContainer");
       filtroContainer.innerHTML = "";
 
-      const input = document.createElement("input");
-      input.id = "filtro";
-      input.placeholder = "Buscar...";
-      input.onkeyup = filtrarTabla;
-
-      input.type = atributo === "fecha" ? "date" : "text";
-      input.style = "width: 80%; padding: 5px; margin-right: 60px;";
-      filtroContainer.appendChild(input);
+      if (atributo === "fecha") {
+        const inputFecha = document.createElement("input");
+        inputFecha.type = "date";
+        inputFecha.id = "filtro";
+        inputFecha.onchange = filtrarTabla;
+        filtroContainer.appendChild(inputFecha);
+      } else {
+        const inputTexto = document.createElement("input");
+        inputTexto.type = "text";
+        inputTexto.id = "filtro";
+        inputTexto.onkeyup = filtrarTabla;
+        inputTexto.placeholder = "Buscar...";
+        inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+        filtroContainer.appendChild(inputTexto);
+      }
     }
 
     function filtrarTabla() {
@@ -49,34 +32,42 @@
       const atributo = document.getElementById("atributo").value;
       const filas = document.querySelectorAll("table tr");
 
-      filas.forEach((fila, i) => {
-        if (i === 0) return;
+      filas.forEach((fila, index) => {
+        if (index === 0) return;
         const celdas = fila.getElementsByTagName("td");
         let contenido = "";
 
         switch (atributo) {
-          case "fecha": contenido = celdas[0].innerText; break;
-          case "estado": contenido = celdas[4].innerText; break;
-          case "vendedor": contenido = celdas[5].innerText; break;
+          case "fecha":
+            contenido = celdas[0].textContent || celdas[0].innerText;
+            break;
+          case "comision":
+            contenido = celdas[1].textContent || celdas[1].innerText;
+            break;
+          case "adelantos":
+            contenido = celdas[2].textContent || celdas[2].innerText;
+            break;
+          case "saldo":
+            contenido = celdas[3].textContent || celdas[3].innerText;
+            break;
+          case "estado":
+            contenido = celdas[4].textContent || celdas[4].innerText;
+            break;
+          case "vendedor":
+            contenido = celdas[5].textContent || celdas[5].innerText;
+            break;
         }
 
         fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
       });
-    }
-
-    function exportarExcel() {
-      const tabla = document.querySelector("table");
-      const wb = XLSX.utils.table_to_book(tabla, { sheet: "Comisiones" });
-      XLSX.writeFile(wb, "lista_comisiones.xlsx");
     }
   </script>
 </head>
 <body>
 <h2>Lista De Comisiones</h2>
 
-<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-  <label for="atributo">Filtrar por:</label>
-  <select id="atributo" onchange="actualizarFiltro()">
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+  <select id="atributo" style="margin-right: 10px;" onchange="actualizarFiltro()">
     <option value="vendedor">Vendedor</option>
     <option value="fecha">Fecha</option>
     <option value="estado">Estado</option>
@@ -85,9 +76,6 @@
   <div id="filtroContainer">
     <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px; margin-right: 60px;">
   </div>
-
-  <button onclick="exportarExcel()" style="padding: 5px 10px;">Exportar a Excel</button>
-
 </div>
 
 <table border="1">
@@ -98,7 +86,6 @@
     <th>Saldo</th>
     <th>Estado</th>
     <th>Vendedor</th>
-    <th>Acciones</th>
   </tr>
   <tr th:each="pagoComision : ${pagoComisiones}">
     <td th:text="${pagoComision.FECHA}"></td>
@@ -107,28 +94,9 @@
     <td th:text="${pagoComision.SALDO}"></td>
     <td th:text="${pagoComision.ESTADO}"></td>
     <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-    <td>
-      <button th:attr="onclick=|editarPago('${pagoComision.ID_COMISIONES}', '${pagoComision.FECHA}', '${pagoComision.COMISION}', '${pagoComision.SALDO}', '${pagoComision.ESTADO}')|">Editar</button>
-      <button th:attr="onclick=|eliminarPago('${pagoComision.ID_COMISIONES}')|">Eliminar</button>
-    </td>
   </tr>
 </table>
-
-<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
-  <form th:action="@{/pagoComisiones/editar}" method="post">
-    <h3>Editar Pago de Comisión</h3><br>
-    <input type="hidden" id="edit-id" name="ID_COMISIONES">
-    <label>Fecha: <input type="date" id="edit-fecha" name="FECHA"></label><br>
-    <label>Comisión: <input type="number" id="edit-comision" name="COMISION"></label><br>
-    <label>Saldo: <input type="number" id="edit-saldo" name="SALDO"></label><br>
-    <label>Estado: <input type="text" id="edit-estado" name="ESTADO"></label><br>
-    <button type="submit">Guardar</button>
-    <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-  </form>
-</div>
-<a href="/main/main">
-  <button style="padding: 5px 10px;">Volver al Inicio</button>
-</a>
+<br>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
-

@@ -22,6 +22,11 @@ public class DetalleMovimientoController {
         return "main";
     }
 
+    @GetMapping("/registro")
+    public String formularioRegistro() {
+        return "detallesMovimiento-form";
+    }
+
     @GetMapping("/listar")
     public String listarDetallesMovimiento(Model model) {
         List<DetalleMovimiento> detalleMovimiento = detalleMovimientoDAO.getAllDetallesMovimiento();

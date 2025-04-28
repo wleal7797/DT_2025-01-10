@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Registrar Usuario</title>
@@ -7,16 +7,23 @@
 </head>
 <body>
 <h2>Registrar Nuevo Usuario</h2>
+<<<<<<< HEAD
 <form action="/users/crear" method="post">
 
     <label>Usuario:</label>
     <input type="text" name="username" required>
+=======
+<form action="/usuarios/crear" method="post">
+    <label>Nombre:</label>
+    <input type="text" name="NOMBRE_USUARIO" required>
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
     <br><br>
 
     <label>Contraseña:</label>
     <input type="text" name="password" required>
     <br><br>
 
+<<<<<<< HEAD
     <label>Rol:</label>
     <input type="text" name="authority" required>
     <br><br>
@@ -29,13 +36,15 @@
                 th:text="${emp.NOMBRE_EMPLEADO}"></option>
     </datalist>
 
+=======
+    <label>ID Empleado:</label>
+    <input type="text" name="empleado" required>
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
     <br><br>
 
     <button type="submit">Guardar</button>
 </form>
-
 <br>
 <a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
-

@@ -17,15 +17,13 @@
     </tr>
     <tr th:each="detalle : ${detalles}">
         <td th:text="${detalle.ID_MOVIMIENTO_BODEGA != null} ? ${detalle.ID_MOVIMIENTO_BODEGA.FECHA_MOVIMIENTO} : 'N/A'"></td>
-        <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+        <td th:text="${detalle.ID_DETALLE_BODEGA != null} ? ${detalle.ID_DETALLE_BODEGA.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
         <td th:text="${detalle.CNT_PRODUCTO_MOVIMIENTO}"></td>
         <td th:text="${detalle.ID_BODEGA_ORIGEN != null} ? ${detalle.ID_BODEGA_ORIGEN.N_BODEGA} : 'N/A'"></td>
         <td th:text="${detalle.ID_BODEGA_DESTINO != null} ? ${detalle.ID_BODEGA_DESTINO.N_BODEGA} : 'N/A'"></td>
     </tr>
 </table>
 <br>
-<a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
-</a>
+<a href="/main/main">Volver al Inicio</a>
 </body>
 </html>
