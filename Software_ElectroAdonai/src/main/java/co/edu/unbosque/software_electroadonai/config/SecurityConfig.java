@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/index").permitAll()
                         .requestMatchers("/css/styles.css").permitAll()
 
+
                         .requestMatchers("/admin").hasRole("ADMIN")
 
                         .requestMatchers("/main").hasRole("ADMIN")
