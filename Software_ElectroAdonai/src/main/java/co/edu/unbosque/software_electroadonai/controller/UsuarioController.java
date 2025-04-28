@@ -1,6 +1,7 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,11 @@ import co.edu.unbosque.software_electroadonai.model.Authorities;
 import co.edu.unbosque.software_electroadonai.model.Users;
 import co.edu.unbosque.software_electroadonai.services.AutoridadesDAO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+=======
+import co.edu.unbosque.software_electroadonai.model.Usuario;
+import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 =======
 import co.edu.unbosque.software_electroadonai.model.Usuario;
 import co.edu.unbosque.software_electroadonai.services.UsuarioDAO;
@@ -30,9 +36,12 @@ public class UsuarioController {
     @Autowired
     private UsuarioDAO usuarioDAO;
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Autowired
     private AutoridadesDAO autoridadesDAO;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+=======
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 =======
 >>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 
@@ -43,9 +52,13 @@ public class UsuarioController {
 
     @GetMapping("/registro")
 <<<<<<< HEAD
+<<<<<<< HEAD
     public String formularioRegistro(Model model) {
         model.addAttribute(new Users());
         model.addAttribute(new Authorities());
+=======
+    public String formularioRegistro() {
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 =======
     public String formularioRegistro() {
 >>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
@@ -69,6 +82,7 @@ public class UsuarioController {
         model.addAttribute("users", users);
         return "lista-usuarios";
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     @PostMapping("/editar")
@@ -95,6 +109,8 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
     }
+=======
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 =======
 >>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 }

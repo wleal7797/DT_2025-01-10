@@ -2,7 +2,10 @@ package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.Producto;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import co.edu.unbosque.software_electroadonai.model.TipoProducto;
+=======
+>>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 =======
 >>>>>>> parent of 585f167 (Merge branch 'master' of https://github.com/wleal7797/DT_2025-01-10)
 import co.edu.unbosque.software_electroadonai.services.ProductoDAO;
