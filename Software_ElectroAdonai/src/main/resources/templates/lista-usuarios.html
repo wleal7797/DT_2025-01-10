@@ -14,7 +14,7 @@
 
         function eliminarUsuario(id) {
             if (confirm("¿Seguro que deseas eliminar este usuario?")) {
-                fetch('/usuarios/eliminar/' + id, { method: 'DELETE' })
+                fetch('/users/eliminar/' + id, { method: 'DELETE' })
                     .then(response => response.text())
                     .then(data => {
                         alert(data);
@@ -46,7 +46,7 @@
     </tr>
 </table>
 <div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
-    <form th:action="@{/usuarios/editar}" method="post">
+    <form th:action="@{/users/editar}" method="post">
         <h3>Editar Usuario</h3><br>
         <input type="hidden" id="edit-id" name="ID_USUARIO">
         <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br>
