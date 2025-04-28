@@ -29,10 +29,10 @@ public class SecurityConfig {
                         //.requestMatchers(HttpMethod."METODOS PERMITIDOS", "RUTA EXCLUSIVA PARA ROL").hasRole("ROL")
                         //.requestMatchers("RUTA").hasRole("ROL")
                         //.requestMatchers("/main/").hasAuthority("ADMIN")
+                        .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/index").permitAll()
                         .requestMatchers("/logout").permitAll()
-                        .requestMatchers("/css/styles.css").permitAll()
 
                         .requestMatchers("/admin").hasRole("ADMIN")
 
