@@ -7,23 +7,28 @@
 </head>
 <body>
 <h2>Registrar Nuevo Usuario</h2>
+<form action="/users/crear" method="post">
 
-<form action="/usuarios/crear" method="post">
-    <label>Nombre:</label>
-    <input type="text" name="NOMBRE_USUARIO" required>
+    <label>Usuario:</label>
+    <input type="text" name="username" required>
     <br><br>
 
     <label>Contraseña:</label>
-    <input type="text" name="CONTRASENA" required>
+    <input type="text" name="password" required>
     <br><br>
 
-    <label>Empleado:</label>
+    <label>Rol:</label>
+    <input type="text" name="authority" required>
+    <br><br>
+
+    <label>Empleado Asociado:</label>
     <input list="empleadoList" name="empleado" id="empleado" required>
     <datalist id="empleadoList">
         <option th:each="emp : ${empleados}"
                 th:value="${emp.ID_EMPLEADO}"
                 th:text="${emp.NOMBRE_EMPLEADO}"></option>
     </datalist>
+
     <br><br>
 
     <button type="submit">Guardar</button>
