@@ -50,6 +50,11 @@ public class DetalleBodegaController {
     @GetMapping("/listar")
     public String listarDetallesBodega(Model model) {
         List<DetalleBodega> detalleBodega = detalleBodegaDAO.getAllDetallesBodega();
+        List<Bodega> bodegas = bodegaDAO.getAllBodegas();
+        List<Producto> productos = productoDAO.getAllProductos();
+
+        model.addAttribute("bodegas", bodegas);
+        model.addAttribute("productos", productos);
         model.addAttribute("detalles", detalleBodega);
         return "lista-detalleBodegas";
     }

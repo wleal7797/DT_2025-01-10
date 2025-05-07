@@ -46,6 +46,8 @@ public class AdelantoController {
     @GetMapping("/listar")
     public String listarAdelantos(Model model) {
         List<Adelanto> adelantos = adelantoDAO.getAllAdelanto();
+        List<Empleado> empleados = empleadoDAO.getAllEmpleados();
+        model.addAttribute("empleados", empleados);
         model.addAttribute("adelantos", adelantos);
         return "lista-adelantos";
     }

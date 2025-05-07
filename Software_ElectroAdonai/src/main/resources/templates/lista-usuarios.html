@@ -5,7 +5,7 @@
     <title>Lista de Usuarios</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script>
-        function editarUsuario(id,nombre, contrasena) {
+        function editarUsuario(id, nombre, contrasena) {
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-contrasena").value = contrasena;
@@ -23,17 +23,56 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
     </script>
 </head>
 <body>
+
 <h2>Lista de Usuarios</h2>
+
+
+<button onclick="mostrarFormularioCreacion()">Nuevo Usuario</button>
+
+
+<div id="create-form" style="display: none;">
+    <h3>Registrar Nuevo Usuario</h3>
+    <form th:action="@{/users/crear}" method="post">
+        <label>Nombre:</label>
+        <input type="text" name="username" required><br><br>
+
+        <label>Contraseña:</label>
+        <input type="text" name="password" required><br><br>
+
+        <label>Enable:</label>
+        <input type="text" name="enabled" required><br><br>
+
+        <label>Empleado:</label>
+        <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
+        <datalist id="empleadoList">
+            <option th:each="emp : ${empleados}"
+                    th:value="${emp.ID_EMPLEADO}"
+                    th:text="${emp.NOMBRE_EMPLEADO}">
+            </option>
+        </datalist><br><br>
+
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+    </form>
+</div>
+
 <table border="1">
     <tr>
         <th>Usuario</th>
         <th>Contraseña</th>
         <th>Nombre</th>
         <th>Acciones</th>
-
     </tr>
     <tr th:each="usuario : ${usuarios}">
         <td th:text="${usuario.Username}"></td>
@@ -45,12 +84,14 @@
         </td>
     </tr>
 </table>
-<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+
+
+<div id="edit-form" style="display:none;">
     <form th:action="@{/users/editar}" method="post">
         <h3>Editar Usuario</h3><br>
         <input type="hidden" id="edit-id" name="ID_USUARIO">
-        <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br>
-        <label>Contraseña: <input type="text" id="edit-contrasena" name="Password"></label><br>
+        <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br><br>
+        <label>Contraseña: <input type="text" id="edit-contrasena" name="Password"></label><br><br>
         <button type="submit">Guardar</button>
         <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
     </form>
@@ -60,5 +101,7 @@
 <a href="/main/main">
     <button style="padding: 5px 10px;">Volver al Inicio</button>
 </a>
+
 </body>
 </html>
+

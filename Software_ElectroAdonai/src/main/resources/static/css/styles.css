@@ -121,12 +121,25 @@ table {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
+#tabla-container {
+    max-height: 550px;
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+
 table th, table td {
+    position: sticky;
     padding: 14px;
     border-bottom: 1px solid #ddd;
 }
 
 table th {
+    position: sticky;
     background-color: #007BFF;
     color: #fff;
     font-weight: bold;
@@ -142,7 +155,7 @@ table tr:nth-child(even) {
 }
 
 form {
-    padding: 25px;
+    padding: 50px;
     border-radius: 12px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
     text-align: center;
@@ -250,5 +263,5 @@ footer {
 }
 
 .imagen {
-    width: 100%; /* o el tamaño que prefieras */
+    width: 100%;
 }

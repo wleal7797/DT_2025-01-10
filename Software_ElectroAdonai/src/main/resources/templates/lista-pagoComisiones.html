@@ -73,7 +73,9 @@
 </head>
 <body>
 <h2>Lista De Comisiones</h2>
-
+<br>
+<button onclick=" ">generar Comisiones</button>
+<br>
 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
   <label for="atributo">Filtrar por:</label>
   <select id="atributo" onchange="actualizarFiltro()">
@@ -89,7 +91,7 @@
   <button onclick="exportarExcel()" style="padding: 5px 10px;">Exportar a Excel</button>
 
 </div>
-
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
   <tr>
     <th>Fecha</th>
@@ -113,8 +115,8 @@
     </td>
   </tr>
 </table>
-
-<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+</div>
+<div id="edit-form" style="display:none;">
   <form th:action="@{/pagoComisiones/editar}" method="post">
     <h3>Editar Pago de Comisión</h3><br>
     <input type="hidden" id="edit-id" name="ID_COMISIONES">

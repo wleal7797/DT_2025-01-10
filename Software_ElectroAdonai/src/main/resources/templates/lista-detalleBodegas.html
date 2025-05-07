@@ -43,11 +43,49 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
     </script>
 </head>
 <body>
 <h2>Lista de Artículos por Bodega</h2>
+<button onclick="mostrarFormularioCreacion()">Nuevo Detalle de Bodega</button>
 
+
+<div id="create-form" style="display: none;">
+<h3>Registrar Detalle de Bodega</h3>
+<form action="/detalleBodega/crear" method="post">
+    <label>Cantidad de Producto en Bodega:</label>
+    <input type="number" name="CNT_PRODUCTO_BODEGA" min="0" required>
+    <br><br>
+
+    <label>Producto:</label>
+    <input list="productoList" name="producto.ID_PRODUCTO" required>
+    <datalist id="productoList">
+        <option th:each="p : ${productos}"
+                th:value="${p.ID_PRODUCTO}"
+                th:text="${p.NOMBRE_PRODUCTO}"></option>
+    </datalist>
+    <br><br>
+
+    <label>Bodega:</label>
+    <input list="bodegaList" name="bodega.ID_BODEGA" required>
+    <datalist id="bodegaList">
+        <option th:each="b : ${bodegas}"
+                th:value="${b.ID_BODEGA}"
+                th:text="${b.N_BODEGA}"></option>
+    </datalist>
+    <br><br>
+
+    <button type="submit">Guardar</button>
+    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+</form>
+</div>
+<br><br>
 <div style="margin-bottom: 10px;">
     <select id="atributo">
         <option value="nombre">Nombre Producto</option>
@@ -58,14 +96,14 @@
     </select>
     <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 50%;">
 </div>
-
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Nombre Producto</th>
         <th>Referencia</th>
         <th>Bodega</th>
         <th>Cantidad</th>
-        <th>Existencias Totales</th>
+        <th>Existencias Totales del Producto</th>
         <th>Acciones</th>
     </tr>
     <tr th:each="detalle : ${detalles}">
@@ -80,8 +118,8 @@
         </td>
     </tr>
 </table>
-
-<div id="edit-form" style="display:none; margin-top: 20px;">
+</div>
+<div id="edit-form" style="display:none;">
     <form th:action="@{/detalleBodega/editar}" method="post">
         <h3>Editar Detalle</h3>
         <input type="hidden" id="edit-id" name="ID_DETALLE_BODEGA">

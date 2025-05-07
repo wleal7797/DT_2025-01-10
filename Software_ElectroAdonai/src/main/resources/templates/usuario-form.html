@@ -9,27 +9,7 @@
 
 <h2>Registrar Nuevo Usuario</h2>
 
-<form th:action="@{/users/crear}" method="post">
-    <label>Nombre:</label>
-    <input type="text" name="username" required>
-    <br><br>
 
-    <label>Contraseña:</label>
-    <input type="text" name="password" required>
-    <br><br>
-
-    <label>Empleado:</label>
-    <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
-    <datalist id="empleadoList">
-        <option th:each="emp : ${empleados}"
-                th:value="${emp.ID_EMPLEADO}"
-                th:text="${emp.NOMBRE_EMPLEADO}">
-        </option>
-    </datalist>
-    <br><br>
-
-    <button type="submit">Guardar</button>
-</form>
 
 <br>
 <a href="/main/main">Volver al Inicio</a>

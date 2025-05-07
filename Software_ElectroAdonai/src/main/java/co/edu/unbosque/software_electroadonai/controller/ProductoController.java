@@ -37,9 +37,9 @@ public class ProductoController {
         List<Producto> productos = productoDAO.getAllProductos();
         List<TipoProducto> tiposProducto = entityManager.createQuery("SELECT t FROM TipoProducto t", TipoProducto.class)
                 .getResultList();
-
-        model.addAttribute("productos", productos);
         model.addAttribute("tiposProducto", tiposProducto);
+        model.addAttribute("productos", productos);
+
         return "producto-form";
     }
 
@@ -52,6 +52,10 @@ public class ProductoController {
     @GetMapping("/listar")
     public String listarProductos(Model model) {
         List<Producto> productos = productoDAO.getAllProductos();
+        List<TipoProducto> tiposProducto = entityManager.createQuery("SELECT t FROM TipoProducto t", TipoProducto.class)
+                .getResultList();
+
+        model.addAttribute("tiposProducto", tiposProducto);
         model.addAttribute("productos", productos);
         return "lista-productos";
     }

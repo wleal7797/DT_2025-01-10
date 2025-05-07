@@ -34,18 +34,20 @@ public class UsuarioController {
         List<Empleado> empleados = empleadoDAO.getAllEmpleados();
         model.addAttribute("empleados", empleados);
         model.addAttribute("usuario", new Users());
-        return "usuario-form";
+        return "lista-usuarios";
     }
 
     @PostMapping("/crear")
     public String crearUsuario(@ModelAttribute Users usuario) {
         usuarioDAO.saveOrUpdate(usuario);
-        return "redirect:/usuarios/listar";
+        return "redirect:/users/listar";
     }
 
     @GetMapping("/listar")
     public String listarUsuarios(Model model) {
         List<Users> usuarios = usuarioDAO.getAllUsuarios();
+        List<Empleado> empleados = empleadoDAO.getAllEmpleados();
+        model.addAttribute("empleados", empleados);
         model.addAttribute("usuarios", usuarios);
         return "lista-usuarios";
     }
@@ -59,7 +61,7 @@ public class UsuarioController {
             usuario.setPassword(nuevoUsuario.getPassword());
             usuarioDAO.saveOrUpdate(usuario);
         }
-        return "redirect:/usuarios/listar";
+        return "redirect:/users/listar";
     }
 
     @DeleteMapping("/eliminar/{id}")

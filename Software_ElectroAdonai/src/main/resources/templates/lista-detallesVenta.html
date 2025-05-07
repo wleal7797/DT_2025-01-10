@@ -100,7 +100,7 @@
     <button>Registrar más ventas</button>
   </a>
 </div>
-
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
   <tr>
     <th>Fecha</th>
@@ -122,13 +122,16 @@
     </td>
   </tr>
 </table>
+</div>
 
-<div id="edit-form" style="display:none; width: 600px; padding: 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+<div id="edit-form" style="display:none;">
   <form th:action="@{/detallesVenta/editar}" method="post">
     <h3>Editar Detalle de Venta</h3><br>
     <input type="hidden" id="edit-id" name="ID_DETALLE_VENTA">
     <label>Cantidad: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_VENTA" required></label><br><br>
     <label>Precio Venta: <input type="number" id="edit-precio" name="PRECIO_VENTA_PRODUCTO" required></label><br><br>
+    <br>
+    <br>
     <button type="submit">Guardar</button>
     <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
   </form>

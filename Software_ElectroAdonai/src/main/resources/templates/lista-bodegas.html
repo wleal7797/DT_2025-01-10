@@ -24,10 +24,43 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
     </script>
 </head>
 <body>
 <h2>Lista de Bodegas</h2>
+
+<button onclick="mostrarFormularioCreacion()">Nueva Bodega</button>
+
+
+<div id="create-form" style="display: none;">
+<h3>Registrar Nueva Bodega</h3>
+<form action="/bodegas/crear" method="post">
+    <label>Nombre de la Bodega:</label>
+    <input type="text" name="N_BODEGA" required>
+    <br><br>
+
+    <label>Cantidad de Productos:</label>
+    <input type="number" name="CNT_PRODUCTOS" min="0" required>
+    <br><br>
+
+    <label>Estado:</label>
+    <input type="text" name="ESTADO" required>
+    <br>
+    <br>
+
+    <button type="submit">Guardar</button>
+    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+</form>
+</div>
+
+
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Nombre de la Bodega</th>
@@ -45,14 +78,16 @@
         </td>
     </tr>
 </table>
-
-<div id="edit-form" style="display:none; width: 600px; padding: 0px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px auto;">
+</div>
+<div id="edit-form" style="display:none;">
     <form th:action="@{/bodegas/editar}" method="post">
         <h3>Editar Bodega</h3><br>
         <input type="hidden" id="edit-id" name="ID_BODEGA">
         <label>Nombre: <input type="text" id="edit-nombre" name="N_BODEGA"></label><br>
         <label>Cantidad de Productos: <input type="number" id="edit-cantidad" name="CNT_PRODUCTOS"></label><br>
         <label>Estado: <input type="text" id="edit-estado" name="ESTADO"></label><br>
+        <br>
+        <br>
         <button type="submit">Guardar</button>
         <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
     </form>
