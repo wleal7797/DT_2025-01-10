@@ -1,11 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Registrar Nueva Venta</title>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+            color: #333;
+        }
+
+        h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #fdfdfd;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .detalle-producto {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-left: 4px solid #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 42px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .select2-selection__rendered {
+            line-height: 28px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 100% !important;
+        }
+
+        button[type="submit"], a.btn {
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            input, select, textarea {
+                max-width: 100%;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+        }
+    </style>
+
 </head>
 <body>
+
+<h2>Registrar Nueva Venta</h2>
+<a href="/serialVentaProducto/listar" style="margin-left: 30px;">
+    <button>Números de serie por producto</button>
+</a>
+<a href="/detallesVenta/listar" style="margin-left: 30px;">
+    <button>Ver todas las ventas</button>
+</a>
+<br><br>
+
+<form th:action="@{/detallesVenta/crear}" method="post" onsubmit="return validarFormulario();">
+    <div class="form-section">
+        <h3>Información de la Venta</h3>
+
+        <label for="fechaVenta">Fecha de Venta</label>
+        <input type="date" id="fechaVenta" name="fechaVenta" required>
+
+        <label for="precioVentaTotal">Precio Total</label>
+        <input type="number" id="precioVentaTotal" name="precioVentaTotal" step="0.01" readonly placeholder="Calculado automáticamente">
+
+        <label for="remision">Número de Remisión</label>
+        <input type="text" id="remision" name="remision" required>
+
+        <label for="empleado">Empleado Responsable</label>
+        <select id="empleado" name="idEmpleado" required>
+            <option value="">-- Selecciona un empleado --</option>
+            <option th:each="emp : ${empleados}"
+                    th:value="${emp.ID_EMPLEADO}"
+                    th:text="${emp.NOMBRE_EMPLEADO}"></option>
+        </select>
+    </div>
+
+    <div class="form-section">
+        <h3>Productos en la Venta</h3>
+        <div id="productos-container"></div>
+        <button type="button" class="btn btn-success" onclick="agregarProducto()">+ Agregar Producto</button>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Guardar Venta</button>
+        <a th:href="@{/main/main}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+<template id="detalle-template">
+    <div class="detalle-producto">
+        <button type="button" class="remove-btn" onclick="this.parentElement.remove(); actualizarTotal();">X</button>
+
+        <label>Cantidad</label>
+        <input type="number" name="cntProductoVenta" required oninput="actualizarTotal()">
+
+        <label>Precio Unitario</label>
+        <input type="number" name="precioVentaProducto" step="0.01" required oninput="actualizarTotal()">
+
+        <label>Seriales del Producto (uno por línea)</label>
+        <textarea name="serialesTexto" rows="3" placeholder="Ej: ABC123&#10;DEF456" required></textarea>
+
+        <label>Producto</label>
+        <select name="idProducto" class="select-producto" required>
+            <option value="">-- Selecciona un producto --</option>
+            <option th:each="prod : ${productos}"
+                    th:value="${prod.ID_PRODUCTO}"
+                    th:text="${prod.NOMBRE_PRODUCTO}"></option>
+        </select>
+
+        <label>Bodega</label>
+        <select name="idBodega" required>
+            <option value="">-- Selecciona una bodega --</option>
+            <option th:each="bod : ${bodegas}"
+                    th:value="${bod.ID_BODEGA}"
+                    th:text="${bod.N_BODEGA}"></option>
+        </select>
+    </div>
+</template>
+
+<!-- jQuery (requerido por Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    let index = 0;
+
+    function inicializarSelect2(contenedor) {
+        $(contenedor).find('.select-producto').select2({
+            placeholder: 'Busca un producto...',
+            width: '100%'
+        });
+    }
+
+    function agregarProducto() {
+        const template = document.getElementById('detalle-template');
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelectorAll('input, select, textarea').forEach(input => {
+            const name = input.getAttribute('name');
+            input.setAttribute('name', `detalles[${index}].${name}`);
+        });
+
+        const container = document.getElementById('productos-container');
+        const newElement = document.createElement('div');
+        newElement.appendChild(clone);
+        container.appendChild(newElement);
+
+        inicializarSelect2(newElement);
+
+        index++;
+        actualizarTotal();
+    }
+
+    function actualizarTotal() {
+        let total = 0;
+        document.querySelectorAll('#productos-container .detalle-producto').forEach(detalle => {
+            const cantidad = parseFloat(detalle.querySelector('input[name*="cntProductoVenta"]').value) || 0;
+            const precio = parseFloat(detalle.querySelector('input[name*="precioVentaProducto"]').value) || 0;
+            total += cantidad * precio;
+        });
+        document.getElementById('precioVentaTotal').value = total.toFixed(2);
+    }
+
+    function validarFormulario() {
+        const productos = document.querySelectorAll('#productos-container .detalle-producto');
+        if (productos.length === 0) {
+            alert("Debes agregar al menos un producto a la venta.");
+            return false;
+        }
+
+        for (let detalle of productos) {
+            const seriales = detalle.querySelector('textarea[name*="serialesTexto"]').value.trim();
+            if (seriales === "") {
+                alert("Todos los productos deben tener seriales ingresados.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
 
 </body>
 </html>

@@ -16,6 +16,8 @@ public class UtilidadesPorProducto {
     private double UTILIDAD_BRUTA;
     @Column(name="UTILIDAD_FINAL")
     private double UTILIDAD_FINAL;
+    @Column(name="ESTADO")
+    private String ESTADO;
     @ManyToOne
     @JoinColumn(name = "ID_PRODUCTO")
     private Producto producto;
