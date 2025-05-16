@@ -23,10 +23,6 @@ public class UtilidadesPorProductoController {
         return "main";
     }
 
-    @GetMapping("/registro")
-    public String formularioRegistro() {
-        return "utilidadesPorProducto-form";
-    }
 
     @GetMapping("/listar")
     public String listarUtilidadesPorProducto(Model model) {

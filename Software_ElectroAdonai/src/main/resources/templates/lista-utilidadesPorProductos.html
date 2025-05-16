@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Utilidades por Producto</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .tabla-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+    <script>
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const contenedor = document.getElementById("filtroContainer");
+            contenedor.innerHTML = "";
+
+            const input = document.createElement("input");
+            input.id = "filtro";
+            input.placeholder = "Buscar...";
+            input.oninput = filtrarTabla;
+            input.type = "text";
+            input.style.width = "80%";
+            input.style.padding = "5px";
+            contenedor.appendChild(input);
+        }
+
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const atributo = document.getElementById("atributo").value;
+            const filas = document.querySelectorAll("#tabla-utilidades tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+                const celdas = fila.getElementsByTagName("td");
+                let texto = "";
+
+                switch (atributo) {
+                    case "producto":
+                        texto = celdas[1].textContent;
+                        break;
+                    case "cantidad":
+                        texto = celdas[2].textContent;
+                        break;
+                    case "precio":
+                        texto = celdas[3].textContent;
+                        break;
+                    case "remision":
+                        texto = celdas[0].textContent;
+                        break;
+                    case "estado":
+                        texto = celdas[6].textContent;
+                        break;
+                }
+
+
+                fila.style.display = texto.toUpperCase().includes(filtro) ? "" : "none";
+            });
+        }
+    </script>
+</head>
+
+<body>
+<h2>Lista de Utilidades por Producto</h2>
+
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 20px;">
+    <select id="atributo" onchange="actualizarFiltro()">
+        <option value="producto">Producto</option>
+        <option value="cantidad">Cantidad Vendida</option>
+        <option value="precio">Precio de Venta</option>
+        <option value="remision">Remisión</option>
+        <option value="estado">Estado</option>
+    </select>
+    <div id="filtroContainer">
+        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+    </div>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table id="tabla-utilidades" border="1">
+        <tr>
+            <th>Remisión</th>
+            <th>Producto</th>
+            <th>Cantidad Vendida</th>
+            <th>Precio de Venta</th>
+            <th>Utilidad Bruta</th>
+            <th>Utilidad Final</th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="util : ${utilidadesPorProductos}">
+            <td th:text="${util.detalle_venta.venta != null ? util.detalle_venta.venta.REMISION : 'N/A'}"></td>
+            <td th:text="${util.producto != null ? util.producto.NOMBRE_PRODUCTO : 'N/A'}"></td>
+            <td th:text="${util.detalle_venta != null ? util.detalle_venta.CNT_PRODUCTO_VENTA : 'N/A'}"></td>
+            <td th:text="${util.detalle_venta != null ? util.detalle_venta.PRECIO_VENTA_PRODUCTO : 'N/A'}"></td>
+            <td th:text="${util.UTILIDAD_BRUTA}"></td>
+            <td th:text="${util.UTILIDAD_FINAL}"></td>
+            <td th:text="${util.ESTADO}"></td>
+        </tr>
+    </table>
+</div>
+
+<br>
+<a href="/main/main">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
+</body>
+</html>
+

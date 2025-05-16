@@ -34,6 +34,11 @@ public class PagoComisionesController {
         pagoComisionesDAO.saveOrUpdate(pagoComision);
         return "redirect:/pagoComisiones/listar";
     }
+    @PostMapping("/generar")
+    public String generarComisiones() {
+        pagoComisionesDAO.generarPagoComisiones();
+        return "redirect:/pagoComisiones/listar";
+    }
 
     @GetMapping("/listar")
     public String listarPagoComisiones(Model model) {

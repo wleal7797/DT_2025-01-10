@@ -72,6 +72,9 @@
           case "precio":
             contenido = celdas[4].textContent;
             break;
+          case "vendedor":
+            contenido = celdas[5].textContent;
+            break;
         }
 
         fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
@@ -89,6 +92,7 @@
     <option value="producto">Producto</option>
     <option value="cantidad">Cantidad</option>
     <option value="precio">Precio Venta</option>
+    <option value="vendedor">Vendedor</option>
   </select>
   <div id="filtroContainer">
     <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px; margin-right: 60px;">
@@ -96,7 +100,7 @@
   <a href="/serialVentaProducto/listar" style="margin-left: 30px;">
     <button>Números de serie por producto</button>
   </a>
-  <a href="/ventas/registro" style="margin-left: 30px;">
+  <a href="/detallesVenta/registro" style="margin-left: 30px;">
     <button>Registrar más ventas</button>
   </a>
 </div>
@@ -108,6 +112,7 @@
     <th>Producto</th>
     <th>Cantidad</th>
     <th>Precio Venta</th>
+    <th>Vendedor</th>
     <th>Acciones</th>
   </tr>
   <tr th:each="detalleVenta : ${detallesVenta}">
@@ -116,6 +121,7 @@
     <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
     <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
     <td th:text="${detalleVenta.PRECIO_VENTA_PRODUCTO}"></td>
+    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     <td>
       <button th:attr="onclick=|editarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}', '${detalleVenta.CNT_PRODUCTO_VENTA}', '${detalleVenta.PRECIO_VENTA_PRODUCTO}')|">Editar</button>
       <button th:attr="onclick=|eliminarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}')|">Eliminar</button>
