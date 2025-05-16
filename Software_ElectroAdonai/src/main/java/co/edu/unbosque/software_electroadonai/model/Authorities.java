@@ -15,11 +15,11 @@ public class Authorities {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "authority")
+    @Column(name = "authority", nullable = false)
     private String authority;
 
     @OneToOne
     @JoinColumn(name = "username")
     private Users user;
-    
+
 }

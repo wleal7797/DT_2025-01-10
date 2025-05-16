@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioRepository extends CrudRepository<Users, Integer> {
 
-    Users findByUsername(String username);
-
 }

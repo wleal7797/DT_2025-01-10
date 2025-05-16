@@ -22,7 +22,7 @@ public class Users {
     @Column(name = "enabled")
     private boolean enabled;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "ID_EMPLEADO")
     private Empleado empleado;
 }
