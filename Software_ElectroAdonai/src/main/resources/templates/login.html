@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesión</title>
+    <link rel="icon" href="/css/logo.png" type="image/x-icon"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 
 <body>
 
 <h1 class="text-center mt-4">Inicio de sesión</h1>
 
-<form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
+<!-- CAPTCHA inválido -->
+<div th:if="${param.error != null and param.error.contains('captcha')}" class="alert alert-danger">
+    Error: Verifique el captcha.
+</div>
 
-    <div th:if="${param.error}">Error: Verifique las credenciales.</div>
+<!-- Error de credenciales inválidas -->
+<div th:if="${param.error != null and !param.error.contains('captcha')}" class="alert alert-danger">
+    Error: Usuario o contraseña incorrectos.
+</div>
+
+<form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
 
     <div class="mb-3">
         <input type="text" class="form-control" name="username" placeholder="Usuario" required>
@@ -21,6 +31,10 @@
     <div class="mb-3">
         <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
     </div>
+
+    <div class="g-recaptcha mb-2" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
+    <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
+
     <button type="submit" class="btn btn-primary w-100">Entrar</button>
 
 </form>
