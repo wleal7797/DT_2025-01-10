@@ -28,13 +28,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF
-                .addFilterBefore(captchaValidationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(captchaValidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         //Permisos:
                         //.requestMatchers(HttpMethod."METODOS PERMITIDOS", "RUTA EXCLUSIVA PARA ROL").hasRole("ROL")
                         //.requestMatchers("RUTA").hasRole("ROL")
                         //.requestMatchers("/main/").hasAuthority("ADMIN")
-                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/index").permitAll()
                         .requestMatchers("/login").permitAll()

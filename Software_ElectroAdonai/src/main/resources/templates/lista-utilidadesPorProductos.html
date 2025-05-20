@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Utilidades por Producto</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
     <style>
         .tabla-scroll {
             max-height: 500px;
             overflow-y: auto;
             border: 1px solid #ccc;
         }
+
         th, td {
             padding: 8px;
             text-align: left;
@@ -70,7 +71,7 @@
 <body>
 <h2>Lista de Utilidades por Producto</h2>
 
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 20px;">
+<div style="display: flex; justify-content: center; margin-bottom: 10px; margin-top: 20px;">
     <select id="atributo" onchange="actualizarFiltro()">
         <option value="producto">Producto</option>
         <option value="cantidad">Cantidad Vendida</option>
@@ -79,12 +80,13 @@
         <option value="estado">Estado</option>
     </select>
     <div id="filtroContainer">
-        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px;">
     </div>
 </div>
 
 <div id="tabla-container" class="tabla-scroll">
-    <table id="tabla-utilidades" border="1">
+    <table id="tabla-utilidades">
         <tr>
             <th>Remisión</th>
             <th>Producto</th>

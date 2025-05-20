@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
 </head>
+
 <body>
-<header class="header">
-    <h1>Sistema de Gestión</h1>
+<header>
+    <div class="grid">
+        <img src="/css/logo.png" style="justify-self: start;" alt="logo" class="logo">
+
+        <div class="dos-vertical" style="justify-self: center;">
+            <h1>Bienvenido</h1>
+        </div>
+
+
+        <form th:action="@{/logout}" method="post" id="logoutForm" style="justify-self: end;">
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </div>
 </header>
+
+<h2>Seleccione una opción para gestionar registros o listas:</h2>
+
 <div class="container">
-    <h2>Bienvenido</h2>
-    <p>Seleccione una opción para gestionar registros o listas.</p>
 
     <div class="dropdown-container">
 
@@ -38,16 +53,27 @@
 <div class="dashboard">
     <div class="calendar">
         <h3>Calendario</h3>
-        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
+        <iframe
+                src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
                 style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div class="notifications">
+        <h3>Notificaciones</h3>
+        <ul>
+            <li>🔔 Nueva actualización disponible</li>
+            <li>📅 Próxima reunión el 28 de abril</li>
+            <li>📢 Recordatorio: Falta arreglar el formulario de usuarios, se debe agregar enable</li>
+        </ul>
     </div>
 </div>
 
-<hr>
-<form th:action="@{/logout}" method="post" id="logoutForm">
-    <button type="submit">Cerrar sesión</button>
-</form>
+<footer>
+    &copy; 2025 Electrodomésticos Adonai.
+    <br>
+    <br>
+    <br>
+</footer>
 
 </body>
-</html>
 
+</html>

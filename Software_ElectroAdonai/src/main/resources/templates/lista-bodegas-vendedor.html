@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Bodegas</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
 </head>
 <body>
 <h2>Lista de Bodegas</h2>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>Bodega</th>
-        <th>Cantidad De Productos Total</th>
-        <th>Estado De Bodega</th>
-    </tr>
-    <tr th:each="bodega : ${bodegas}">
-        <td th:text="${bodega.N_BODEGA}"></td>
-        <td th:text="${bodega.CNT_PRODUCTOS}"></td>
-        <td th:text="${bodega.ESTADO}"></td>
-    </tr>
-</table>
+    <table>
+        <tr>
+            <th>Bodega</th>
+            <th>Cantidad De Productos Total</th>
+            <th>Estado De Bodega</th>
+        </tr>
+        <tr th:each="bodega : ${bodegas}">
+            <td th:text="${bodega.N_BODEGA}"></td>
+            <td th:text="${bodega.CNT_PRODUCTOS}"></td>
+            <td th:text="${bodega.ESTADO}"></td>
+        </tr>
+    </table>
 </div>
 <br>
 <a href="/mainVendedor/mainVendedor">

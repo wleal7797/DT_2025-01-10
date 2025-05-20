@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Artículos por Bodega</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
     <script>
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
@@ -16,11 +17,21 @@
                 let contenido = "";
 
                 switch (atributo) {
-                    case "nombre": contenido = celdas[0].textContent; break;
-                    case "referencia": contenido = celdas[1].textContent; break;
-                    case "bodega": contenido = celdas[2].textContent; break;
-                    case "cantidad": contenido = celdas[3].textContent; break;
-                    case "existencias": contenido = celdas[4].textContent; break;
+                    case "nombre":
+                        contenido = celdas[0].textContent;
+                        break;
+                    case "referencia":
+                        contenido = celdas[1].textContent;
+                        break;
+                    case "bodega":
+                        contenido = celdas[2].textContent;
+                        break;
+                    case "cantidad":
+                        contenido = celdas[3].textContent;
+                        break;
+                    case "existencias":
+                        contenido = celdas[4].textContent;
+                        break;
                 }
                 fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
             });
@@ -34,7 +45,7 @@
 
         function eliminarDetalle(id) {
             if (confirm("¿Seguro que deseas eliminar este detalle?")) {
-                fetch('/detalleBodega/eliminar/' + id, { method: 'DELETE' })
+                fetch('/detalleBodega/eliminar/' + id, {method: 'DELETE'})
                     .then(response => response.text())
                     .then(data => {
                         alert(data);
@@ -43,9 +54,11 @@
                     .catch(error => console.error('Error:', error));
             }
         }
+
         function mostrarFormularioCreacion() {
             document.getElementById("create-form").style.display = "block";
         }
+
         function ocultarFormularioCreacion() {
             document.getElementById("create-form").style.display = "none";
         }
@@ -57,33 +70,33 @@
 
 
 <div id="create-form" style="display: none;">
-<h3>Registrar Detalle de Bodega</h3>
-<form action="/detalleBodega/crear" method="post">
-    <label>Cantidad de Producto en Bodega:</label>
-    <input type="number" name="CNT_PRODUCTO_BODEGA" min="0" required>
-    <br><br>
+    <h3>Registrar Detalle de Bodega</h3>
+    <form action="/detalleBodega/crear" method="post">
+        <label>Cantidad de Producto en Bodega:</label>
+        <input type="number" name="CNT_PRODUCTO_BODEGA" min="0" required>
+        <br><br>
 
-    <label>Producto:</label>
-    <input list="productoList" name="producto.ID_PRODUCTO" required>
-    <datalist id="productoList">
-        <option th:each="p : ${productos}"
-                th:value="${p.ID_PRODUCTO}"
-                th:text="${p.NOMBRE_PRODUCTO}"></option>
-    </datalist>
-    <br><br>
+        <label>Producto:</label>
+        <input list="productoList" name="producto.ID_PRODUCTO" required>
+        <datalist id="productoList">
+            <option th:each="p : ${productos}"
+                    th:value="${p.ID_PRODUCTO}"
+                    th:text="${p.NOMBRE_PRODUCTO}"></option>
+        </datalist>
+        <br><br>
 
-    <label>Bodega:</label>
-    <input list="bodegaList" name="bodega.ID_BODEGA" required>
-    <datalist id="bodegaList">
-        <option th:each="b : ${bodegas}"
-                th:value="${b.ID_BODEGA}"
-                th:text="${b.N_BODEGA}"></option>
-    </datalist>
-    <br><br>
+        <label>Bodega:</label>
+        <input list="bodegaList" name="bodega.ID_BODEGA" required>
+        <datalist id="bodegaList">
+            <option th:each="b : ${bodegas}"
+                    th:value="${b.ID_BODEGA}"
+                    th:text="${b.N_BODEGA}"></option>
+        </datalist>
+        <br><br>
 
-    <button type="submit">Guardar</button>
-    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
-</form>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+    </form>
 </div>
 <br><br>
 <div style="margin-bottom: 10px;">
@@ -94,30 +107,32 @@
         <option value="cantidad">Cantidad</option>
         <option value="existencias">Existencias</option>
     </select>
-    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 50%;">
+    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 20%;">
 </div>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>Nombre Producto</th>
-        <th>Referencia</th>
-        <th>Bodega</th>
-        <th>Cantidad</th>
-        <th>Existencias Totales del Producto</th>
-        <th>Acciones</th>
-    </tr>
-    <tr th:each="detalle : ${detalles}">
-        <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
-        <td th:text="${detalle.producto != null} ? ${detalle.producto.REFERENCIA} : 'N/A'"></td>
-        <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
-        <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
-        <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
-        <td>
-            <button th:attr="onclick=|editarDetalle('${detalle.ID_DETALLE_BODEGA}', '${detalle.CNT_PRODUCTO_BODEGA}')|">Editar</button>
-            <button th:attr="onclick=|eliminarDetalle('${detalle.ID_DETALLE_BODEGA}')|">Eliminar</button>
-        </td>
-    </tr>
-</table>
+    <table>
+        <tr>
+            <th>Nombre Producto</th>
+            <th>Referencia</th>
+            <th>Bodega</th>
+            <th>Cantidad</th>
+            <th>Existencias Totales del Producto</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="detalle : ${detalles}">
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.REFERENCIA} : 'N/A'"></td>
+            <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
+            <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
+            <td>
+                <button th:attr="onclick=|editarDetalle('${detalle.ID_DETALLE_BODEGA}', '${detalle.CNT_PRODUCTO_BODEGA}')|">
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarDetalle('${detalle.ID_DETALLE_BODEGA}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
 </div>
 <div id="edit-form" style="display:none;">
     <form th:action="@{/detalleBodega/editar}" method="post">
@@ -130,6 +145,8 @@
 </div>
 
 <br>
-<a href="/main/main"><button>Volver al Inicio</button></a>
+<a href="/main/main">
+    <button>Volver al Inicio</button>
+</a>
 </body>
 </html>

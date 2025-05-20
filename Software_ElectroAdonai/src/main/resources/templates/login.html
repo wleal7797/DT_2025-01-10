@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesión</title>
-    <link rel="icon" href="/css/logo.png" type="image/x-icon"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="icon" href="/css/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/login.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 
 <body>
 
-<h1 class="text-center mt-4">Inicio de sesión</h1>
+    <h1 class="login"><b>Inicio de sesión</b></h1>
 
-<!-- CAPTCHA inválido -->
-<div th:if="${param.error != null and param.error.contains('captcha')}" class="alert alert-danger">
-    Error: Verifique el captcha.
-</div>
+    <div class="centro">
 
-<!-- Error de credenciales inválidas -->
-<div th:if="${param.error != null and !param.error.contains('captcha')}" class="alert alert-danger">
-    Error: Usuario o contraseña incorrectos.
-</div>
+        <!-- CAPTCHA inválido -->
+        <div th:if="${param.error != null and param.error.contains('captcha')}" class="alert alert-danger">
+            Error: Verifique el captcha.
+        </div>
 
-<form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
+        <!-- Error de credenciales inválidas -->
+        <div th:if="${param.error != null and !param.error.contains('captcha')}" class="alert alert-danger">
+            Error: Usuario o contraseña incorrectos.
+        </div>
 
-    <div class="mb-3">
-        <input type="text" class="form-control" name="username" placeholder="Usuario" required>
-    </div>
-    <div class="mb-3">
-        <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
     </div>
 
-    <div class="g-recaptcha mb-2" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
-    <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
+    <form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
 
-    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        <div class="mb-3">
+            <input type="text" class="form-control" name="username" placeholder="Usuario" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+        </div>
 
-</form>
+        <div class="g-recaptcha mb-2" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
+        <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
+
+        <div class="d-grid">
+            <button type="submit" class="boton btn btn-primary mx-auto">Entrar</button>
+        </div>
 
 </body>
+
 </html>

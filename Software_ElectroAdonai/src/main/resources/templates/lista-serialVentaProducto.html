@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista De Seriales Para Garantías</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
     <script>
         function actualizarFiltro() {
             const atributo = document.getElementById("atributo").value;
@@ -61,7 +62,7 @@
 </head>
 <body>
 <h2>Lista De Seriales Para Garantía</h2>
-<div style="display: flex; align-items: center; margin-bottom: 10px;">
+<div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
     <select id="atributo" style="margin-right: 10px;" onchange="actualizarFiltro()">
         <option value="remision">Remisión</option>
         <option value="fecha">Fecha</option>
@@ -69,27 +70,28 @@
         <option value="serial">Número De Serie</option>
     </select>
     <div id="filtroContainer">
-        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="padding: 5px; margin-right: 60px;">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="padding: 5px; margin-right: 60px;">
     </div>
     <a href="/detallesVenta/listar" style="margin-left: 30px;">
         <button>Volver a Ventas</button>
     </a>
 </div>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>Fecha</th>
-        <th>Remisión</th>
-        <th>Producto</th>
-        <th>Número De Serie</th>
-    </tr>
-    <tr th:each="serialVentaProducto : ${serialVentaProductos}">
-        <td th:text="${serialVentaProducto.venta != null} ? ${serialVentaProducto.venta.FECHA_VENTA} : 'N/A'"></td>
-        <td th:text="${serialVentaProducto.venta != null} ? ${serialVentaProducto.venta.REMISION} : 'N/A'"></td>
-        <td th:text="${serialVentaProducto.producto != null} ? ${serialVentaProducto.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
-        <td th:text="${serialVentaProducto.SERIAL}"></td>
-    </tr>
-</table>
+    <table border="1">
+        <tr>
+            <th>Fecha</th>
+            <th>Remisión</th>
+            <th>Producto</th>
+            <th>Número De Serie</th>
+        </tr>
+        <tr th:each="serialVentaProducto : ${serialVentaProductos}">
+            <td th:text="${serialVentaProducto.venta != null} ? ${serialVentaProducto.venta.FECHA_VENTA} : 'N/A'"></td>
+            <td th:text="${serialVentaProducto.venta != null} ? ${serialVentaProducto.venta.REMISION} : 'N/A'"></td>
+            <td th:text="${serialVentaProducto.producto != null} ? ${serialVentaProducto.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+            <td th:text="${serialVentaProducto.SERIAL}"></td>
+        </tr>
+    </table>
 </div>
 
 <br>

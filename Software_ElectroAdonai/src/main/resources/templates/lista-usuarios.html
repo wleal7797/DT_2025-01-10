@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <title>Lista de Usuarios</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
     <script>
         function editarUsuario(id, nombre) {
             document.getElementById("edit-id").value = id;
@@ -33,6 +35,7 @@
         }
     </script>
 </head>
+
 <body>
 
 <h2>Lista de Usuarios</h2>
@@ -41,57 +44,66 @@
 <button onclick="mostrarFormularioCreacion()">Nuevo Usuario</button>
 
 
-<div id="create-form" style="display: none;">
-    <h3>Registrar Nuevo Usuario</h3>
+<div class="centro">
 
-    <form th:action="@{/users/crear}" method="post">
+    <div id="create-form" style="display: none;">
 
-        <label>Usuario:</label>
-        <input type="text" name="username" required><br><br>
 
-        <label>Contraseña:</label>
-        <input type="password" name="password" required><br><br>
+        <form th:action="@{/users/crear}" method="post">
 
-        <label>Empleado:</label>
-        <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
-        <datalist id="empleadoList">
-            <option th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}">
-            </option>
-        </datalist>
+            <h3>Registrar Nuevo Usuario</h3>
 
-        <br><br>
-        <label>Rol:</label>
-        <select name="authority" required>
-            <option value="ROLE_VENDEDOR">Empleado</option>
-            <option value="ROLE_ADMIN">Administrador</option>
-        </select>
+            <label>Usuario:</label>
+            <input type="text" name="username" required><br><br>
 
-        <br><br>
+            <label>Contraseña:</label>
+            <input type="password" name="password" required><br><br>
 
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
-    </form>
+            <label>Empleado:</label>
+            <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
+            <datalist id="empleadoList">
+                <option th:each="emp : ${empleados}" th:value="${emp.ID_EMPLEADO}" th:text="${emp.NOMBRE_EMPLEADO}">
+                </option>
+            </datalist>
+
+            <br><br>
+            <label>Rol:</label>
+            <select name="authority" required>
+                <option value="ROLE_VENDEDOR">Empleado</option>
+                <option value="ROLE_ADMIN">Administrador</option>
+            </select>
+
+            <br><br>
+
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+        </form>
+    </div>
+
 </div>
 
-<table border="1">
-    <tr>
-        <th>Usuario</th>
-        <th>Nombre Empleado</th>
-        <th>Acciones</th>
-    </tr>
-    <tr th:each="usuario : ${usuarios}">
-        <td th:text="${usuario.Username}"></td>
-        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-        <td>
-            <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}')|">
-                Editar
-            </button>
-            <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
-        </td>
-    </tr>
-</table>
+
+<div class="centro">
+
+    <table>
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre Empleado</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.Username}"></td>
+            <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td>
+                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}')|">
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
+
+</div>
 
 
 <div id="edit-form" style="display:none;">
@@ -117,5 +129,5 @@
 </a>
 
 </body>
-</html>
 
+</html>

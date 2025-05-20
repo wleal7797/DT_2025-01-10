@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <title>Lista de Productos</title>
-  <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="/css/list.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
 </head>
 <body>
 <h2>Lista de Productos</h2>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-  <tr>
-    <th>ID Producto</th>
-    <th>Nombre del Producto</th>
-    <th>Referencia</th>
-    <th>Costo</th>
-    <th>Existencias</th>
-    <th>Tipo de Producto</th>
-  </tr>
-  <tr th:each="producto : ${productos}">
-    <td th:text="${producto.ID_PRODUCTO}"></td>
-    <td th:text="${producto.NOMBRE_PRODUCTO}"></td>
-    <td th:text="${producto.REFERENCIA}"></td>
-    <td th:text="${producto.COSTO}"></td>
-    <td th:text="${producto.EXISTENCIAS}"></td>
-    <td th:text="${producto.ID_TIPO_PRODUCTO.NOMBRE_TIPO}"></td>
-  </tr>
-</table>
+    <table border="1">
+        <tr>
+            <th>ID Producto</th>
+            <th>Nombre del Producto</th>
+            <th>Referencia</th>
+            <th>Costo</th>
+            <th>Existencias</th>
+            <th>Tipo de Producto</th>
+        </tr>
+        <tr th:each="producto : ${productos}">
+            <td th:text="${producto.ID_PRODUCTO}"></td>
+            <td th:text="${producto.NOMBRE_PRODUCTO}"></td>
+            <td th:text="${producto.REFERENCIA}"></td>
+            <td th:text="${producto.COSTO}"></td>
+            <td th:text="${producto.EXISTENCIAS}"></td>
+            <td th:text="${producto.ID_TIPO_PRODUCTO.NOMBRE_TIPO}"></td>
+        </tr>
+    </table>
 </div>
 <br>
 <a href="/mainVendedor/mainVendedor">
-  <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
 </a>
 </body>
 </html>

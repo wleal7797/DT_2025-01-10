@@ -1,59 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/css/logo-ueb.png" type="image/x-icon"/>
 </head>
 
 <body>
-<header class="header">
-    <h1>Sistema de Gestión</h1>
+<header>
+    <div class="grid">
+        <img src="images/logo.png" style="justify-self: start;" alt="logo" class="logo">
+
+        <div class="dos-vertical" style="justify-self: center;">
+            <h1>Bienvenido</h1>
+        </div>
+
+
+        <form th:action="@{/logout}" method="post" id="logoutForm" style="justify-self: end;">
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </div>
 </header>
 
-<div class="container">
-    <h2>Bienvenido</h2>
-    <p>Seleccione una opción para gestionar registros o listas.</p>
+<h2>Seleccione una opción para gestionar registros o listas:</h2>
 
-    <div class="dropdown-container">
-        <div class="dropdown">
-            <button class="dropdown-btn">Vendedores</button>
-            <div class="dropdown-content">
-                <a href="/empleados/listar">Ver Lista De Vendedores</a>
-                <a href="/adelantos/listar">Ver Lista De Adelantos</a>
-                <a href="/pagoComisiones/listar">Ver Lista De Comisiones</a>
-            </div>
+<div class="dropdown-container">
+    <div class="dropdown">
+        <button class="dropdown-btn">Vendedores</button>
+        <div class="dropdown-content">
+            <a href="/empleados/listar">Ver Lista De Vendedores</a>
+            <a href="/adelantos/listar">Ver Lista De Adelantos</a>
+            <a href="/pagoComisiones/listar">Ver Lista De Comisiones</a>
         </div>
-        <div class="dropdown">
-            <button class="dropdown-btn">Bodegas</button>
-            <div class="dropdown-content">
+    </div>
+    <div class="dropdown">
+        <button class="dropdown-btn">Bodegas</button>
+        <div class="dropdown-content">
 
-                <a href="/bodegas/listar">Ver Lista De Bodegas</a>
-                <a href="/productos/listar">Ver Lista De Productos</a>
-                <a href="/detalleBodega/listar">Ver Lista De Artículos Por Bodega</a>
+            <a href="/bodegas/listar">Ver Lista De Bodegas</a>
+            <a href="/productos/listar">Ver Lista De Productos</a>
+            <a href="/detalleBodega/listar">Ver Lista De Artículos Por Bodega</a>
 
-            </div>
         </div>
-        <div class="dropdown">
-            <button class="dropdown-btn">Ventas</button>
-            <div class="dropdown-content">
-                <a href="/detallesVenta/registro">Registrar Nuevas Ventas</a>
-                <a href="/detallesVenta/listar">Ver Lista De Ventas</a>
-                <a href="/utilidadesPorProducto/listar">Ver Lista De Utilidades Por Venta</a>
-            </div>
+    </div>
+    <div class="dropdown">
+        <button class="dropdown-btn">Ventas</button>
+        <div class="dropdown-content">
+            <a href="/detallesVenta/registro">Registrar Nuevas Ventas</a>
+            <a href="/detallesVenta/listar">Ver Lista De Ventas</a>
+            <a href="/utilidadesPorProducto/listar">Ver Lista De Utilidades Por Venta</a>
         </div>
-        <div class="dropdown">
-            <button class="dropdown-btn">Movimientos De Bodega</button>
-            <div class="dropdown-content">
-                <a href="/detalleMovimiento/listar">Ver Lista de Movimientos De Bodega</a>
-            </div>
+    </div>
+    <div class="dropdown">
+        <button class="dropdown-btn">Movimientos De Bodega</button>
+        <div class="dropdown-content">
+            <a href="/detalleMovimiento/listar">Ver Lista de Movimientos De Bodega</a>
         </div>
-        <div class="dropdown">
-            <button class="dropdown-btn">Gestión De Usuarios</button>
+    </div>
+    <div class="dropdown">
+        <button class="dropdown-btn">Gestión De Usuarios</button>
         <div class="dropdown-content">
             <a href="/users/listar">Ver Lista De Usuarios</a>
-        </div>
         </div>
     </div>
 </div>
@@ -61,7 +71,8 @@
 <div class="dashboard">
     <div class="calendar">
         <h3>Calendario</h3>
-        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
+        <iframe
+                src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
                 style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
     </div>
     <div class="notifications">
@@ -74,10 +85,13 @@
     </div>
 </div>
 
-<hr>
-<form th:action="@{/logout}" method="post" id="logoutForm">
-    <button type="submit">Cerrar sesión</button>
-</form>
+<footer>
+    &copy; 2025 Electrodomésticos Adonai.
+    <br>
+    <br>
+    <br>
+</footer>
 
 </body>
+
 </html>
