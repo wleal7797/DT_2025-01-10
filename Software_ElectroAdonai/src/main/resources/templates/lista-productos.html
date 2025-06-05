@@ -41,38 +41,26 @@
 
     function filtrarTabla() {
       const filtro = document.getElementById("filtro").value.toUpperCase();
-      const atributo = document.getElementById("atributo").value;
       const filas = document.querySelectorAll("table tr");
 
       filas.forEach((fila, index) => {
-        if (index === 0) return;
-        const celdas = fila.getElementsByTagName("td");
-        let texto = "";
+        if (index === 0) return; // omitir encabezado
 
-        switch (atributo) {
-          case "id":
-            texto = celdas[0].textContent;
+        const celdas = fila.getElementsByTagName("td");
+        let coincide = false;
+
+        for (let i = 0; i < celdas.length; i++) {
+          const texto = celdas[i].textContent.toUpperCase();
+          if (texto.includes(filtro)) {
+            coincide = true;
             break;
-          case "nombre":
-            texto = celdas[1].textContent;
-            break;
-          case "referencia":
-            texto = celdas[2].textContent;
-            break;
-          case "costo":
-            texto = celdas[3].textContent;
-            break;
-          case "existencias":
-            texto = celdas[4].textContent;
-            break;
-          case "tipo":
-            texto = celdas[5].textContent;
-            break;
+          }
         }
 
-        fila.style.display = texto.toUpperCase().includes(filtro) ? "" : "none";
+        fila.style.display = coincide ? "" : "none";
       });
     }
+
     function mostrarFormularioCreacion() {
       document.getElementById("create-form").style.display = "block";
     }
@@ -89,7 +77,7 @@
 
 <div id="create-form" style="display: none;">
 <h3>Registrar Nuevo Producto</h3>
-<form action="@{/productos/crear}" method="post">
+<form action="/productos/crear" method="post">
   <label>Nombre:</label>
   <input type="text" name="NOMBRE_PRODUCTO" required>
   <br><br>
@@ -120,17 +108,9 @@
 </form>
 </div>
 <br><br>
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-  <select id="atributo" onchange="actualizarFiltro()">
-    <option value="id">ID</option>
-    <option value="nombre">Nombre</option>
-    <option value="referencia">Referencia</option>
-    <option value="costo">Costo</option>
-    <option value="existencias">Existencias</option>
-    <option value="tipo">Tipo</option>
-  </select>
+<div style="display: flex; justify-content: center; margin-bottom: 10px;">
   <div id="filtroContainer">
-    <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+    <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 300px; padding: 5px;">
   </div>
 </div>
 <div id="tabla-container" class="tabla-scroll">
