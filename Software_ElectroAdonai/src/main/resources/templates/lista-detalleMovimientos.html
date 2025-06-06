@@ -4,26 +4,211 @@
     <meta charset="UTF-8">
     <title>Lista de Detalles de Movimientos</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .fila-anulada {
+            background-color: #ffe5e5;
+            color: #a00;
+            font-style: italic;
+        }
+        .icono-anulado {
+            color: red;
+            margin-left: 8px;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const anulados = JSON.parse(localStorage.getItem("anulados") || "[]");
+            anulados.forEach(id => marcarAnulado(id));
+        });
+
+        function editarDetalle(id, fecha, cantidad) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-fecha").value = fecha;
+            document.getElementById("edit-cantidad").value = cantidad;
+            document.getElementById("edit-form").style.display = "block";
+        }
+
+        function anularDetalle(id) {
+            const confirmar = confirm("¿Está seguro que desea anular o desanular este movimiento?");
+            if (!confirmar) return;
+
+            const fila = document.getElementById("fila-" + id);
+            const celdaAcciones = fila.querySelector(".celda-anular");
+            let anulados = JSON.parse(localStorage.getItem("anulados") || "[]");
+
+            const estaAnulado = anulados.includes(id);
+
+            if (estaAnulado) {
+                // Quitar ícono
+                const icono = celdaAcciones.querySelector(".icono-anulado");
+                if (icono) icono.remove();
+                fila.classList.remove("fila-anulada");
+
+                // Actualizar localStorage
+                anulados = anulados.filter(item => item !== id);
+                localStorage.setItem("anulados", JSON.stringify(anulados));
+            } else {
+                marcarAnulado(id);
+                anulados.push(id);
+                localStorage.setItem("anulados", JSON.stringify(anulados));
+            }
+        }
+
+        function marcarAnulado(id) {
+            const fila = document.getElementById("fila-" + id);
+            const celdaAcciones = fila.querySelector(".celda-anular");
+
+            if (!celdaAcciones.querySelector(".icono-anulado")) {
+                const icono = document.createElement("i");
+                icono.className = "fas fa-ban icono-anulado";
+                icono.title = "Movimiento anulado";
+                celdaAcciones.appendChild(icono);
+            }
+
+            fila.classList.add("fila-anulada");
+        }
+
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const contenedor = document.getElementById("filtroContainer");
+            contenedor.innerHTML = "";
+
+            const input = document.createElement("input");
+            input.id = "filtro";
+            input.placeholder = "Buscar...";
+            input.oninput = filtrarTabla;
+            input.type = "text";
+            input.style.width = "80%";
+            input.style.padding = "5px";
+            contenedor.appendChild(input);
+        }
+
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const atributo = document.getElementById("atributo").value;
+            const filas = document.querySelectorAll("#tabla-detalles tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+                const celdas = fila.getElementsByTagName("td");
+                let texto = "";
+
+                switch (atributo) {
+                    case "fecha":
+                        texto = celdas[0].textContent;
+                        break;
+                    case "producto":
+                        texto = celdas[1].textContent;
+                        break;
+                    case "cantidad":
+                        texto = celdas[2].textContent;
+                        break;
+                    case "origen":
+                        texto = celdas[3].textContent;
+                        break;
+                    case "destino":
+                        texto = celdas[4].textContent;
+                        break;
+                }
+
+                fila.style.display = texto.toUpperCase().includes(filtro) ? "" : "none";
+            });
+        }
+
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
+    </script>
 </head>
+
 <body>
 <h2>Lista de Detalles de Movimientos</h2>
-<table border="1">
-    <tr>
-        <th>Fecha Movimiento</th>
-        <th>Nombre Producto</th>
-        <th>Cantidad en Movimiento</th>
-        <th>Bodega origen</th>
-        <th>Bodega destino</th>
-    </tr>
-    <tr th:each="detalle : ${detalles}">
-        <td th:text="${detalle.ID_MOVIMIENTO_BODEGA != null} ? ${detalle.ID_MOVIMIENTO_BODEGA.FECHA_MOVIMIENTO} : 'N/A'"></td>
-        <td th:text="${detalle.ID_DETALLE_BODEGA != null} ? ${detalle.ID_DETALLE_BODEGA.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
-        <td th:text="${detalle.CNT_PRODUCTO_MOVIMIENTO}"></td>
-        <td th:text="${detalle.ID_BODEGA_ORIGEN != null} ? ${detalle.ID_BODEGA_ORIGEN.N_BODEGA} : 'N/A'"></td>
-        <td th:text="${detalle.ID_BODEGA_DESTINO != null} ? ${detalle.ID_BODEGA_DESTINO.N_BODEGA} : 'N/A'"></td>
-    </tr>
-</table>
+
+<button onclick="mostrarFormularioCreacion()">Nuevo Movimiento</button>
+
+<div id="create-form" style="display: none;">
+    <h3>Registrar Nuevo Movimiento y Detalle</h3>
+    <form action="/detalleMovimiento/crear" method="post">
+        <label>Fecha del Movimiento:</label>
+        <input type="date" name="FECHA_MOVIMIENTO" required><br><br>
+
+        <label>Tipo de Movimiento:</label>
+        <select name="idTipoMovimiento" required>
+            <option th:each="tipo : ${tiposMovimiento}" th:value="${tipo.ID_TIPO_PRODUCTO}" th:text="${tipo.NOMBRE_MOVIMIENTO}"></option>
+        </select><br><br>
+
+        <label>Empleado:</label>
+        <select name="idEmpleado" required>
+            <option th:each="emp : ${empleados}" th:value="${emp.ID_EMPLEADO}" th:text="${emp.NOMBRE_EMPLEADO}"></option>
+        </select><br><br>
+
+        <label>Cantidad del Producto:</label>
+        <input type="number" name="CNT_PRODUCTO_MOVIMIENTO" required><br><br>
+
+        <label>Bodega Origen:</label>
+        <select name="ID_BODEGA_ORIGEN" required>
+            <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+        </select><br><br>
+
+        <label>Bodega Destino:</label>
+        <select name="ID_BODEGA_DESTINO" required>
+            <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+        </select><br><br>
+
+        <label>Producto:</label>
+        <select name="ID_PRODUCTO" required>
+            <option th:each="prod : ${productos}" th:value="${prod.ID_PRODUCTO}" th:text="${prod.NOMBRE_PRODUCTO}"></option>
+        </select><br><br>
+
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+    </form>
+</div>
+
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 20px;">
+    <select id="atributo" onchange="actualizarFiltro()">
+        <option value="fecha">Fecha</option>
+        <option value="producto">Producto</option>
+        <option value="cantidad">Cantidad</option>
+        <option value="origen">Bodega Origen</option>
+        <option value="destino">Bodega Destino</option>
+    </select>
+    <div id="filtroContainer">
+        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+    </div>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table id="tabla-detalles" border="1">
+        <tr>
+            <th>Fecha Movimiento</th>
+            <th>Nombre Producto</th>
+            <th>Cantidad</th>
+            <th>Bodega origen</th>
+            <th>Bodega destino</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="detalle : ${detalles}" th:id="'fila-' + ${detalle.ID_DETALLE_MOVIMIENTO}">
+            <td th:text="${detalle.ID_MOVIMIENTO_BODEGA != null ? detalle.ID_MOVIMIENTO_BODEGA.FECHA_MOVIMIENTO : 'N/A'}"></td>
+            <td th:text="${detalle.producto != null ? detalle.producto.NOMBRE_PRODUCTO : 'N/A'}"></td>
+            <td th:text="${detalle.CNT_PRODUCTO_MOVIMIENTO}"></td>
+            <td th:text="${detalle.ID_BODEGA_ORIGEN != null ? detalle.ID_BODEGA_ORIGEN.N_BODEGA : 'N/A'}"></td>
+            <td th:text="${detalle.ID_BODEGA_DESTINO != null ? detalle.ID_BODEGA_DESTINO.N_BODEGA : 'N/A'}"></td>
+            <td class="celda-anular">
+                <button th:attr="onclick=|anularDetalle('${detalle.ID_DETALLE_MOVIMIENTO}')|">Anular movimiento</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
 <br>
-<a href="/main/main">Volver al Inicio</a>
+<a href="/main/main">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
 </body>
 </html>

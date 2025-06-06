@@ -49,6 +49,7 @@
     </select>
     <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
 </div>
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Nombre Producto</th>
@@ -65,10 +66,11 @@
         <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
     </tr>
 </table>
+</div>
 <br>
 <div style="text-align: left;">
     <a href="/mainVendedor/mainVendedor">
-        <button>Volver al Inicio</button>
+        <button style="padding: 5px 10px;">Volver al Inicio</button>
     </a>
 </div>
 </body>

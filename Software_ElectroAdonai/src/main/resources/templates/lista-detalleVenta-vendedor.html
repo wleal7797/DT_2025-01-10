@@ -72,6 +72,7 @@
         <button>Lista De Seriales Para Garantías</button>
     </a>
 </div>
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Fecha</th>
@@ -94,10 +95,11 @@
         <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     </tr>
 </table>
+</div>
 <br>
 <div style="text-align: left;">
     <a href="/mainVendedor/mainVendedor">
-        <button>Volver al Inicio</button>
+        <button style="padding: 5px 10px;">Volver al Inicio</button>
     </a>
 </div>
 </body>

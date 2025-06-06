@@ -7,6 +7,7 @@
 </head>
 <body>
 <h2>Lista de Bodegas</h2>
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Bodega</th>
@@ -19,7 +20,10 @@
         <td th:text="${bodega.ESTADO}"></td>
     </tr>
 </table>
+</div>
 <br>
-<a href="/mainVendedor/mainVendedor">Volver al Inicio</a>
+<a href="/mainVendedor/mainVendedor">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
 </body>
 </html>

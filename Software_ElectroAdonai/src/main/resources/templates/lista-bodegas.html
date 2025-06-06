@@ -4,22 +4,98 @@
     <meta charset="UTF-8">
     <title>Lista de Bodegas</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function editarBodega(id, nombre, cantidad, estado) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-nombre").value = nombre;
+            document.getElementById("edit-cantidad").value = cantidad;
+            document.getElementById("edit-estado").value = estado;
+            document.getElementById("edit-form").style.display = "block";
+        }
+
+        function eliminarBodega(id) {
+            if (confirm("¿Seguro que deseas eliminar esta bodega?")) {
+                fetch('/bodegas/eliminar/' + id, { method: 'DELETE' })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
+    </script>
 </head>
 <body>
 <h2>Lista de Bodegas</h2>
+
+<button onclick="mostrarFormularioCreacion()">Nueva Bodega</button>
+
+
+<div id="create-form" style="display: none;">
+<h3>Registrar Nueva Bodega</h3>
+<form action="/bodegas/crear" method="post">
+    <label>Nombre de la Bodega:</label>
+    <input type="text" name="N_BODEGA" required>
+    <br><br>
+
+    <label>Cantidad de Productos:</label>
+    <input type="number" name="CNT_PRODUCTOS" min="0" required>
+    <br><br>
+
+    <label>Estado:</label>
+    <input type="text" name="ESTADO" required>
+    <br>
+    <br>
+
+    <button type="submit">Guardar</button>
+    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+</form>
+</div>
+
+
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
-        <th>Bodega</th>
-        <th>Cantidad De Productos Total</th>
-        <th>Estado De Bodega</th>
+        <th>Nombre de la Bodega</th>
+        <th>Cantidad de Productos</th>
+        <th>Estado</th>
+        <th>Acciones</th>
     </tr>
     <tr th:each="bodega : ${bodegas}">
         <td th:text="${bodega.N_BODEGA}"></td>
         <td th:text="${bodega.CNT_PRODUCTOS}"></td>
         <td th:text="${bodega.ESTADO}"></td>
+        <td>
+            <button th:attr="onclick=|editarBodega('${bodega.ID_BODEGA}', '${bodega.N_BODEGA}', '${bodega.CNT_PRODUCTOS}', '${bodega.ESTADO}')|">Editar</button>
+            <button th:attr="onclick=|eliminarBodega('${bodega.ID_BODEGA}')|">Eliminar</button>
+        </td>
     </tr>
 </table>
+</div>
+<div id="edit-form" style="display:none;">
+    <form th:action="@{/bodegas/editar}" method="post">
+        <h3>Editar Bodega</h3><br>
+        <input type="hidden" id="edit-id" name="ID_BODEGA">
+        <label>Nombre: <input type="text" id="edit-nombre" name="N_BODEGA"></label><br>
+        <label>Cantidad de Productos: <input type="number" id="edit-cantidad" name="CNT_PRODUCTOS"></label><br>
+        <label>Estado: <input type="text" id="edit-estado" name="ESTADO"></label><br>
+        <br>
+        <br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+    </form>
+</div>
+
 <br>
-<a href="/main/main">Volver al Inicio</a>
+<a href="/main/main">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
 </body>
 </html>
