@@ -74,7 +74,7 @@
         <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
     </form>
 </div>
-
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Usuario</th>
@@ -92,7 +92,7 @@
         </td>
     </tr>
 </table>
-
+</div>
 
 <div id="edit-form" style="display:none;">
     <form th:action="@{/users/editar}" method="post">
