@@ -1,53 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inicio</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-<header class="header">
-    <h1>Sistema de Gestión</h1>
-</header>
-<div class="container">
-    <h2>Bienvenido</h2>
-    <p>Seleccione una opción para gestionar registros o listas.</p>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="header">
+        <h1>Sistema de Gestión</h1>
+      </header>
+      <div class="container">
+        <h2>Bienvenido</h2>
 
-    <div class="dropdown-container">
-
-        <div class="dropdown">
-            <button class="dropdown-btn">Bodegas</button>
-            <div class="dropdown-content">
-                <a href="/bodegas/listarVendedor">Ver Lista De Bodegas</a>
-                <a href="/productos/listarVendedor">Ver Lista De Productos</a>
-                <a href="/detalleBodega/listarVendedores">Ver Lista De Artículos Por Bodega</a>
-
-            </div>
+        <div class="alert alert-info">
+          <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
+          diferentes módulos del sistema.
         </div>
-        <div class="dropdown">
-            <button class="dropdown-btn">Ventas</button>
-            <div class="dropdown-content">
-                <a href="/detallesVenta/registroVendedor">Registrar Nuevas Ventas</a>
-                <a href="/detallesVenta/listarVendedor">Ver Lista De Ventas</a>
+
+        <div class="dropdown-container">
+          <div class="dropdown">
+            <button class="dropdown-btn">🏪 Bodegas</button>
+            <div class="dropdown-content" style="z-index: 9999">
+              <a href="/bodegas/listarVendedor">🏬 Ver Lista De Bodegas</a>
+              <a href="/productos/listarVendedor">📦 Ver Lista De Productos</a>
+              <a href="/detalleBodega/listarVendedores">📋 Ver Lista De Artículos Por Bodega</a>
             </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropdown-btn">🛒 Ventas</button>
+            <div class="dropdown-content">
+              <a href="/detallesVenta/registroVendedor">➕ Registrar Nuevas Ventas</a>
+              <a href="/detallesVenta/listarVendedor">📊 Ver Lista De Ventas</a>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="dashboard">
+        <div class="calendar">
+          <h3>Calendario</h3>
+          <iframe
+            src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
+            style="border: 0"
+            width="800"
+            height="600"
+            frameborder="0"
+            scrolling="no"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="container" style="margin-top: 2rem">
+        <div class="alert alert-warning">
+          <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
+          la seguridad del sistema.
+        </div>
+
+        <form
+          action="/logout"
+          method="post"
+          id="logoutForm"
+          style="text-align: center; margin-top: 2rem"
+        >
+          <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
+        </form>
+      </div>
+
+      <footer>
+        <p>
+          &copy; 2025 Sistema de Gestión Empresarial Electrodomesticos Adonai - Todos los derechos
+          reservados
+        </p>
+      </footer>
     </div>
-</div>
-
-<div class="dashboard">
-    <div class="calendar">
-        <h3>Calendario</h3>
-        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
-                style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
-    </div>
-</div>
-
-<hr>
-<form th:action="@{/logout}" method="post" id="logoutForm">
-    <button type="submit">Cerrar sesión</button>
-</form>
-
-</body>
+  </body>
 </html>
-
