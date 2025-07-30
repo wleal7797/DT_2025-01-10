@@ -36,9 +36,10 @@
         <label for="empleado">Empleado Responsable</label>
         <select id="empleado" name="idEmpleado" required>
             <option value="">-- Selecciona un empleado --</option>
-            <option th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}"></option>
+            <option th:each="prod : ${productos}"
+                    th:value="${prod.ID_PRODUCTO}"
+                    th:text="${prod.NOMBRE_PRODUCTO + ' - $' + #numbers.formatDecimal(prod.COSTO, 1, 'COMMA', 2, 'POINT')}">
+            </option>
         </select>
     </div>
 
