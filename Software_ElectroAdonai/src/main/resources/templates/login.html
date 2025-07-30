@@ -37,11 +37,16 @@
     <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
 
     <button type="submit" class="btn btn-primary w-100">Entrar</button>
-
 </form>
 
 <br>
-<a th:href="@{/index}" class="btn">Regresar</a>
+<form
+        th:action="@{/index}"
+        class="container mt-5 w-25 p-4 bg-light rounded shadow"
+        style="text-align: center;"
+>
+    <button type="submit" class="btn-danger">Regresar</button>
+</form>
 
 </body>
 </html>

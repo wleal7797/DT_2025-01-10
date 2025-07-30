@@ -5,7 +5,7 @@
     <title>Registrar Nueva Venta</title>
     <link rel="stylesheet" href="/css/styles.css">
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
 
 </head>
@@ -28,7 +28,8 @@
         <input type="date" id="fechaVenta" name="fechaVenta" required>
 
         <label for="precioVentaTotal">Precio Total</label>
-        <input type="number" id="precioVentaTotal" name="precioVentaTotal" step="0.01" readonly placeholder="Calculado automáticamente">
+        <input type="number" id="precioVentaTotal" name="precioVentaTotal" step="0.01" readonly
+               placeholder="Calculado automáticamente">
 
         <label for="remision">Número de Remisión</label>
         <input type="text" id="remision" name="remision" required>
@@ -50,7 +51,7 @@
 
     <div>
         <button type="submit" class="btn btn-primary">Guardar Venta</button>
-        <a th:href="@{/main/main}" class="btn btn-secondary">Cancelar</a>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/main/main'">Cancelar</button>
     </div>
 </form>
 
@@ -72,7 +73,7 @@
             <option value="">-- Selecciona un producto --</option>
             <option th:each="prod : ${productos}"
                     th:value="${prod.ID_PRODUCTO}"
-                    th:text="${prod.NOMBRE_PRODUCTO}"></option>
+                    th:text="${prod.NOMBRE_PRODUCTO + ' - $' + prod.COSTO}"></option>
         </select>
 
         <label>Bodega</label>

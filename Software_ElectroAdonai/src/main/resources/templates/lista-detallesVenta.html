@@ -1,132 +1,137 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <title>Lista de Ventas</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <script>
-    function editarDetalleVenta(id, cantidad, precio) {
-      document.getElementById("edit-id").value = id;
-      document.getElementById("edit-cantidad").value = cantidad;
-      document.getElementById("edit-precio").value = precio;
-      document.getElementById("edit-form").style.display = "block";
-    }
-
-    function eliminarDetalleVenta(id) {
-      if (confirm("¿Seguro que deseas eliminar este detalle de venta?")) {
-        fetch('/detallesVenta/eliminar/' + id, { method: 'DELETE' })
-                .then(response => response.text())
-                .then(data => {
-                  alert(data);
-                  location.reload();
-                })
-                .catch(error => console.error('Error:', error));
-      }
-    }
-
-    function actualizarFiltro() {
-      const atributo = document.getElementById("atributo").value;
-      const filtroContainer = document.getElementById("filtroContainer");
-      filtroContainer.innerHTML = "";
-
-      if (atributo === "fecha") {
-        const inputFecha = document.createElement("input");
-        inputFecha.type = "date";
-        inputFecha.id = "filtro";
-        inputFecha.onchange = filtrarTabla;
-        filtroContainer.appendChild(inputFecha);
-      } else {
-        const inputTexto = document.createElement("input");
-        inputTexto.type = "text";
-        inputTexto.id = "filtro";
-        inputTexto.onkeyup = filtrarTabla;
-        inputTexto.placeholder = "Buscar...";
-        inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
-        filtroContainer.appendChild(inputTexto);
-      }
-    }
-
-    function filtrarTabla() {
-      const filtro = document.getElementById("filtro").value.toUpperCase();
-      const filas = document.querySelectorAll("table tr");
-
-      filas.forEach((fila, index) => {
-        if (index === 0) return; // omitir encabezado
-
-        const celdas = fila.getElementsByTagName("td");
-        let coincide = false;
-
-        for (let i = 0; i < celdas.length; i++) {
-          const texto = celdas[i].textContent.toUpperCase();
-          if (texto.includes(filtro)) {
-            coincide = true;
-            break;
-          }
+    <meta charset="UTF-8">
+    <title>Lista de Ventas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function editarDetalleVenta(id, cantidad, precio) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-cantidad").value = cantidad;
+            document.getElementById("edit-precio").value = precio;
+            document.getElementById("edit-form").style.display = "block";
         }
 
-        fila.style.display = coincide ? "" : "none";
-      });
-    }
-  </script>
+        function eliminarDetalleVenta(id) {
+            if (confirm("¿Seguro que deseas eliminar este detalle de venta?")) {
+                fetch('/detallesVenta/eliminar/' + id, {method: 'DELETE'})
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const filtroContainer = document.getElementById("filtroContainer");
+            filtroContainer.innerHTML = "";
+
+            if (atributo === "fecha") {
+                const inputFecha = document.createElement("input");
+                inputFecha.type = "date";
+                inputFecha.id = "filtro";
+                inputFecha.onchange = filtrarTabla;
+                filtroContainer.appendChild(inputFecha);
+            } else {
+                const inputTexto = document.createElement("input");
+                inputTexto.type = "text";
+                inputTexto.id = "filtro";
+                inputTexto.onkeyup = filtrarTabla;
+                inputTexto.placeholder = "Buscar...";
+                inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+                filtroContainer.appendChild(inputTexto);
+            }
+        }
+
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // omitir encabezado
+
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    const texto = celdas[i].textContent.toUpperCase();
+                    if (texto.includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+    </script>
 </head>
 <body>
 <h2>Lista de Ventas</h2>
 
 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-  <div id="filtroContainer">
-    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px; margin-right: 60px;">
-  </div>
-  <a href="/serialVentaProducto/listar" style="margin-left: 30px;">
-    <button>Números de serie por producto</button>
-  </a>
-  <a href="/detallesVenta/registro" style="margin-left: 30px;">
-    <button>Registrar más ventas</button>
-  </a>
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+    </div>
+    <a href="/serialVentaProducto/listar" style="margin-left: 30px;">
+        <button>Números de serie por producto</button>
+    </a>
+    <a href="/detallesVenta/registro" style="margin-left: 30px;">
+        <button>Registrar más ventas</button>
+    </a>
 </div>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-  <tr>
-    <th>Fecha</th>
-    <th>Remisión</th>
-    <th>Producto</th>
-    <th>Cantidad</th>
-    <th>Precio Venta</th>
-    <th>Vendedor</th>
-    <th>Acciones</th>
-  </tr>
-  <tr th:each="detalleVenta : ${detallesVenta}">
-    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.FECHA_VENTA} : 'N/A'"></td>
-    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.REMISION} : 'N/A'"></td>
-    <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
-    <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
-    <td th:text="${detalleVenta.PRECIO_VENTA_PRODUCTO}"></td>
-    <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-    <td>
-      <button th:attr="onclick=|editarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}', '${detalleVenta.CNT_PRODUCTO_VENTA}', '${detalleVenta.PRECIO_VENTA_PRODUCTO}')|">Editar</button>
-      <button th:attr="onclick=|eliminarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}')|">Eliminar</button>
-    </td>
-  </tr>
-</table>
+    <table border="1">
+        <tr>
+            <th>Fecha</th>
+            <th>Remisión</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Venta</th>
+            <th>Vendedor</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="detalleVenta : ${detallesVenta}">
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.FECHA_VENTA} : 'N/A'"></td>
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.REMISION} : 'N/A'"></td>
+            <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+            <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
+            <td th:text="${#numbers.formatCurrency(detalleVenta.PRECIO_VENTA_PRODUCTO)}"></td>
+            <!-- <td th:text="${}"></td> -->
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td>
+                <button th:attr="onclick=|editarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}', '${detalleVenta.CNT_PRODUCTO_VENTA}', '${detalleVenta.PRECIO_VENTA_PRODUCTO}')|">
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div id="edit-form" style="display:none;">
-  <form th:action="@{/detallesVenta/editar}" method="post">
-    <h3>Editar Detalle de Venta</h3><br>
-    <input type="hidden" id="edit-id" name="ID_DETALLE_VENTA">
-    <label>Cantidad: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_VENTA" required></label><br><br>
-    <label>Precio Venta: <input type="number" id="edit-precio" name="PRECIO_VENTA_PRODUCTO" required></label><br><br>
-    <br>
-    <br>
-    <button type="submit">Guardar</button>
-    <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-  </form>
+    <form th:action="@{/detallesVenta/editar}" method="post">
+        <h3>Editar Detalle de Venta</h3><br>
+        <input type="hidden" id="edit-id" name="ID_DETALLE_VENTA">
+        <label>Cantidad: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_VENTA" required></label><br><br>
+        <label>Precio Venta: <input type="number" id="edit-precio" name="PRECIO_VENTA_PRODUCTO"
+                                    required></label><br><br>
+        <br>
+        <br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+    </form>
 </div>
 
 <br>
 <div style="text-align: left;">
-  <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
-  </a>
+    <a href="/main/main">
+        <button style="padding: 5px 10px;">Volver al Inicio</button>
+    </a>
 </div>
 </body>
 </html>

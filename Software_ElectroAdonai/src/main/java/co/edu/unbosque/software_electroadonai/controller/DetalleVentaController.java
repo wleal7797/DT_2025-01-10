@@ -47,6 +47,14 @@ public class DetalleVentaController {
         return "detalleVenta-form";
     }
 
+    @GetMapping("/registroVendedor")
+    public String mostrarFormularioVendedor(Model model) {
+        model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
+        model.addAttribute("productos", productoDAO.getAllProductos());
+        model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+        return "detalleVenta-form-vendedor";
+    }
+
     @PostMapping("/crear")
     public String crearVentaYDetalles(@ModelAttribute VentaForm ventaForm) {
         Venta venta = new Venta();
@@ -81,8 +89,34 @@ public class DetalleVentaController {
     }
 
     @PostMapping("/crearVendedor")
-    public String crearDetalleVentaVendedor(@ModelAttribute DetalleVenta detalleVenta) {
-        detalleVentaDAO.saveOrUpdate(detalleVenta);
+    public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm) {
+        Venta venta = new Venta();
+        venta.setFECHA_VENTA(LocalDate.parse(ventaForm.getFechaVenta()));
+        venta.setPRECIO_VENTA_TOTAL(ventaForm.getPrecioVentaTotal());
+        venta.setREMISION(ventaForm.getRemision());
+        venta.setEmpleado(empleadoDAO.getEmpleadoById(ventaForm.getIdEmpleado()).orElse(null));
+        ventaDAO.saveOrUpdate(venta);
+
+        for (DetalleVentaForm d : ventaForm.getDetalles()) {
+            DetalleVenta detalle = new DetalleVenta();
+            detalle.setCNT_PRODUCTO_VENTA(d.getCntProductoVenta());
+            detalle.setPRECIO_VENTA_PRODUCTO(d.getPrecioVentaProducto());
+            detalle.setVenta(venta);
+            detalle.setProducto(productoDAO.getProductoById(d.getIdProducto()).orElse(null));
+            detalle.setBodega(bodegaDAO.getBodegaById(d.getIdBodega()).orElse(null));
+            detalleVentaDAO.saveOrUpdate(detalle);
+
+            if (d.getSerialesTexto() != null && !d.getSerialesTexto().trim().isEmpty()) {
+                String[] seriales = d.getSerialesTexto().split("\\r?\\n");
+                for (String serial : seriales) {
+                    SerialVentaProducto svp = new SerialVentaProducto();
+                    svp.setSERIAL(serial.trim());
+                    svp.setVenta(venta);
+                    svp.setProducto(detalle.getProducto());
+                    serialVentaProductoDAO.saveOrUpdate(svp);
+                }
+            }
+        }
         return "redirect:/detallesVenta/listarVendedor";
     }
 

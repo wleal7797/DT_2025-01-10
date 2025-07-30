@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>Lista de Vendedores</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css"/>
     <script>
         function editarEmpleado(id, doc, nombre, telefono) {
             document.getElementById("edit-id").value = id;
@@ -15,18 +15,20 @@
 
         function eliminarEmpleado(id) {
             if (confirm("¿Seguro que deseas eliminar este empleado?")) {
-                fetch('/empleados/eliminar/' + id, { method: 'DELETE' })
-                    .then(response => response.text())
-                    .then(data => {
+                fetch("/empleados/eliminar/" + id, {method: "DELETE"})
+                    .then((response) => response.text())
+                    .then((data) => {
                         alert(data);
                         location.reload();
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch((error) => console.error("Error:", error));
             }
         }
+
         function mostrarFormularioCreacion() {
             document.getElementById("create-form").style.display = "block";
         }
+
         function ocultarFormularioCreacion() {
             document.getElementById("create-form").style.display = "none";
         }
@@ -37,24 +39,46 @@
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Vendedor</button>
 
+<!-- Error usuario duplicado -->
+<div th:if="${param.error != null and param.error.contains('duplicado')}" class="alert alert-danger">
+    Error: Verifique los datos. Puede que el número de documento ya esté registrado.
+</div>
 
-<div id="create-form" style="display: none;">
+<div id="create-form" style="display: none">
     <h3>Registrar Nuevo Usuario</h3>
     <form action="/empleados/crear" method="post">
         <label>Nombre:</label>
-        <input type="text" name="NOMBRE_EMPLEADO" required>
-        <br><br>
+        <input
+                type="text"
+                name="NOMBRE_EMPLEADO"
+                pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
+                title="Por favor ingrese un nombre válido (solo letras y espacios)"
+                required
+        />
+        <br/>
 
         <label>Documento:</label>
-        <input type="text" name="N_DOCUMENTO" required>
-        <br><br>
+        <input
+                type="text"
+                name="N_DOCUMENTO"
+                pattern="^[0-9]{6,12}$"
+                title="Por favor ingrese un número de documento válido"
+                required
+        />
+        <br/>
 
         <label>Teléfono:</label>
-        <input type="text" name="TELEFONO_EMPLEADO" required>
-        <br><br>
+        <input
+                type="tel"
+                name="TELEFONO_EMPLEADO"
+                pattern="^\d{10}$"
+                title="Verifique el número (debe tener 10 dígitos)"
+                required
+        />
+        <br/>
 
         <button type="submit">Guardar</button>
-        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+        <button type="reset" onclick="ocultarFormularioCreacion()">Cancelar</button>
     </form>
 </div>
 
@@ -71,32 +95,66 @@
             <td th:text="${empleado.NOMBRE_EMPLEADO}"></td>
             <td th:text="${empleado.TELEFONO_EMPLEADO}"></td>
             <td>
-                <button th:attr="onclick=|editarEmpleado('${empleado.ID_EMPLEADO}', '${empleado.N_DOCUMENTO}', '${empleado.NOMBRE_EMPLEADO}', '${empleado.TELEFONO_EMPLEADO}')|">Editar</button>
-                <button th:attr="onclick=|eliminarEmpleado('${empleado.ID_EMPLEADO}')|">Eliminar</button>
+                <button
+                        th:attr="onclick=|editarEmpleado('${empleado.ID_EMPLEADO}', '${empleado.N_DOCUMENTO}', '${empleado.NOMBRE_EMPLEADO}', '${empleado.TELEFONO_EMPLEADO}')|"
+                >
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarEmpleado('${empleado.ID_EMPLEADO}')|">
+                    Eliminar
+                </button>
             </td>
         </tr>
     </table>
 </div>
 
-
-<div id="edit-form" style="display:none;">
+<div id="edit-form" style="display: none">
     <form th:action="@{/empleados/editar}" method="post">
-        <h3>Editar Empleado</h3><br>
-        <input type="hidden" id="edit-id" name="ID_EMPLEADO">
-        <label>Documento: <input type="text" id="edit-documento" name="N_DOCUMENTO"></label><br>
-        <label>Nombre: <input type="text" id="edit-nombre" name="NOMBRE_EMPLEADO"></label><br>
-        <label>Teléfono: <input type="text" id="edit-telefono" name="TELEFONO_EMPLEADO"></label><br>
-        <br>
-        <br>
+        <h3>Editar Empleado</h3>
+        <br/>
+
+        <input type="hidden" id="edit-id" name="ID_EMPLEADO"/>
+        <label>Nombre:</label>
+        <input
+                type="text"
+                id="edit-nombre"
+                name="NOMBRE_EMPLEADO"
+                pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
+                title="Por favor ingrese un nombre válido (solo letras y espacios)"
+                required/>
+        <br/>
+
+        <label>Documento:</label>
+        <input
+                type="text"
+                id="edit-documento"
+                name="N_DOCUMENTO"
+                pattern="^[0-9]{6,12}$"
+                title="Por favor ingrese un número de documento válido"
+                required/>
+        <br/>
+
+        <label>Teléfono:</label>
+        <input
+                type="tel"
+                id="edit-telefono"
+                name="TELEFONO_EMPLEADO"
+                pattern="^\d{10}$"
+                title="Verifique el número (debe tener 10 dígitos)"
+                required/>
+        <br/>
+
         <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">
+            Cancelar
+        </button>
     </form>
 </div>
 
-<br>
+<br/>
 <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button style="padding: 5px 10px">Volver al Inicio</button>
 </a>
+<br/>
 </body>
 </html>
-
