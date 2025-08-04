@@ -1,117 +1,182 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Registrar Nueva Venta</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css" />
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h2>Registrar Nueva Venta</h2>
+    <br />
 
+    <div class="centro">
+      <a href="/serialVentaProducto/listar" style="margin-left: 30px">
+        <button>Números de serie por producto</button>
+      </a>
+      <a href="/detallesVenta/listar" style="margin-left: 30px">
+        <button>Ver todas las ventas</button>
+      </a>
+    </div>
 
-</head>
-<body>
+    <br />
+    <br />
 
-<h2>Registrar Nueva Venta</h2>
-<a href="/serialVentaProducto/listar" style="margin-left: 30px;">
-    <button>Números de serie por producto</button>
-</a>
-<a href="/detallesVenta/listar" style="margin-left: 30px;">
-    <button>Ver todas las ventas</button>
-</a>
-<br><br>
-
-<form th:action="@{/detallesVenta/crear}" method="post" onsubmit="return validarFormulario();">
-    <div class="form-section">
+    <form th:action="@{/detallesVenta/crear}" method="post" onsubmit="return validarFormulario();">
+      <div class="form-section">
         <h3>Información de la Venta</h3>
 
         <label for="fechaVenta">Fecha de Venta</label>
-        <input type="date" id="fechaVenta" name="fechaVenta" required>
+        <input type="date" id="fechaVenta" name="fechaVenta" required />
 
         <label for="precioVentaTotal">Precio Total</label>
-        <input type="number" id="precioVentaTotal" name="precioVentaTotal" step="0.01" readonly
-               placeholder="Calculado automáticamente">
+        <input
+          type="number"
+          id="precioVentaTotal"
+          name="precioVentaTotal"
+          step="0.01"
+          readonly
+          placeholder="Calculado automáticamente"
+        />
 
         <label for="remision">Número de Remisión</label>
-        <input type="text" id="remision" name="remision" required>
+        <input
+          type="text"
+          id="remision"
+          name="remision"
+          pattern="^[0-9]{1,12}$"
+          title="Por favor ingrese un número de remisión válido"
+          required
+        />
 
         <label for="empleado">Empleado Responsable</label>
         <select id="empleado" name="idEmpleado" required>
-            <option value="">-- Selecciona un empleado --</option>
-            <option th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}"></option>
+          <option value="">-- Selecciona un empleado --</option>
+          <option
+            th:each="emp : ${empleados}"
+            th:value="${emp.ID_EMPLEADO}"
+            th:text="${emp.NOMBRE_EMPLEADO}"
+          ></option>
         </select>
-    </div>
+      </div>
 
-    <div class="form-section">
-        <h3>Productos en la Venta</h3>
-        <div id="productos-container"></div>
-        <button type="button" class="btn btn-success" onclick="agregarProducto()">+ Agregar Producto</button>
-    </div>
+      <div class="centro">
+        <div class="form-section">
+          <h3>Productos en la Venta</h3>
 
-    <div>
-        <button type="submit" class="btn btn-primary">Guardar Venta</button>
-        <button type="button" class="btn btn-secondary" onclick="window.location.href='/main/main'">Cancelar</button>
-    </div>
-</form>
+          <br />
+          <hr />
+          <br />
 
-<template id="detalle-template">
-    <div class="detalle-producto">
-        <button type="button" class="remove-btn" onclick="this.parentElement.remove(); actualizarTotal();">X</button>
+          <div id="productos-container"></div>
+          <button type="button" class="btn btn-success" onclick="agregarProducto()">
+            + Agregar Producto
+          </button>
+        </div>
+        <br />
+        <div>
+          <button type="submit" class="btn btn-primary">Guardar Venta</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="window.location.href='/main/main'"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <template id="detalle-template">
+      <div class="detalle-producto">
+        <button
+          type="button"
+          class="btn-danger"
+          onclick="this.parentElement.remove(); actualizarTotal();"
+        >
+          &times; Eliminar Producto
+        </button>
+
+        <br />
+        <br />
 
         <label>Cantidad</label>
-        <input type="number" name="cntProductoVenta" required oninput="actualizarTotal()">
+        <input type="number" name="cntProductoVenta" min="1" required oninput="actualizarTotal()" />
 
         <label>Precio Unitario</label>
-        <input type="number" name="precioVentaProducto" step="0.01" required oninput="actualizarTotal()">
+        <input
+          type="number"
+          name="precioVentaProducto"
+          step="1000"
+          min="0"
+          required
+          oninput="actualizarTotal()"
+        />
 
         <label>Seriales del Producto (uno por línea)</label>
-        <textarea name="serialesTexto" rows="3" placeholder="Ej: ABC123&#10;DEF456" required></textarea>
+        <textarea
+          name="serialesTexto"
+          rows="3"
+          placeholder="Ej: ABC123&#10;DEF456"
+          required
+        ></textarea>
 
         <label>Producto</label>
-        <select name="idProducto" class="select-producto" required>
-            <option value="">-- Selecciona un producto --</option>
-            <option th:each="prod : ${productos}"
-                    th:value="${prod.ID_PRODUCTO}"
-                    th:text="${prod.NOMBRE_PRODUCTO + ' - $' + prod.COSTO}"></option>
+        <select name="idProducto" required>
+          <option value="">-- Selecciona un producto --</option>
+          <option
+            th:each="prod : ${productos}"
+            th:value="${prod.ID_PRODUCTO}"
+            th:text="${prod.NOMBRE_PRODUCTO + ' - $' + prod.COSTO}"
+          ></option>
         </select>
 
         <label>Bodega</label>
         <select name="idBodega" required>
-            <option value="">-- Selecciona una bodega --</option>
-            <option th:each="bod : ${bodegas}"
-                    th:value="${bod.ID_BODEGA}"
-                    th:text="${bod.N_BODEGA}"></option>
+          <option value="">-- Selecciona una bodega --</option>
+          <option
+            th:each="bod : ${bodegas}"
+            th:value="${bod.ID_BODEGA}"
+            th:text="${bod.N_BODEGA}"
+          ></option>
         </select>
-    </div>
-</template>
+        <hr />
+        <br />
+      </div>
+    </template>
+    <br />
+    <br />
 
-<!-- jQuery (requerido por Select2) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- jQuery (requerido por Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<script>
-    let index = 0;
+    <script>
+      let index = 0;
 
-    function inicializarSelect2(contenedor) {
-        $(contenedor).find('.select-producto').select2({
-            placeholder: 'Busca un producto...',
-            width: '100%'
+      function inicializarSelect2(contenedor) {
+        $(contenedor).find(".select-producto").select2({
+          placeholder: "Busca un producto...",
+          width: "100%",
         });
-    }
+      }
 
-    function agregarProducto() {
-        const template = document.getElementById('detalle-template');
+      function agregarProducto() {
+        const template = document.getElementById("detalle-template");
         const clone = template.content.cloneNode(true);
 
-        clone.querySelectorAll('input, select, textarea').forEach(input => {
-            const name = input.getAttribute('name');
-            input.setAttribute('name', `detalles[${index}].${name}`);
+        clone.querySelectorAll("input, select, textarea").forEach((input) => {
+          const name = input.getAttribute("name");
+          input.setAttribute("name", `detalles[${index}].${name}`);
         });
 
-        const container = document.getElementById('productos-container');
-        const newElement = document.createElement('div');
+        const container = document.getElementById("productos-container");
+        const newElement = document.createElement("div");
         newElement.appendChild(clone);
         container.appendChild(newElement);
 
@@ -119,36 +184,37 @@
 
         index++;
         actualizarTotal();
-    }
+      }
 
-    function actualizarTotal() {
+      function actualizarTotal() {
         let total = 0;
-        document.querySelectorAll('#productos-container .detalle-producto').forEach(detalle => {
-            const cantidad = parseFloat(detalle.querySelector('input[name*="cntProductoVenta"]').value) || 0;
-            const precio = parseFloat(detalle.querySelector('input[name*="precioVentaProducto"]').value) || 0;
-            total += cantidad * precio;
+        document.querySelectorAll("#productos-container .detalle-producto").forEach((detalle) => {
+          const cantidad =
+            parseFloat(detalle.querySelector('input[name*="cntProductoVenta"]').value) || 0;
+          const precio =
+            parseFloat(detalle.querySelector('input[name*="precioVentaProducto"]').value) || 0;
+          total += cantidad * precio;
         });
-        document.getElementById('precioVentaTotal').value = total.toFixed(2);
-    }
+        document.getElementById("precioVentaTotal").value = total.toFixed(2);
+      }
 
-    function validarFormulario() {
-        const productos = document.querySelectorAll('#productos-container .detalle-producto');
+      function validarFormulario() {
+        const productos = document.querySelectorAll("#productos-container .detalle-producto");
         if (productos.length === 0) {
-            alert("Debes agregar al menos un producto a la venta.");
-            return false;
+          alert("Debes agregar al menos un producto a la venta.");
+          return false;
         }
 
         for (let detalle of productos) {
-            const seriales = detalle.querySelector('textarea[name*="serialesTexto"]').value.trim();
-            if (seriales === "") {
-                alert("Todos los productos deben tener seriales ingresados.");
-                return false;
-            }
+          const seriales = detalle.querySelector('textarea[name*="serialesTexto"]').value.trim();
+          if (seriales === "") {
+            alert("Todos los productos deben tener seriales ingresados.");
+            return false;
+          }
         }
 
         return true;
-    }
-</script>
-
-</body>
+      }
+    </script>
+  </body>
 </html>
