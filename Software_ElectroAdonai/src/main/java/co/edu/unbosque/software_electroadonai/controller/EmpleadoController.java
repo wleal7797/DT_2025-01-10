@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class EmpleadoController {
 
     @Autowired
     private EmpleadoDAO empleadoDAO;
+
     @GetMapping("/")
 
     public String inicio() {
@@ -37,8 +39,15 @@ public class EmpleadoController {
 
     @PostMapping("/crear")
     public String crearEmpleado(@ModelAttribute Empleado empleado) {
-        empleadoDAO.saveOrUpdate(empleado);
-        return "redirect:/empleados/listar";
+
+        try {
+            empleadoDAO.saveOrUpdate(empleado);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            return "redirect:/empleados/listar?error=duplicado";
+        }
+
     }
 
     @GetMapping("/listar")
@@ -47,6 +56,7 @@ public class EmpleadoController {
         model.addAttribute("empleados", empleados);
         return "lista-empleados";
     }
+
     @PostMapping("/editar")
     public String editarEmpleado(@ModelAttribute Empleado nuevoEmpleado) {
         Optional<Empleado> empleadoExistente = empleadoDAO.getEmpleadoById(nuevoEmpleado.getID_EMPLEADO());
@@ -57,11 +67,16 @@ public class EmpleadoController {
             empleado.setNOMBRE_EMPLEADO(nuevoEmpleado.getNOMBRE_EMPLEADO());
             empleado.setTELEFONO_EMPLEADO(nuevoEmpleado.getTELEFONO_EMPLEADO());
 
-            empleadoDAO.saveOrUpdate(empleado);
+            try {
+                empleadoDAO.saveOrUpdate(empleado);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            } finally {
+                return "redirect:/empleados/listar?error=duplicado";
+            }
         }
         return "redirect:/empleados/listar";
     }
-
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarEmpleado(@PathVariable int id) {
@@ -75,11 +90,4 @@ public class EmpleadoController {
     }
 
 }
-
-
-
-
-
-
-
 

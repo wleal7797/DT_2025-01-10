@@ -11,6 +11,7 @@
             overflow-y: auto;
             border: 1px solid #ccc;
         }
+
         th, td {
             padding: 8px;
             text-align: left;
@@ -79,7 +80,8 @@
         <option value="estado">Estado</option>
     </select>
     <div id="filtroContainer">
-        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px;">
     </div>
 </div>
 
@@ -98,9 +100,9 @@
             <td th:text="${util.detalle_venta.venta != null ? util.detalle_venta.venta.REMISION : 'N/A'}"></td>
             <td th:text="${util.producto != null ? util.producto.NOMBRE_PRODUCTO : 'N/A'}"></td>
             <td th:text="${util.detalle_venta != null ? util.detalle_venta.CNT_PRODUCTO_VENTA : 'N/A'}"></td>
-            <td th:text="${util.detalle_venta != null ? util.detalle_venta.PRECIO_VENTA_PRODUCTO : 'N/A'}"></td>
-            <td th:text="${util.UTILIDAD_BRUTA}"></td>
-            <td th:text="${util.UTILIDAD_FINAL}"></td>
+            <td th:text="${util.detalle_venta != null ? #numbers.formatCurrency(util.detalle_venta.PRECIO_VENTA_PRODUCTO) : 'N/A'}"></td>
+            <td th:text="${#numbers.formatCurrency(util.UTILIDAD_BRUTA)}"></td>
+            <td th:text="${#numbers.formatCurrency(util.UTILIDAD_FINAL)}"></td>
             <td th:text="${util.ESTADO}"></td>
         </tr>
     </table>

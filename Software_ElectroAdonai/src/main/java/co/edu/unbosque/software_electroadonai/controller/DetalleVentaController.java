@@ -47,6 +47,14 @@ public class DetalleVentaController {
         return "detalleVenta-form";
     }
 
+    @GetMapping("/registroVendedor")
+    public String mostrarFormularioVendedor(Model model) {
+        model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
+        model.addAttribute("productos", productoDAO.getAllProductos());
+        model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+        return "detalleVenta-form-vendedor";
+    }
+
     @PostMapping("/crear")
     public String crearVentaYDetalles(@ModelAttribute VentaForm ventaForm) {
         Venta venta = new Venta();
@@ -79,13 +87,7 @@ public class DetalleVentaController {
 
         return "redirect:/detallesVenta/listar";
     }
-    @GetMapping("/registroVendedor")
-    public String mostrarFormularioVendedor(Model model) {
-        model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
-        model.addAttribute("productos", productoDAO.getAllProductos());
-        model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
-        return "detalleVenta-form-vendedor";
-    }
+
     @PostMapping("/crearVendedor")
     public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm) {
         Venta venta = new Venta();
@@ -115,7 +117,6 @@ public class DetalleVentaController {
                 }
             }
         }
-
         return "redirect:/detallesVenta/listarVendedor";
     }
 
