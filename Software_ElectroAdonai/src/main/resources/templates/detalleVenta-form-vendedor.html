@@ -25,7 +25,34 @@
 
     <br />
     <br />
+    <script th:inline="javascript">
+      const remisionesExistentes = /*[[${remisionesExistentes}]]*/ [];
 
+      const inputRemision = document.getElementById('remision');
+      const form = inputRemision.closest('form');
+
+      inputRemision.addEventListener('blur', () => {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+          alert("⚠️ La remisión ya existe. Por favor ingresa una remisión diferente.");
+          inputRemision.value = "";
+          inputRemision.focus();
+        }
+      });
+
+      form.addEventListener('submit', function (e) {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+          e.preventDefault();
+          alert("❌ No se puede enviar el formulario. La remisión ya existe.");
+          inputRemision.value = "";
+          inputRemision.focus();
+        }
+      });
+    </script>
+    <div th:if="${errorInventario}" class="alert alert-danger" role="alert">
+      <span th:text="${errorInventario}">Ocurrió un error</span>
+    </div>
     <form
       th:action="@{/detallesVenta/crearVendedor}"
       method="post"
@@ -48,14 +75,18 @@
         />
 
         <label for="remision">Número de Remisión</label>
+        <p th:if="${ultimaRemision != null}" style="font-size: 0.9em; color: gray; margin-bottom: 4px;">
+          Última remisión registrada: <strong th:text="${ultimaRemision}">0000</strong>
+        </p>
         <input
-          type="text"
-          id="remision"
-          name="remision"
-          pattern="^[0-9]{1,12}$"
-          title="Por favor ingrese un número de remisión válido"
-          required
+                type="text"
+                id="remision"
+                name="remision"
+                pattern="^[0-9]{1,12}$"
+                title="Por favor ingrese un número de remisión válido"
+                required
         />
+
 
         <label for="empleado">Empleado Responsable</label>
         <select id="empleado" name="idEmpleado" required>

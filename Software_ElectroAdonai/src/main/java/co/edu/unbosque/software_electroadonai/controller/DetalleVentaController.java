@@ -38,7 +38,7 @@ public class DetalleVentaController {
     public String inicio() {
         return "main";
     }
-
+/*
     @GetMapping("/registro")
     public String mostrarFormulario(Model model) {
         model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
@@ -46,6 +46,33 @@ public class DetalleVentaController {
         model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
         return "detalleVenta-form";
     }
+    */
+@GetMapping("/registro")
+public String mostrarFormulario(Model model) {
+    model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
+    model.addAttribute("productos", productoDAO.getAllProductos());
+    model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+
+    List<Venta> ventas = ventaDAO.getAllVentas();
+    String ultimaRemision = "N/A";
+    List<String> remisionesExistentes = ventas.stream()
+            .map(Venta::getREMISION)
+            .filter(r -> r != null && !r.trim().isEmpty())
+            .toList();
+
+    if (!ventas.isEmpty()) {
+        Venta ultimaVenta = ventas.get(ventas.size() - 1);
+        if (ultimaVenta.getREMISION() != null) {
+            ultimaRemision = ultimaVenta.getREMISION();
+        }
+    }
+
+    model.addAttribute("ultimaRemision", ultimaRemision);
+    model.addAttribute("remisionesExistentes", remisionesExistentes);
+
+    return "detalleVenta-form";
+}
+
 
     @GetMapping("/registroVendedor")
     public String mostrarFormularioVendedor(Model model) {
@@ -56,37 +83,71 @@ public class DetalleVentaController {
     }
 
     @PostMapping("/crear")
-    public String crearVentaYDetalles(@ModelAttribute VentaForm ventaForm) {
-        Venta venta = new Venta();
-        venta.setFECHA_VENTA(LocalDate.parse(ventaForm.getFechaVenta()));
-        venta.setPRECIO_VENTA_TOTAL(ventaForm.getPrecioVentaTotal());
-        venta.setREMISION(ventaForm.getRemision());
-        venta.setEmpleado(empleadoDAO.getEmpleadoById(ventaForm.getIdEmpleado()).orElse(null));
-        ventaDAO.saveOrUpdate(venta);
+    public String crearVentaYDetalles(@ModelAttribute VentaForm ventaForm, Model model) {
+        try {
+            Venta venta = new Venta();
+            venta.setFECHA_VENTA(LocalDate.parse(ventaForm.getFechaVenta()));
+            venta.setPRECIO_VENTA_TOTAL(ventaForm.getPrecioVentaTotal());
+            venta.setREMISION(ventaForm.getRemision());
+            venta.setEmpleado(empleadoDAO.getEmpleadoById(ventaForm.getIdEmpleado()).orElse(null));
+            ventaDAO.saveOrUpdate(venta);
 
-        for (DetalleVentaForm d : ventaForm.getDetalles()) {
-            DetalleVenta detalle = new DetalleVenta();
-            detalle.setCNT_PRODUCTO_VENTA(d.getCntProductoVenta());
-            detalle.setPRECIO_VENTA_PRODUCTO(d.getPrecioVentaProducto());
-            detalle.setVenta(venta);
-            detalle.setProducto(productoDAO.getProductoById(d.getIdProducto()).orElse(null));
-            detalle.setBodega(bodegaDAO.getBodegaById(d.getIdBodega()).orElse(null));
-            detalleVentaDAO.saveOrUpdate(detalle);
+            for (DetalleVentaForm d : ventaForm.getDetalles()) {
+                DetalleVenta detalle = new DetalleVenta();
+                detalle.setCNT_PRODUCTO_VENTA(d.getCntProductoVenta());
+                detalle.setPRECIO_VENTA_PRODUCTO(d.getPrecioVentaProducto());
+                detalle.setVenta(venta);
+                detalle.setProducto(productoDAO.getProductoById(d.getIdProducto()).orElse(null));
+                detalle.setBodega(bodegaDAO.getBodegaById(d.getIdBodega()).orElse(null));
+                detalleVentaDAO.saveOrUpdate(detalle);
 
-            if (d.getSerialesTexto() != null && !d.getSerialesTexto().trim().isEmpty()) {
-                String[] seriales = d.getSerialesTexto().split("\\r?\\n");
-                for (String serial : seriales) {
-                    SerialVentaProducto svp = new SerialVentaProducto();
-                    svp.setSERIAL(serial.trim());
-                    svp.setVenta(venta);
-                    svp.setProducto(detalle.getProducto());
-                    serialVentaProductoDAO.saveOrUpdate(svp);
+                if (d.getSerialesTexto() != null && !d.getSerialesTexto().trim().isEmpty()) {
+                    String[] seriales = d.getSerialesTexto().split("\\r?\\n");
+                    for (String serial : seriales) {
+                        SerialVentaProducto svp = new SerialVentaProducto();
+                        svp.setSERIAL(serial.trim());
+                        svp.setVenta(venta);
+                        svp.setProducto(detalle.getProducto());
+                        serialVentaProductoDAO.saveOrUpdate(svp);
+                    }
                 }
             }
-        }
 
-        return "redirect:/detallesVenta/listar";
+            return "redirect:/detallesVenta/listar";
+
+        } catch (Exception e) {
+            String mensajeError = "Ocurrió un error al registrar la venta.";
+
+            if (e.getMessage().contains("no hay suficiente inventario del producto")) {
+                mensajeError = "⚠️ No hay suficiente inventario del producto seleccionado.";
+            }
+
+            model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
+            model.addAttribute("productos", productoDAO.getAllProductos());
+            model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+
+            List<Venta> ventas = ventaDAO.getAllVentas();
+            String ultimaRemision = "N/A";
+            List<String> remisionesExistentes = ventas.stream()
+                    .map(Venta::getREMISION)
+                    .filter(r -> r != null && !r.trim().isEmpty())
+                    .toList();
+
+            if (!ventas.isEmpty()) {
+                Venta ultimaVenta = ventas.get(ventas.size() - 1);
+                if (ultimaVenta.getREMISION() != null) {
+                    ultimaRemision = ultimaVenta.getREMISION();
+                }
+            }
+
+            model.addAttribute("ultimaRemision", ultimaRemision);
+            model.addAttribute("remisionesExistentes", remisionesExistentes);
+            model.addAttribute("errorInventario", mensajeError);
+
+            return "detalleVenta-form";
+        }
     }
+
 
     @PostMapping("/crearVendedor")
     public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm) {

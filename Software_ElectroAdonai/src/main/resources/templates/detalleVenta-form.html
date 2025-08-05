@@ -25,7 +25,9 @@
 
     <br />
     <br />
-
+    <div th:if="${errorInventario}" class="alert alert-danger" role="alert">
+      <span th:text="${errorInventario}">Ocurrió un error</span>
+    </div>
     <form th:action="@{/detallesVenta/crear}" method="post" onsubmit="return validarFormulario();">
       <div class="form-section">
         <h3>Información de la Venta</h3>
@@ -44,14 +46,19 @@
         />
 
         <label for="remision">Número de Remisión</label>
+        <p th:if="${ultimaRemision != null}" style="font-size: 0.9em; color: gray; margin-bottom: 4px;">
+          Última remisión registrada: <strong th:text="${ultimaRemision}">0000</strong>
+        </p>
         <input
-          type="text"
-          id="remision"
-          name="remision"
-          pattern="^[0-9]{1,12}$"
-          title="Por favor ingrese un número de remisión válido"
-          required
+                type="text"
+                id="remision"
+                name="remision"
+                pattern="^[0-9]{1,12}$"
+                title="Por favor ingrese un número de remisión válido"
+                required
         />
+
+
 
         <label for="empleado">Empleado Responsable</label>
         <select id="empleado" name="idEmpleado" required>
@@ -107,7 +114,17 @@
         <label>Cantidad</label>
         <input type="number" name="cntProductoVenta" min="1" required oninput="actualizarTotal()" />
 
-        <label>Precio Unitario</label>
+        <label>Producto</label>
+        <select name="idProducto" required>
+          <option value="">-- Selecciona un producto --</option>
+          <option
+                  th:each="prod : ${productos}"
+                  th:value="${prod.ID_PRODUCTO}"
+                  th:text="${prod.NOMBRE_PRODUCTO + ' - $' + prod.COSTO}"
+          ></option>
+        </select>
+
+        <label>Precio Venta Unitario</label>
         <input
           type="number"
           name="precioVentaProducto"
@@ -125,16 +142,6 @@
           required
         ></textarea>
 
-        <label>Producto</label>
-        <select name="idProducto" required>
-          <option value="">-- Selecciona un producto --</option>
-          <option
-            th:each="prod : ${productos}"
-            th:value="${prod.ID_PRODUCTO}"
-            th:text="${prod.NOMBRE_PRODUCTO + ' - $' + prod.COSTO}"
-          ></option>
-        </select>
-
         <label>Bodega</label>
         <select name="idBodega" required>
           <option value="">-- Selecciona una bodega --</option>
@@ -150,6 +157,32 @@
     </template>
     <br />
     <br />
+
+    <script th:inline="javascript">
+      const remisionesExistentes = /*[[${remisionesExistentes}]]*/ [];
+
+      const inputRemision = document.getElementById('remision');
+      const form = inputRemision.closest('form');
+
+      inputRemision.addEventListener('blur', () => {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+          alert("⚠️ La remisión ya existe. Por favor ingresa una remisión diferente.");
+          inputRemision.value = "";
+          inputRemision.focus();
+        }
+      });
+
+      form.addEventListener('submit', function (e) {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+          e.preventDefault();
+          alert("❌ No se puede enviar el formulario. La remisión ya existe.");
+          inputRemision.value = "";
+          inputRemision.focus();
+        }
+      });
+    </script>
 
     <!-- jQuery (requerido por Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
