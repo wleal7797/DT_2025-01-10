@@ -1,9 +1,5 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
-import co.edu.unbosque.software_electroadonai.config.CaptchaSettings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -12,23 +8,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 class LoginController {
 
     @GetMapping("/")
-    String index() {
-        return "index";
-    }
-
-    @GetMapping("/index")
-    String index2() {
-        return "index";
-    }
-
-    @GetMapping("/login")
-    String login() {
+    String login1() {
         return "login";
     }
 
-    @GetMapping("/denied")
-    String denied() {
-        return "index";
+    @GetMapping("/login")
+    String login2() {
+        return "login";
     }
+
+    // Administrador
+    @GetMapping("/main")
+    String main() {
+        return "main";
+    }
+
+    // Empleado
+    @GetMapping("/mainVendedor")
+    String mainVendedor() {
+        return "mainVendedor";
+    }
+
+//    @GetMapping("/denied")
+//    String denied() {
+//        return "login";
+//    }
 
 }

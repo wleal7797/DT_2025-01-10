@@ -24,6 +24,14 @@
     Error: Usuario o contraseña incorrectos.
 </div>
 
+<div th:if="${param.logout}" class="alert alert-success">
+    ¡Sesión finalizada con éxito!
+</div>
+
+<div th:if="${param.denied}" class="alert alert-danger">
+    No tienes permisos para acceder a este recurso.
+</div>
+
 <form th:action="@{/login}" method="post" class="container mt-5 w-25 p-4 bg-light rounded shadow">
 
     <div class="mb-3">
@@ -36,17 +44,10 @@
     <div class="g-recaptcha mb-2" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
     <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
 
-    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
 </form>
 
 <br>
-<form
-        th:action="@{/index}"
-        class="container mt-5 w-25 p-4 bg-light rounded shadow"
-        style="text-align: center;"
->
-    <button type="submit" class="btn-danger">Regresar</button>
-</form>
 
 </body>
 </html>

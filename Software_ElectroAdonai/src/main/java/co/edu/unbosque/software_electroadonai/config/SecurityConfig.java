@@ -34,11 +34,10 @@ public class SecurityConfig {
                         //.requestMatchers(HttpMethod."METODOS PERMITIDOS", "RUTA EXCLUSIVA PARA ROL").hasRole("ROL")
                         //.requestMatchers("RUTA").hasRole("ROL")
                         //.requestMatchers("/main/").hasAuthority("ADMIN")
+
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/index").permitAll()
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/logout").permitAll()
                         .requestMatchers("/denied").permitAll()
 
                         .requestMatchers("/admin").hasRole("ADMIN")
@@ -51,6 +50,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .successHandler(new CustomAuthenticationSuccessHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -61,8 +61,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(exception -> exception
-                                .accessDeniedHandler(new CustomAccessDeniedHandler())
-                        //.accessDeniedPage("/denied?denied")
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
                 )
                 .build();
     }
