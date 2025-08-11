@@ -1,135 +1,128 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=0.9"/>
     <title>Inicio - Sistema de Gestión</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css"/>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
     />
-  </head>
+</head>
 
-  <body>
-    <div class="main-wrapper">
-      <header class="header">
+<body>
+<div class="main-wrapper">
+    <header class="header">
         <h1>Sistema de Gestión</h1>
         <h5>Plataforma integral para la administración empresarial</h5>
-      </header>
+    </header>
 
-      <div class="container">
+    <div class="container">
         <h2>Panel de Control</h2>
         <div class="alert alert-info">
-          <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
-          diferentes módulos del sistema.
+            <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
+            diferentes módulos del sistema.
         </div>
         <div class="dropdown-container" style="position: relative; z-index: 10">
-          <div class="dropdown" style="position: relative; z-index: 10">
-            <button class="dropdown-btn">👥 Vendedores</button>
-            <div
-              class="dropdown-content"
-              style="position: absolute; z-index: 10000; background: white"
-            >
-              <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
-              <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
-              <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
+            <div class="dropdown" style="position: relative; z-index: 10">
+                <button class="dropdown-btn">👥 Vendedores</button>
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 10000; background: white"
+                >
+                    <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
+                    <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
+                    <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
+                </div>
             </div>
-          </div>
 
-          <div class="dropdown" style="position: relative; z-index: 10">
-            <button class="dropdown-btn">🏪 Bodegas</button>
-            <div
-              class="dropdown-content"
-              style="position: absolute; z-index: 9999; background: white"
-            >
-              <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
-              <a href="/productos/listar">📦 Ver Lista De Productos</a>
-              <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
+            <div class="dropdown" style="position: relative; z-index: 10">
+                <button class="dropdown-btn">🏪 Bodegas</button>
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
+                    <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
+                    <a href="/productos/listar">📦 Ver Lista De Productos</a>
+                    <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
+                </div>
             </div>
-          </div>
 
-          <div class="dropdown" style="position: relative; z-index: 10">
-            <button class="dropdown-btn">🛒 Ventas</button>
-            <div
-              class="dropdown-content"
-              style="position: absolute; z-index: 9999; background: white"
-            >
-              <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
-              <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
-              <a href="/utilidadesPorProducto/listar">💹 Ver Utilidades Por Venta</a>
+            <div class="dropdown" style="position: relative; z-index: 10">
+                <button class="dropdown-btn">🛒 Ventas</button>
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
+                    <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
+                    <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
+                    <a href="/utilidadesPorProducto/listar">💹 Ver Utilidades Por Venta</a>
+                </div>
             </div>
-          </div>
 
-          <div class="dropdown" style="position: relative; z-index: 10">
-            <button class="dropdown-btn">📋 Movimientos</button>
-            <div
-              class="dropdown-content"
-              style="position: absolute; z-index: 9999; background: white"
-            >
-              <a href="/detalleMovimiento/listar">🔄 Ver Movimientos De Bodega</a>
+            <div class="dropdown" style="position: relative; z-index: 10">
+                <button class="dropdown-btn">📋 Movimientos</button>
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
+                    <a href="/detalleMovimiento/listar">🔄 Ver Movimientos De Bodega</a>
+                </div>
             </div>
-          </div>
 
-          <div class="dropdown" style="position: relative; z-index: 10">
-            <button class="dropdown-btn">⚙️ Usuarios</button>
-            <div
-              class="dropdown-content"
-              style="position: absolute; z-index: 9999; background: white"
-            >
-              <a href="/users/listar">👤 Ver Lista De Usuarios</a>
+            <div class="dropdown" style="position: relative; z-index: 10">
+                <button class="dropdown-btn">⚙️ Usuarios</button>
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
+                    <a href="/users/listar">👤 Ver Lista De Usuarios</a>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
-      <div class="dashboard">
+    <div class="dashboard">
         <div class="calendar">
-          <h3 class="text-gradient">📅 Calendario</h3>
-          <iframe
-            src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
-            style="border: 0"
-            width="800"
-            height="600"
-            frameborder="0"
-            scrolling="no"
-          ></iframe>
+            <h3 class="text-gradient">📅 Calendario</h3>
+            <iframe
+                    src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
+                    style="border: 0"
+                    width="800"
+                    height="600"
+            ></iframe>
         </div>
 
         <div class="notifications">
-          <h3 class="text-gradient">🔔 Notificaciones</h3>
-          <ul>
-            <li>🆕 Nueva actualización disponible</li>
-            <li>📅 Próxima reunión el 28 de abril</li>
-            <li>⚠️ Recordatorio: Falta arreglar el formulario de usuarios</li>
-            <li>✅ Sistema funcionando correctamente</li>
-            <li>📈 Reportes mensuales listos</li>
-          </ul>
+            <h3 class="text-gradient">🔔 Notificaciones</h3>
+            <ul>
+                <li>🆕 Nueva actualización disponible</li>
+                <li>📅 Próxima reunión el 28 de abril</li>
+                <li>⚠️ Recordatorio: Falta arreglar el formulario de usuarios</li>
+                <li>✅ Sistema funcionando correctamente</li>
+                <li>📈 Reportes mensuales listos</li>
+            </ul>
         </div>
-      </div>
-
-      <div class="container" style="margin-top: 2rem">
-        <div class="alert alert-warning">
-          <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
-          la seguridad del sistema.
-        </div>
-
-        <form
-          action="/logout"
-          method="post"
-          id="logoutForm"
-          style="text-align: center; margin-top: 2rem"
-        >
-          <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
-        </form>
-      </div>
-
-      <footer>
-        <p>
-          &copy; 2025 Sistema de Gestión Empresarial Electrodomesticos Adonai - Todos los derechos
-          reservados
-        </p>
-      </footer>
     </div>
-  </body>
+
+    <div class="container" style="margin-top: 2rem">
+        <div class="alert alert-warning">
+            <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
+            la seguridad del sistema.
+        </div>
+
+        <form action="/logout" method="post" class="logout-form">
+            <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>
+            &copy; 2025 Sistema de Gestión Empresarial Electrodomesticos Adonai - Todos los derechos
+            reservados
+        </p>
+    </footer>
+</div>
+</body>
 </html>
