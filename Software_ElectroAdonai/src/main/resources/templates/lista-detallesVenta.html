@@ -67,6 +67,22 @@
                 fila.style.display = coincide ? "" : "none";
             });
         }
+
+        function ordenarPorFechaDesc() {
+            const tabla = document.querySelector("table");
+            const filas = Array.from(tabla.querySelectorAll("tr:nth-child(n+2)")); // Ignorar encabezado
+
+            filas.sort((a, b) => {
+                const fechaA = new Date(a.cells[0].innerText.trim());
+                const fechaB = new Date(b.cells[0].innerText.trim());
+                return fechaB - fechaA; // Descendente
+            });
+
+            filas.forEach(fila => tabla.appendChild(fila)); // Reagregar en nuevo orden
+        }
+
+        // Llamar al cargar
+        window.addEventListener("DOMContentLoaded", ordenarPorFechaDesc);
     </script>
 </head>
 <body>

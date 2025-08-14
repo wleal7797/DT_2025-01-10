@@ -23,7 +23,6 @@ public class EmpleadoDAO {
     }
 
     public Optional<Empleado> getEmpleadoById(int id) {
-
         return empleadoRepository.findById(id);
     }
 

@@ -38,40 +38,42 @@ public class DetalleVentaController {
     public String inicio() {
         return "main";
     }
-/*
+
+    /*
+        @GetMapping("/registro")
+        public String mostrarFormulario(Model model) {
+            model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
+            model.addAttribute("productos", productoDAO.getAllProductos());
+            model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+            return "detalleVenta-form";
+        }
+    */
+
     @GetMapping("/registro")
     public String mostrarFormulario(Model model) {
         model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
         model.addAttribute("productos", productoDAO.getAllProductos());
         model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+
+        List<Venta> ventas = ventaDAO.getAllVentas();
+        String ultimaRemision = "N/A";
+        List<String> remisionesExistentes = ventas.stream()
+                .map(Venta::getREMISION)
+                .filter(r -> r != null && !r.trim().isEmpty())
+                .toList();
+
+        if (!ventas.isEmpty()) {
+            Venta ultimaVenta = ventas.get(ventas.size() - 1);
+            if (ultimaVenta.getREMISION() != null) {
+                ultimaRemision = ultimaVenta.getREMISION();
+            }
+        }
+
+        model.addAttribute("ultimaRemision", ultimaRemision);
+        model.addAttribute("remisionesExistentes", remisionesExistentes);
+
         return "detalleVenta-form";
     }
-    */
-@GetMapping("/registro")
-public String mostrarFormulario(Model model) {
-    model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
-    model.addAttribute("productos", productoDAO.getAllProductos());
-    model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
-
-    List<Venta> ventas = ventaDAO.getAllVentas();
-    String ultimaRemision = "N/A";
-    List<String> remisionesExistentes = ventas.stream()
-            .map(Venta::getREMISION)
-            .filter(r -> r != null && !r.trim().isEmpty())
-            .toList();
-
-    if (!ventas.isEmpty()) {
-        Venta ultimaVenta = ventas.get(ventas.size() - 1);
-        if (ultimaVenta.getREMISION() != null) {
-            ultimaRemision = ultimaVenta.getREMISION();
-        }
-    }
-
-    model.addAttribute("ultimaRemision", ultimaRemision);
-    model.addAttribute("remisionesExistentes", remisionesExistentes);
-
-    return "detalleVenta-form";
-}
 
 
     @GetMapping("/registroVendedor")
@@ -149,8 +151,15 @@ public String mostrarFormulario(Model model) {
     }
 
 
+    @GetMapping("/listarVendedor")
+    public String listarDetalleVentaVendedor(Model model) {
+        List<DetalleVenta> detallesVenta = detalleVentaDAO.getAllDetallesVenta();
+        model.addAttribute("detallesVenta", detallesVenta);
+        return "lista-detalleVenta-vendedor";
+    }
+
     @PostMapping("/crearVendedor")
-    public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm) {
+    public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm, Model model) {
         Venta venta = new Venta();
         venta.setFECHA_VENTA(LocalDate.parse(ventaForm.getFechaVenta()));
         venta.setPRECIO_VENTA_TOTAL(ventaForm.getPrecioVentaTotal());
@@ -161,9 +170,15 @@ public String mostrarFormulario(Model model) {
         for (DetalleVentaForm d : ventaForm.getDetalles()) {
             DetalleVenta detalle = new DetalleVenta();
             detalle.setCNT_PRODUCTO_VENTA(d.getCntProductoVenta());
+
+            System.out.println("\nCant producto: " + d.getCntProductoVenta() + "\n");
+
             detalle.setPRECIO_VENTA_PRODUCTO(d.getPrecioVentaProducto());
             detalle.setVenta(venta);
             detalle.setProducto(productoDAO.getProductoById(d.getIdProducto()).orElse(null));
+
+            System.out.println("\nID bodega: " + d.getIdBodega() + "\n");
+
             detalle.setBodega(bodegaDAO.getBodegaById(d.getIdBodega()).orElse(null));
             detalleVentaDAO.saveOrUpdate(detalle);
 
@@ -179,13 +194,6 @@ public String mostrarFormulario(Model model) {
             }
         }
         return "redirect:/detallesVenta/listarVendedor";
-    }
-
-    @GetMapping("/listarVendedor")
-    public String listarDetalleVentaVendedor(Model model) {
-        List<DetalleVenta> detallesVenta = detalleVentaDAO.getAllDetallesVenta();
-        model.addAttribute("detallesVenta", detallesVenta);
-        return "lista-detalleVenta-vendedor";
     }
 
     @GetMapping("/listar")

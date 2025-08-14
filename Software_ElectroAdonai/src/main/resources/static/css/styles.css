@@ -59,13 +59,6 @@
     box-sizing: border-box;
 }
 
-/* Para centrar algunos botones en un contenedor */
-.centro {
-    justify-content: center;
-    align-content: center;
-    text-align: center;
-}
-
 body {
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
@@ -82,6 +75,47 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     position: relative;
+}
+
+.centro {
+    display: flex;
+    align-items: center;
+}
+
+.grid-2 {
+    display: flex;
+    justify-content: center; /* Centra el conjunto */
+    align-items: center; /* Alinea verticalmente */
+    gap: 10px; /* Espacio entre select y input */
+}
+
+.grid-2 select {
+    width: 150px; /* ancho fijo */
+    max-width: 200px; /* ancho máximo permitido */
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px; /* espacio entre columnas */
+    place-items: center;
+    text-align: center;
+    margin: 0.5rem 0; /* margen superior e inferior */
+    width: 100%;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px; /* espacio entre columnas */
+    place-items: center;
+    text-align: center;
+    margin: 1rem 0; /* margen superior e inferior */
+    width: 100%;
+}
+
+#precioVentaTotal {
+    text-align: right; /* alinea el texto a la derecha */
 }
 
 /* Encabezados espectaculares */
@@ -110,7 +144,8 @@ h1 {
 }
 
 h2 {
-    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    margin-top: 20px;
 }
 
 h1::after,
@@ -141,7 +176,7 @@ h2::after {
 
 h3 {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--text-primary);
     margin: 10px;
 }
@@ -325,11 +360,11 @@ h5 {
 /* Tablas increíbles */
 #tabla-container {
     max-height: 400px;
-    max-width: 90%;
+    max-width: 100%;
     overflow-y: auto;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-lg);
-    margin: 1rem auto;
+    margin: 1rem 4rem;
     border: 1px solid var(--border-color);
     background: var(--bg-card);
 }
@@ -410,7 +445,7 @@ form {
     padding: 1rem 3rem;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
-    max-width: 600px;
+    max-width: 90%;
     margin: 0 auto;
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
@@ -841,17 +876,17 @@ footer {
     }
 }
 
-/* Fondo oscuro del modal */
+/* Fondo oscuro cubriendo toda la pantalla */
 .modal {
     display: flex;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100%; /* cubrir toda la pantalla */
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* centrar horizontalmente */
+    align-items: center; /* centrar verticalmente */
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -864,26 +899,43 @@ footer {
     visibility: visible;
 }
 
-/* Caja del modal */
 .modal-content {
     background: white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
+
     width: 90%;
+    max-width: 700px; /* más ancho para distribuir campos */
     transform: translateY(-20px);
     transition: transform 0.3s ease;
 }
 
-/* Animación de entrada */
-.modal.show .modal-content {
-    transform: translateY(0);
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* dos columnas */
+    gap: 1rem 2rem; /* espacio entre filas y columnas */
 }
 
-/* Botones alineados */
+.form-grid label {
+    font-weight: bold;
+    display: block;
+}
+
+.form-grid select,
+.form-grid input,
+.form-grid textarea {
+    width: 100%;
+    padding: 0.4rem;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
 .modal-actions {
-    margin-top: 1rem;
+    grid-column: span 2; /* que los botones ocupen todo el ancho */
     display: flex;
     justify-content: flex-end;
     gap: 1rem;

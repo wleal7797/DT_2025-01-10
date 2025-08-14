@@ -54,6 +54,22 @@
                 fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
             });
         }
+
+        function ordenarPorFechaDesc() {
+            const tabla = document.querySelector("table");
+            const filas = Array.from(tabla.querySelectorAll("tr:nth-child(n+2)")); // Ignorar encabezado
+
+            filas.sort((a, b) => {
+                const fechaA = new Date(a.cells[0].innerText.trim());
+                const fechaB = new Date(b.cells[0].innerText.trim());
+                return fechaB - fechaA; // Descendente
+            });
+
+            filas.forEach(fila => tabla.appendChild(fila)); // Reagregar en nuevo orden
+        }
+
+        // Llamar al cargar
+        window.addEventListener("DOMContentLoaded", ordenarPorFechaDesc);
     </script>
 </head>
 <body>
@@ -66,35 +82,36 @@
         <option value="vendedor">Vendedor</option>
     </select>
     <div id="filtroContainer">
-        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px; margin-right: 60px;">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
     </div>
     <a href="/serialVentaProducto/listarVendedor" style="margin-left: 30px;">
         <button>Lista De Seriales Para Garantías</button>
     </a>
 </div>
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>Fecha</th>
-        <th>Remisión</th>
-        <th>Producto</th>
-        <th>Cantidad Vendida Producto</th>
-        <th>Costo del Producto</th>
-        <th>Precio Venta Producto</th>
-        <th>Valor Total De La Remisión</th>
-        <th>Vendedor</th>
-    </tr>
-    <tr th:each="detalleVenta : ${detallesVenta}">
-        <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.FECHA_VENTA} : 'N/A'"></td>
-        <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.REMISION} : 'N/A'"></td>
-        <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
-        <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
-        <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.COSTO} : 'N/A'"></td>
-        <td th:text="${detalleVenta.PRECIO_VENTA_PRODUCTO}"></td>
-        <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.PRECIO_VENTA_TOTAL} : 'N/A'"></td>
-        <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-    </tr>
-</table>
+    <table border="1">
+        <tr>
+            <th>Fecha</th>
+            <th>Remisión</th>
+            <th>Producto</th>
+            <th>Cantidad Vendida Producto</th>
+            <th>Costo del Producto</th>
+            <th>Precio Venta Producto</th>
+            <th>Valor Total De La Remisión</th>
+            <th>Vendedor</th>
+        </tr>
+        <tr th:each="detalleVenta : ${detallesVenta}">
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.FECHA_VENTA} : 'N/A'"></td>
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.REMISION} : 'N/A'"></td>
+            <td th:text="${detalleVenta.producto != null} ? ${detalleVenta.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+            <td th:text="${detalleVenta.CNT_PRODUCTO_VENTA}"></td>
+            <td th:text="${detalleVenta.producto != null} ? ${#numbers.formatCurrency(detalleVenta.producto.COSTO)} : 'N/A'"></td>
+            <td th:text="${#numbers.formatCurrency(detalleVenta.PRECIO_VENTA_PRODUCTO)}"></td>
+            <td th:text="${detalleVenta.venta != null} ? ${#numbers.formatCurrency(detalleVenta.venta.PRECIO_VENTA_TOTAL)} : 'N/A'"></td>
+            <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+        </tr>
+    </table>
 </div>
 <br>
 <div style="text-align: left;">

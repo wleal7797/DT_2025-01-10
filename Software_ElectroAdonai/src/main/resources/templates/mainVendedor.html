@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
 </head>
 <body>
+
 <header class="header">
     <h1>Sistema de Gestión</h1>
 </header>
+
 <div class="container">
     <h2>Bienvenido</h2>
     <p>Seleccione una opción para gestionar registros o listas.</p>
@@ -34,8 +37,9 @@
             </div>
         </div>
     </div>
-</div>0
+</div>
 
+<!--
 <div class="dashboard">
 <div class="calendar">
         <h3>Calendario</h3>
@@ -43,11 +47,25 @@
                 style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
     </div>
 </div>
+-->
 
-<hr>
-<form th:action="@{/logout}" method="post" id="logoutForm">
-    <button type="submit">Cerrar sesión</button>
-</form>
+<div class="container" style="margin-top: 2rem">
+    <div class="alert alert-warning">
+        <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
+        la seguridad del sistema.
+    </div>
+
+    <form action="/logout" method="post" class="logout-form">
+        <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
+    </form>
+</div>
+
+<footer>
+    <p>
+        &copy; 2025 Sistema de Gestión Empresarial Electrodomesticos Adonai - Todos los derechos
+        reservados
+    </p>
+</footer>
 
 </body>
 </html>
