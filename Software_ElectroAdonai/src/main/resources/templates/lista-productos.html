@@ -9,21 +9,9 @@
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-referencia").value = referencia;
-            document.getElementById("edit-costo").value = costo;
+            document.getElementById("edit-costo").value = new Intl.NumberFormat("es-CO").format(costo);
             document.getElementById("edit-existencias").value = existencias;
             document.getElementById("edit-form").style.display = "block";
-        }
-
-        function eliminarProducto(id) {
-            if (confirm("¿Seguro que deseas eliminar este producto?")) {
-                fetch('/productos/eliminar/' + id, {method: 'DELETE'})
-                    .then(response => response.text())
-                    .then(data => {
-                        alert(data);
-                        location.reload();
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
         }
 
         function actualizarFiltro() {
@@ -68,6 +56,22 @@
         function ocultarFormularioCreacion() {
             document.getElementById("create-form").style.display = "none";
         }
+
+        // Formatea como pesos colombianos mientras se escribe
+        function formatearPesos(input) {
+            let valor = input.value.replace(/\D/g, ""); // quitar todo lo que no sea dígito
+            if (valor) {
+                input.value = new Intl.NumberFormat("es-CO").format(valor);
+            } else {
+                input.value = "";
+            }
+        }
+
+        // Limpia formato antes de enviar el formulario
+        function limpiarFormatoAntesDeEnviar(form) {
+            const costoInput = form.querySelector("[name='COSTO']");
+            costoInput.value = costoInput.value.replace(/\./g, "").replace(/\s/g, "");
+        }
     </script>
 </head>
 <body>
@@ -75,10 +79,9 @@
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Producto</button>
 
-
 <div id="create-form" style="display: none;">
     <h3>Registrar Nuevo Producto</h3>
-    <form action="/productos/crear" method="post">
+    <form action="/productos/crear" method="post" onsubmit="limpiarFormatoAntesDeEnviar(this)">
         <label>Nombre:</label>
         <input type="text" name="NOMBRE_PRODUCTO" required>
         <br><br>
@@ -88,7 +91,7 @@
         <br><br>
 
         <label>Costo:</label>
-        <input type="number" name="COSTO" step="0.01" required>
+        <input type="text" name="COSTO" required oninput="formatearPesos(this)">
         <br><br>
 
         <label>Existencias:</label>
@@ -108,6 +111,7 @@
         <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
     </form>
 </div>
+
 <br><br>
 <div style="display: flex; justify-content: center; margin-bottom: 10px;">
     <div id="filtroContainer">
@@ -131,31 +135,29 @@
             <td th:text="${producto.NOMBRE_PRODUCTO}"></td>
             <td th:text="${producto.REFERENCIA}"></td>
             <td th:text="${#numbers.formatCurrency(producto.COSTO)}"></td>
-            <!-- <td th:text="${producto.COSTO}"></td> -->
             <td th:text="${producto.EXISTENCIAS}"></td>
             <td th:text="${producto.ID_TIPO_PRODUCTO.NOMBRE_TIPO}"></td>
             <td>
                 <button th:attr="onclick=|editarProducto('${producto.ID_PRODUCTO}', '${producto.NOMBRE_PRODUCTO}', '${producto.REFERENCIA}', '${producto.COSTO}', '${producto.EXISTENCIAS}')|">
                     Editar
                 </button>
-                <button th:attr="onclick=|eliminarProducto('${producto.ID_PRODUCTO}')|">Eliminar</button>
+               
             </td>
         </tr>
     </table>
 </div>
 
 <div id="edit-form" style="display:none;">
-    <form th:action="@{/productos/editar}" method="post">
+    <form th:action="@{/productos/editar}" method="post" onsubmit="limpiarFormatoAntesDeEnviar(this)">
         <h3>Editar Producto</h3><br>
         <input type="hidden" id="edit-id" name="ID_PRODUCTO">
         <label>Nombre: <input type="text" id="edit-nombre" name="NOMBRE_PRODUCTO"></label><br>
         <label>Referencia: <input type="text" id="edit-referencia" name="REFERENCIA"></label><br>
-        <label>Costo: <input type="number" step="0.01" id="edit-costo" name="COSTO"></label><br>
+        <label>Costo: <input type="text" id="edit-costo" name="COSTO" oninput="formatearPesos(this)"></label><br>
         <label>Existencias: <input type="number" id="edit-existencias" name="EXISTENCIAS"></label><br>
         <br>
         <br>
         <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
     </form>
 </div>
 

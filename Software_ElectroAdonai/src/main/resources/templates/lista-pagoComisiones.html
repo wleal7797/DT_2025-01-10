@@ -17,50 +17,25 @@
       document.getElementById("edit-form").style.display = "block";
     }
 
-    function eliminarPago(id) {
-      if (confirm("¿Seguro que deseas eliminar este registro?")) {
-        fetch('/pagoComisiones/eliminar/' + id, { method: 'DELETE' })
-                .then(response => response.text())
-                .then(data => {
-                  alert(data);
-                  location.reload();
-                })
-                .catch(error => console.error('Error:', error));
-      }
-    }
 
-    function actualizarFiltro() {
-      const atributo = document.getElementById("atributo").value;
-      const filtroContainer = document.getElementById("filtroContainer");
-      filtroContainer.innerHTML = "";
-
-      const input = document.createElement("input");
-      input.id = "filtro";
-      input.placeholder = "Buscar...";
-      input.onkeyup = filtrarTabla;
-
-      input.type = atributo === "fecha" ? "date" : "text";
-      input.style = "width: 80%; padding: 5px; margin-right: 60px;";
-      filtroContainer.appendChild(input);
-    }
 
     function filtrarTabla() {
       const filtro = document.getElementById("filtro").value.toUpperCase();
-      const atributo = document.getElementById("atributo").value;
       const filas = document.querySelectorAll("table tr");
 
-      filas.forEach((fila, i) => {
-        if (i === 0) return;
+      filas.forEach((fila, index) => {
+        if (index === 0) return; // Saltar encabezado
         const celdas = fila.getElementsByTagName("td");
-        let contenido = "";
+        let coincide = false;
 
-        switch (atributo) {
-          case "fecha": contenido = celdas[0].innerText; break;
-          case "estado": contenido = celdas[4].innerText; break;
-          case "vendedor": contenido = celdas[5].innerText; break;
+        for (let i = 0; i < celdas.length; i++) {
+          if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+            coincide = true;
+            break;
+          }
         }
 
-        fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
+        fila.style.display = coincide ? "" : "none";
       });
     }
 
@@ -74,23 +49,23 @@
 <body>
 <h2>Lista De Comisiones</h2>
 <br>
-<form action="/pagoComisiones/generar" method="post" style="display: inline;">
+<br>
+<form action="/pagoComisiones/generar" method="post">
   <button type="submit">Generar Comisiones</button>
 </form>
-
 <br>
 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-  <label for="atributo">Filtrar por:</label>
-  <select id="atributo" onchange="actualizarFiltro()">
-    <option value="vendedor">Vendedor</option>
-    <option value="fecha">Fecha</option>
-    <option value="estado">Estado</option>
-  </select>
-
-  <div id="filtroContainer">
-    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px; margin-right: 60px;">
+  <div style="display: flex; justify-content: space-between; margin-bottom: 10px">
+    <div style="margin-bottom: 10px">
+      <input
+              type="text"
+              id="filtro"
+              oninput="filtrarTabla()"
+              placeholder="Buscar..."
+              style="width: 80%; padding: 5px"
+      />
+    </div>
   </div>
-
   <button onclick="exportarExcel()" style="padding: 5px 10px;">Exportar a Excel</button>
 
 </div>
@@ -114,7 +89,7 @@
     <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
     <td>
       <button th:attr="onclick=|editarPago('${pagoComision.ID_COMISIONES}', '${pagoComision.FECHA}', '${pagoComision.COMISION}', '${pagoComision.SALDO}', '${pagoComision.ESTADO}')|">Editar</button>
-      <button th:attr="onclick=|eliminarPago('${pagoComision.ID_COMISIONES}')|">Eliminar</button>
+
     </td>
   </tr>
 </table>

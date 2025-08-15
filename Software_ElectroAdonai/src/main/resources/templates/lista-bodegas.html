@@ -5,11 +5,10 @@
     <title>Lista de Bodegas</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script>
-        function editarBodega(id, nombre, cantidad, estado) {
+        function editarBodega(id, nombre, cantidad) {
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-cantidad").value = cantidad;
-            document.getElementById("edit-estado").value = estado;
             document.getElementById("edit-form").style.display = "block";
         }
 
@@ -65,13 +64,11 @@
     <tr>
         <th>Nombre de la Bodega</th>
         <th>Cantidad de Productos</th>
-        <th>Estado</th>
         <th>Acciones</th>
     </tr>
     <tr th:each="bodega : ${bodegas}">
         <td th:text="${bodega.N_BODEGA}"></td>
         <td th:text="${bodega.CNT_PRODUCTOS}"></td>
-        <td th:text="${bodega.ESTADO}"></td>
         <td>
             <button th:attr="onclick=|editarBodega('${bodega.ID_BODEGA}', '${bodega.N_BODEGA}', '${bodega.CNT_PRODUCTOS}', '${bodega.ESTADO}')|">Editar</button>
             <button th:attr="onclick=|eliminarBodega('${bodega.ID_BODEGA}')|">Eliminar</button>
@@ -85,7 +82,6 @@
         <input type="hidden" id="edit-id" name="ID_BODEGA">
         <label>Nombre: <input type="text" id="edit-nombre" name="N_BODEGA"></label><br>
         <label>Cantidad de Productos: <input type="number" id="edit-cantidad" name="CNT_PRODUCTOS"></label><br>
-        <label>Estado: <input type="text" id="edit-estado" name="ESTADO"></label><br>
         <br>
         <br>
         <button type="submit">Guardar</button>

@@ -61,20 +61,6 @@ public class EmpleadoController {
     public String editarEmpleado(@ModelAttribute Empleado nuevoEmpleado) {
         Optional<Empleado> empleadoExistente = empleadoDAO.getEmpleadoById(nuevoEmpleado.getID_EMPLEADO());
 
-        if (empleadoExistente.isPresent()) {
-            Empleado empleado = empleadoExistente.get();
-            empleado.setN_DOCUMENTO(nuevoEmpleado.getN_DOCUMENTO());
-            empleado.setNOMBRE_EMPLEADO(nuevoEmpleado.getNOMBRE_EMPLEADO());
-            empleado.setTELEFONO_EMPLEADO(nuevoEmpleado.getTELEFONO_EMPLEADO());
-
-            try {
-                empleadoDAO.saveOrUpdate(empleado);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            } finally {
-                return "redirect:/empleados/listar?error=duplicado";
-            }
-        }
         return "redirect:/empleados/listar";
     }
 
