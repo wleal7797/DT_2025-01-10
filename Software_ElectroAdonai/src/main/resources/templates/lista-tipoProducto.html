@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tipos de Producto</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        function editarTipo(id, nombre) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-nombre").value = nombre;
+            document.getElementById("edit-form").style.display = "block";
+        }
+
+        function eliminarTipo(id) {
+            if (confirm("¿Seguro que deseas eliminar este tipo de producto?")) {
+                fetch('/tipos/eliminar/' + id, { method: 'DELETE' })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "block";
+        }
+
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+<h2>Lista de Tipos de Producto</h2>
+
+<button onclick="mostrarFormularioCreacion()">Nuevo Tipo</button>
+
+<div id="create-form" style="display: none;">
+    <h3>Registrar Nuevo Tipo de Producto</h3>
+    <form action="/tipos/crear" method="post">
+        <label>Nombre del Tipo:</label>
+        <input type="text" name="NOMBRE_TIPO" required>
+        <br><br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+    </form>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
+        <tr>
+            <th>Nombre del Tipo</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="tipo : ${tipos}">
+            <td th:text="${tipo.NOMBRE_TIPO}"></td>
+            <td>
+                <button th:attr="onclick=|editarTipo('${tipo.ID_TIPO_PRODUCTO}', '${tipo.NOMBRE_TIPO}')|">Editar</button>
+                <button th:attr="onclick=|eliminarTipo('${tipo.ID_TIPO_PRODUCTO}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="edit-form" style="display:none;">
+    <form th:action="@{/tipos/editar}" method="post">
+        <h3>Editar Tipo de Producto</h3><br>
+        <input type="hidden" id="edit-id" name="ID_TIPO_PRODUCTO">
+        <label>Nombre: <input type="text" id="edit-nombre" name="NOMBRE_TIPO"></label><br><br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+    </form>
+</div>
+
+<br>
+<a href="/main/main">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
+</body>
+</html>

@@ -51,6 +51,20 @@
         function ocultarFormularioCreacion() {
             document.getElementById("create-form").style.display = "none";
         }
+
+            function formatearPesos(input) {
+                let valor = input.value.replace(/\D/g, ""); // quitar todo lo que no sea dígito
+                if (valor) {
+                    input.value = new Intl.NumberFormat("es-CO").format(valor);
+                } else {
+                    input.value = "";
+                }
+            }
+
+            function limpiarFormatoAntesDeEnviar(form) {
+                const costoInput = form.querySelector("[name='COSTO']");
+                costoInput.value = costoInput.value.replace(/\./g, "").replace(/\s/g, "");
+            }
     </script>
 </head>
 <body>
@@ -60,14 +74,14 @@
 <br/><br/>
 <div id="create-form" style="display: none">
     <h3>Registrar Nuevo Adelanto</h3>
-    <form action="/adelantos/crear" method="post">
+    <form action="/adelantos/crear" method="post" onsubmit="limpiarFormatoAntesDeEnviar(this)">
         <label>Monto del Adelanto:</label>
         <input
                 type="text"
                 name="CNT_ADELANTO"
                 pattern="^[1-9]\d*$"
                 title="Ingrese un monto válido"
-                required
+                required oninput="formatearPesos(this)"
         />
         <br/>
 
@@ -102,15 +116,10 @@
     <br/>
 </div>
 
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px">
-    <div style="margin-bottom: 10px">
-        <input
-                type="text"
-                id="filtro"
-                oninput="filtrarTabla()"
-                placeholder="Buscar..."
-                style="width: 80%; padding: 5px"
-        />
+<div class="grid-2">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
     </div>
 </div>
 

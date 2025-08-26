@@ -5,34 +5,47 @@
     <title>Lista de Artículos por Bodega</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script>
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const filtroContainer = document.getElementById("filtroContainer");
+            filtroContainer.innerHTML = "";
+
+            if (atributo === "fecha") {
+                const inputFecha = document.createElement("input");
+                inputFecha.type = "date";
+                inputFecha.id = "filtro";
+                inputFecha.onchange = filtrarTabla;
+                filtroContainer.appendChild(inputFecha);
+            } else {
+                const inputTexto = document.createElement("input");
+                inputTexto.type = "text";
+                inputTexto.id = "filtro";
+                inputTexto.onkeyup = filtrarTabla;
+                inputTexto.placeholder = "Buscar...";
+                inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+                filtroContainer.appendChild(inputTexto);
+            }
+        }
+
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
-            const atributo = document.getElementById("atributo").value;
             const filas = document.querySelectorAll("table tr");
 
             filas.forEach((fila, index) => {
                 if (index === 0) return;
-                const celdas = fila.getElementsByTagName("td");
-                let contenido = "";
 
-                switch (atributo) {
-                    case "nombre":
-                        contenido = celdas[0].textContent || celdas[0].innerText;
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    const texto = celdas[i].textContent.toUpperCase();
+                    if (texto.includes(filtro)) {
+                        coincide = true;
                         break;
-                    case "referencia":
-                        contenido = celdas[1].textContent || celdas[1].innerText;
-                        break;
-                    case "bodega":
-                        contenido = celdas[2].textContent || celdas[2].innerText;
-                        break;
-                    case "cantidad":
-                        contenido = celdas[3].textContent || celdas[3].innerText;
-                        break;
-                    case "existencias":
-                        contenido = celdas[4].textContent || celdas[4].innerText;
-                        break;
+                    }
                 }
-                fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
+
+                fila.style.display = coincide ? "" : "none";
             });
         }
     </script>
@@ -47,7 +60,10 @@
         <option value="cantidad">Cantidad en Bodega</option>
         <option value="existencias">Existencias Totales</option>
     </select>
-    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+    </div>
 </div>
 <div id="tabla-container" class="tabla-scroll">
 <table border="1">

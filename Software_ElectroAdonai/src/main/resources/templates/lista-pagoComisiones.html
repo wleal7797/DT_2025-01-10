@@ -24,7 +24,7 @@
       const filas = document.querySelectorAll("table tr");
 
       filas.forEach((fila, index) => {
-        if (index === 0) return; // Saltar encabezado
+        if (index === 0) return;
         const celdas = fila.getElementsByTagName("td");
         let coincide = false;
 
@@ -50,21 +50,19 @@
 <h2>Lista De Comisiones</h2>
 <br>
 <br>
-<form action="/pagoComisiones/generar" method="post">
-  <button type="submit">Generar Comisiones</button>
-</form>
+
 <br>
 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
   <div style="display: flex; justify-content: space-between; margin-bottom: 10px">
-    <div style="margin-bottom: 10px">
-      <input
-              type="text"
-              id="filtro"
-              oninput="filtrarTabla()"
-              placeholder="Buscar..."
-              style="width: 80%; padding: 5px"
-      />
+    <div class="grid-2">
+      <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+      </div>
     </div>
+    <form action="/pagoComisiones/generar" method="post">
+      <button type="submit">Generar Comisiones</button>
+    </form>
   </div>
   <button onclick="exportarExcel()" style="padding: 5px 10px;">Exportar a Excel</button>
 

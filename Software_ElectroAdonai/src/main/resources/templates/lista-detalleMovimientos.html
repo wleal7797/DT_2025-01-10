@@ -86,33 +86,21 @@
 
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
-            const atributo = document.getElementById("atributo").value;
-            const filas = document.querySelectorAll("#tabla-detalles tr");
+            const filas = document.querySelectorAll("table tr");
 
             filas.forEach((fila, index) => {
-                if (index === 0) return;
+                if (index === 0) return; // Saltar encabezado
                 const celdas = fila.getElementsByTagName("td");
-                let texto = "";
+                let coincide = false;
 
-                switch (atributo) {
-                    case "fecha":
-                        texto = celdas[0].textContent;
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
                         break;
-                    case "producto":
-                        texto = celdas[1].textContent;
-                        break;
-                    case "cantidad":
-                        texto = celdas[2].textContent;
-                        break;
-                    case "origen":
-                        texto = celdas[3].textContent;
-                        break;
-                    case "destino":
-                        texto = celdas[4].textContent;
-                        break;
+                    }
                 }
 
-                fila.style.display = texto.toUpperCase().includes(filtro) ? "" : "none";
+                fila.style.display = coincide ? "" : "none";
             });
         }
 
@@ -171,15 +159,10 @@
 </div>
 
 <div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 20px;">
-    <select id="atributo" onchange="actualizarFiltro()">
-        <option value="fecha">Fecha</option>
-        <option value="producto">Producto</option>
-        <option value="cantidad">Cantidad</option>
-        <option value="origen">Bodega Origen</option>
-        <option value="destino">Bodega Destino</option>
-    </select>
+
     <div id="filtroContainer">
-        <input type="text" id="filtro" oninput="filtrarTabla()" placeholder="Buscar..." style="width: 80%; padding: 5px;">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
     </div>
 </div>
 

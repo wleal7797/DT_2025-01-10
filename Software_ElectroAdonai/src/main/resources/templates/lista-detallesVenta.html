@@ -70,18 +70,17 @@
 
         function ordenarPorFechaDesc() {
             const tabla = document.querySelector("table");
-            const filas = Array.from(tabla.querySelectorAll("tr:nth-child(n+2)")); // Ignorar encabezado
+            const filas = Array.from(tabla.querySelectorAll("tr:nth-child(n+2)"));
 
             filas.sort((a, b) => {
                 const fechaA = new Date(a.cells[0].innerText.trim());
                 const fechaB = new Date(b.cells[0].innerText.trim());
-                return fechaB - fechaA; // Descendente
+                return fechaB - fechaA;
             });
 
-            filas.forEach(fila => tabla.appendChild(fila)); // Reagregar en nuevo orden
+            filas.forEach(fila => tabla.appendChild(fila));
         }
 
-        // Llamar al cargar
         window.addEventListener("DOMContentLoaded", ordenarPorFechaDesc);
     </script>
 </head>

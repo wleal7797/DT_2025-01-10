@@ -5,24 +5,48 @@
     <title>Lista de Artículos por Bodega</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script>
+
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const filtroContainer = document.getElementById("filtroContainer");
+            filtroContainer.innerHTML = "";
+
+            if (atributo === "fecha") {
+                const inputFecha = document.createElement("input");
+                inputFecha.type = "date";
+                inputFecha.id = "filtro";
+                inputFecha.onchange = filtrarTabla;
+                filtroContainer.appendChild(inputFecha);
+            } else {
+                const inputTexto = document.createElement("input");
+                inputTexto.type = "text";
+                inputTexto.id = "filtro";
+                inputTexto.onkeyup = filtrarTabla;
+                inputTexto.placeholder = "Buscar...";
+                inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+                filtroContainer.appendChild(inputTexto);
+            }
+        }
+
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
-            const atributo = document.getElementById("atributo").value;
             const filas = document.querySelectorAll("table tr");
 
             filas.forEach((fila, index) => {
                 if (index === 0) return;
-                const celdas = fila.getElementsByTagName("td");
-                let contenido = "";
 
-                switch (atributo) {
-                    case "nombre": contenido = celdas[0].textContent; break;
-                    case "referencia": contenido = celdas[1].textContent; break;
-                    case "bodega": contenido = celdas[2].textContent; break;
-                    case "cantidad": contenido = celdas[3].textContent; break;
-                    case "existencias": contenido = celdas[4].textContent; break;
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    const texto = celdas[i].textContent.toUpperCase();
+                    if (texto.includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
                 }
-                fila.style.display = contenido.toUpperCase().includes(filtro) ? "" : "none";
+
+                fila.style.display = coincide ? "" : "none";
             });
         }
 
@@ -86,15 +110,11 @@
 </form>
 </div>
 <br><br>
-<div style="margin-bottom: 10px;">
-    <select id="atributo">
-        <option value="nombre">Nombre Producto</option>
-        <option value="referencia">Referencia Producto</option>
-        <option value="bodega">Bodega</option>
-        <option value="cantidad">Cantidad</option>
-        <option value="existencias">Existencias</option>
-    </select>
-    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..." style="width: 50%;">
+<div class="grid-2">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+    </div>
 </div>
 <div id="tabla-container" class="tabla-scroll">
 <table border="1">

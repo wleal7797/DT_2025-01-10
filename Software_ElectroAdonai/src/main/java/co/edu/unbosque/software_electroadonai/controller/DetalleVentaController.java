@@ -161,7 +161,7 @@ public class DetalleVentaController {
     @PostMapping("/crearVendedor")
     public String crearDetalleVentaVendedor(@ModelAttribute VentaForm ventaForm, Model model) {
         Venta venta = new Venta();
-        venta.setFECHA_VENTA(LocalDate.parse(ventaForm.getFechaVenta()));
+        venta.setFECHA_VENTA(LocalDate.now());
         venta.setPRECIO_VENTA_TOTAL(ventaForm.getPrecioVentaTotal());
         venta.setREMISION(ventaForm.getRemision());
         venta.setEmpleado(empleadoDAO.getEmpleadoById(ventaForm.getIdEmpleado()).orElse(null));
@@ -190,6 +190,7 @@ public class DetalleVentaController {
                     svp.setVenta(venta);
                     svp.setProducto(detalle.getProducto());
                     serialVentaProductoDAO.saveOrUpdate(svp);
+
                 }
             }
         }
