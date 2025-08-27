@@ -1,11 +1,7 @@
 package co.edu.unbosque.software_electroadonai.controller;
 
 import co.edu.unbosque.software_electroadonai.model.*;
-import co.edu.unbosque.software_electroadonai.services.DetalleMovimientoDAO;
-import co.edu.unbosque.software_electroadonai.services.EmpleadoDAO;
-import co.edu.unbosque.software_electroadonai.services.ProductoDAO;
-import co.edu.unbosque.software_electroadonai.services.BodegaDAO;
-import co.edu.unbosque.software_electroadonai.services.MovimientoBodegaDAO;
+import co.edu.unbosque.software_electroadonai.services.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +32,9 @@ public class DetalleMovimientoController {
     @Autowired
     private EmpleadoDAO empleadoDAO;
 
+    @Autowired
+    private DetalleBodegaDAO detalleBodegaDAO;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -56,8 +55,20 @@ public class DetalleMovimientoController {
         return "detalleMovimiento-form";
     }
 
+
+    @GetMapping("/listarBodegaDetalle")
+    public void tablaDetalleBodega(Model model) {
+
+/*
+        System.out.println(bodegas.get(1));
+        System.out.println(productos.get(1));
+        System.out.println(detalleBodega.get(1));
+        */
+    }
+
     @PostMapping("/crear")
     public String crearDetalleMovimiento(
+
             @ModelAttribute DetalleMovimiento detalle,
             @RequestParam("FECHA_MOVIMIENTO") String fechaStr,
             @RequestParam("idTipoMovimiento") int idTipoMovimiento,
@@ -92,7 +103,6 @@ public class DetalleMovimientoController {
     }
 
 
-
     @GetMapping("/listar")
     public String listarDetallesMovimiento(Model model) {
         List<TipoMovimiento> tiposMovimiento = entityManager.createQuery("SELECT t FROM TipoMovimiento t", TipoMovimiento.class)
@@ -103,6 +113,15 @@ public class DetalleMovimientoController {
         model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
         model.addAttribute("tiposMovimiento", tiposMovimiento);
         model.addAttribute("detalles", detalleMovimientoDAO.getAllDetallesMovimiento());
+
+        List<DetalleBodega> detalleBodega = detalleBodegaDAO.getAllDetallesBodega();
+        List<Bodega> bodegas = bodegaDAO.getAllBodegas();
+        List<Producto> productos = productoDAO.getAllProductos();
+
+        model.addAttribute("bodegas", bodegas);
+        model.addAttribute("productos", productos);
+        model.addAttribute("detallesBodega", detalleBodega);
+
         return "lista-detalleMovimientos";
     }
 

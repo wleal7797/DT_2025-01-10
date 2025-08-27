@@ -34,6 +34,8 @@ public class DetalleVentaController {
     @Autowired
     private SerialVentaProductoDAO serialVentaProductoDAO;
 
+    @Autowired
+    private DetalleBodegaDAO detalleBodegaDAO;
     @GetMapping("/")
     public String inicio() {
         return "main";
@@ -48,12 +50,21 @@ public class DetalleVentaController {
             return "detalleVenta-form";
         }
     */
+/*
+    List<Bodega> bodegas = bodegaDAO.getAllBodegas();
+    List<Producto> productos = productoDAO.getAllProductos();
 
+        model.addAttribute("bodegas", bodegas);
+        model.addAttribute("productos", productos);
+   */
     @GetMapping("/registro")
     public String mostrarFormulario(Model model) {
+        List<DetalleBodega> detalleBodega = detalleBodegaDAO.getAllDetallesBodega();
         model.addAttribute("empleados", empleadoDAO.getAllEmpleados());
         model.addAttribute("productos", productoDAO.getAllProductos());
         model.addAttribute("bodegas", bodegaDAO.getAllBodegas());
+        model.addAttribute("detallesBodega", detalleBodega);
+
 
         List<Venta> ventas = ventaDAO.getAllVentas();
         String ultimaRemision = "N/A";

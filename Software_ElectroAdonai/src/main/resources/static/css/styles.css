@@ -82,6 +82,22 @@ body {
     align-items: center;
 }
 
+.grid-special {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 60px;
+}
+
+@media (max-width: 768px) {
+    .layout-container {
+        grid-template-columns: 1fr;
+    }
+}
 .grid-2 {
     display: flex;
     justify-content: center; /* Centra el conjunto */
@@ -371,6 +387,16 @@ h5 {
 
 /* Tablas increíbles */
 #tabla-container {
+    max-height: 400px;
+    max-width: 100%;
+    overflow-y: auto;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    margin: 1rem 4rem;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+}
+#tabla-special {
     max-height: 400px;
     max-width: 100%;
     overflow-y: auto;

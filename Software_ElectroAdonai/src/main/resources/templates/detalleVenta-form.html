@@ -120,74 +120,95 @@
 <!-- Formulario emergente para agregar producto -->
 <div id="create-detalle">
     <div class="modal">
-        <div class="modal-content">
-            <form>
-                <h3>Agregar Producto</h3>
-                <div class="form-grid">
-                    <div>
-                        <label>Producto</label>
-                        <select name="idProducto" class="select-producto" required onchange="mostrarCosto(this)">
-                            <option value="">-- Selecciona un producto --</option>
-                            <option
-                                    th:each="prod : ${productos}"
-                                    th:value="${prod.ID_PRODUCTO}"
-                                    th:data-costo="${prod.COSTO}"
-                                    th:text="${prod.NOMBRE_PRODUCTO}">
-                            </option>
-                        </select>
+        <div class="grid-special">
+            <div class="modal-content">
+                <form>
+                    <h3>Agregar Producto</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label>Producto</label>
+                            <select name="idProducto" class="select-producto" required onchange="mostrarCosto(this)">
+                                <option value="">-- Selecciona un producto --</option>
+                                <option
+                                        th:each="prod : ${productos}"
+                                        th:value="${prod.ID_PRODUCTO}"
+                                        th:data-costo="${prod.COSTO}"
+                                        th:text="${prod.NOMBRE_PRODUCTO}">
+                                </option>
+                            </select>
 
-                        <p id="costoProducto" style="margin-top: 5px; font-weight: bold; color: #333;"></p>
-                    </div>
+                            <p id="costoProducto" style="margin-top: 5px; font-weight: bold; color: #333;"></p>
+                        </div>
 
-                    <div>
-                        <label>Cantidad</label>
-                        <input
-                                type="number"
-                                name="cntProductoVenta"
-                                min="1"
-                                required
-                                oninput="actualizarTotal()"
-                        />
-                    </div>
+                        <div>
+                            <label>Cantidad</label>
+                            <input
+                                    type="number"
+                                    name="cntProductoVenta"
+                                    min="1"
+                                    required
+                                    oninput="actualizarTotal()"
+                            />
+                        </div>
 
-                    <div>
-                        <label>Precio Unitario</label>
-                        <input
-                                type="number"
-                                name="precioVentaProducto"
-                                step="1000"
-                                min="0"
-                                required
-                                oninput="actualizarTotal()"
-                        />
-                    </div>
+                        <div>
+                            <label>Precio Unitario</label>
+                            <input
+                                    type="number"
+                                    name="precioVentaProducto"
+                                    step="1000"
+                                    min="0"
+                                    required
+                                    oninput="actualizarTotal()"
+                            />
+                        </div>
 
-                    <div>
-                        <label>Bodega</label>
-                        <select id="idBodega" name="idBodega" required>
-                            <option value="">-- Selecciona una bodega --</option>
-                            <option
-                                    th:each="bod : ${bodegas}"
-                                    th:value="${bod.ID_BODEGA}"
-                                    th:text="${bod.N_BODEGA}">
-                            </option>
-                        </select>
-                    </div>
+                        <div>
+                            <label>Bodega</label>
+                            <select id="idBodega" name="idBodega" required>
+                                <option value="">-- Selecciona una bodega --</option>
+                                <option
+                                        th:each="bod : ${bodegas}"
+                                        th:value="${bod.ID_BODEGA}"
+                                        th:text="${bod.N_BODEGA}">
+                                </option>
+                            </select>
+                        </div>
 
-                    <div style="grid-column: span 2">
-                        <label>Seriales del Producto (uno por línea)</label>
-                        <textarea
-                                name="serialesTexto"
-                                rows="3"
-                                placeholder="Ej: ABC123&#10;DEF456"></textarea>
-                    </div>
+                        <div style="grid-column: span 2">
+                            <label>Seriales del Producto (uno por línea)</label>
+                            <textarea
+                                    name="serialesTexto"
+                                    rows="3"
+                                    placeholder="Ej: ABC123&#10;DEF456"></textarea>
+                        </div>
 
-                    <div class="modal-actions">
-                        <button type="submit">Guardar Producto</button>
-                        <button type="reset" onclick="cerrarModal()">Cancelar</button>
+                        <div class="modal-actions">
+                            <button type="submit">Guardar Producto</button>
+                            <button type="reset" onclick="cerrarModal()">Cancelar</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
+            <div id="tabla-special" class="tabla-scroll">
+                <table border="1">
+                    <tr>
+                        <th>Nombre Producto</th>
+                        <th>Referencia</th>
+                        <th>Bodega</th>
+                        <th>Cantidad</th>
+                        <th>Existencias Totales del Producto</th>
+                    </tr>
+                    <tr th:each="detalles : ${detallesBodega}">
+                        <td th:text="${detalles.producto != null} ? ${detalles.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+                        <td th:text="${detalles.producto != null} ? ${detalles.producto.REFERENCIA} : 'N/A'"></td>
+                        <td th:text="${detalles.bodega != null} ? ${detalles.bodega.N_BODEGA} : 'N/A'"></td>
+                        <td th:text="${detalles.CNT_PRODUCTO_BODEGA}"></td>
+                        <td th:text="${detalles.producto != null} ? ${detalles.producto.EXISTENCIAS} : 'N/A'"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>
