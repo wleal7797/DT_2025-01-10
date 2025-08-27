@@ -50,10 +50,13 @@
         }
     </script>
 </head>
+
 <body>
 <h2>Lista de Artículos por Bodega</h2>
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-    <select id="atributo" style="margin-right: 10px;">
+<br>
+
+<div class="grid-2">
+    <select id="atributo">
         <option value="nombre">Nombre Producto</option>
         <option value="referencia">Referencia Producto</option>
         <option value="bodega">Bodega</option>
@@ -62,7 +65,7 @@
     </select>
     <div id="filtroContainer">
         <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
-               style="width: 80%; padding: 5px; margin-right: 60px;">
+               style="width: 250px;">
     </div>
 </div>
 <div id="tabla-container" class="tabla-scroll">
@@ -86,7 +89,7 @@
 <br>
 <div style="text-align: left;">
     <a href="/mainVendedor/mainVendedor">
-        <button style="padding: 5px 10px;">Volver al Inicio</button>
+        <button>Volver al Inicio</button>
     </a>
 </div>
 </body>

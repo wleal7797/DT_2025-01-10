@@ -9,7 +9,7 @@
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-cantidad").value = cantidad;
             document.getElementById("edit-precio").value = precio;
-            document.getElementById("edit-form").style.display = "block";
+            document.getElementById("edit-form").classList.add('show');
         }
 
         function eliminarDetalleVenta(id) {
@@ -87,18 +87,21 @@
 <body>
 <h2>Lista de Ventas</h2>
 
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-    <div id="filtroContainer">
-        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
-               style="width: 80%; padding: 5px; margin-right: 60px;">
-    </div>
-    <a href="/serialVentaProducto/listar" style="margin-left: 30px;">
+<div class="grid-3">
+    <a href="/serialVentaProducto/listar">
         <button>Números de serie por producto</button>
     </a>
-    <a href="/detallesVenta/registro" style="margin-left: 30px;">
+
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 250px; margin-top: 40px;">
+    </div>
+
+    <a href="/detallesVenta/registro">
         <button>Registrar más ventas</button>
     </a>
 </div>
+
 <div id="tabla-container" class="tabla-scroll">
     <table border="1">
         <tr>
@@ -118,34 +121,42 @@
             <td th:text="${#numbers.formatCurrency(detalleVenta.PRECIO_VENTA_PRODUCTO)}"></td>
             <!-- <td th:text="${}"></td> -->
             <td th:text="${detalleVenta.venta != null} ? ${detalleVenta.venta.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-            <td>
+            
+            <td class="acciones">
                 <button th:attr="onclick=|editarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}', '${detalleVenta.CNT_PRODUCTO_VENTA}', '${detalleVenta.PRECIO_VENTA_PRODUCTO}')|">
-                    Editar
+                    ✏️
                 </button>
-                <button th:attr="onclick=|eliminarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}')|">Eliminar</button>
+                <button th:attr="onclick=|eliminarDetalleVenta('${detalleVenta.ID_DETALLE_VENTA}')|">❌</button>
             </td>
         </tr>
     </table>
 </div>
 
-<div id="edit-form" style="display:none;">
-    <form th:action="@{/detallesVenta/editar}" method="post">
-        <h3>Editar Detalle de Venta</h3><br>
-        <input type="hidden" id="edit-id" name="ID_DETALLE_VENTA">
-        <label>Cantidad: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_VENTA" required></label><br><br>
-        <label>Precio Venta: <input type="number" id="edit-precio" name="PRECIO_VENTA_PRODUCTO"
-                                    required></label><br><br>
-        <br>
-        <br>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-    </form>
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+
+        <form th:action="@{/detallesVenta/editar}" method="post">
+            <h3>Editar Detalle de Venta</h3><br>
+            <input type="hidden" id="edit-id" name="ID_DETALLE_VENTA">
+            <label>Cantidad: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_VENTA" required></label><br><br>
+            <label>Precio Venta: <input type="number" id="edit-precio" name="PRECIO_VENTA_PRODUCTO"
+                                        required></label><br><br>
+            <br>
+            <br>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="document.getElementById('edit-form').classList.remove('show')">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
 </div>
 
 <br>
 <div style="text-align: left;">
     <a href="/main/main">
-        <button style="padding: 5px 10px;">Volver al Inicio</button>
+        <button>Volver al Inicio</button>
     </a>
 </div>
 </body>

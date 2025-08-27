@@ -25,11 +25,11 @@
         }
 
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "block";
+            document.getElementById("create-form").classList.add('show');
         }
 
         function ocultarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "none";
+            document.getElementById("create-form").classList.remove('show');
         }
     </script>
 </head>
@@ -37,83 +37,93 @@
 
 <h2>Lista de Usuarios</h2>
 
-
 <button onclick="mostrarFormularioCreacion()">Nuevo Usuario</button>
 
+<div id="create-form" class="modal">
+    <div class="modal-content">
+        <h3>Registrar Nuevo Usuario</h3>
 
-<div id="create-form" style="display: none;">
-    <h3>Registrar Nuevo Usuario</h3>
+        <form th:action="@{/users/crear}" method="post">
 
-    <form th:action="@{/users/crear}" method="post">
+            <label>Usuario:</label>
+            <input type="text" name="username" required>
 
-        <label>Usuario:</label>
-        <input type="text" name="username" required><br><br>
+            <br>
 
-        <label>Contraseña:</label>
-        <input type="password" name="password" required><br><br>
+            <label>Contraseña:</label>
+            <input type="password" name="password" required>
+            
+            <br>
 
-        <label>Empleado:</label>
-        <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
-        <datalist id="empleadoList">
-            <option th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}">
-            </option>
-        </datalist>
+            <label>Empleado:</label>
+            <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
+            <datalist id="empleadoList">
+                <option th:each="emp : ${empleados}"
+                        th:value="${emp.ID_EMPLEADO}"
+                        th:text="${emp.NOMBRE_EMPLEADO}">
+                </option>
+            </datalist>
 
-        <br><br>
-        <label>Rol:</label>
-        <select name="authority" required>
-            <option value="ROLE_VENDEDOR">Empleado</option>
-            <option value="ROLE_ADMIN">Administrador</option>
-        </select>
+            <br>
+            
+            <label>Rol:</label>
+            <select name="authority" required>
+                <option value="ROLE_VENDEDOR">Empleado</option>
+                <option value="ROLE_ADMIN">Administrador</option>
+            </select>
 
-        <br><br>
+            <br>
 
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
-    </form>
+            <div class="grid-2">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+            </div>
+ 
+        </form>
+    </div>
 </div>
+
 <div id="tabla-container" class="tabla-scroll">
-<table border="1">
-    <tr>
-        <th>Usuario</th>
-        <th>Nombre Empleado</th>
-        <th>Acciones</th>
-    </tr>
-    <tr th:each="usuario : ${usuarios}">
-        <td th:text="${usuario.Username}"></td>
-        <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
-        <td>
-            <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}')|">
-                Editar
-            </button>
-            <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
-        </td>
-    </tr>
-</table>
+    <table border="1">
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre Empleado</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.Username}"></td>
+            <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td>
+                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}')|">
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
 </div>
 
-<div id="edit-form" style="display:none;">
-    <form th:action="@{/users/editar}" method="post">
-        <h3>Editar Usuario</h3><br>
-        <input type="hidden" id="edit-id" name="ID_USUARIO">
-        <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br><br>
-        <label>Contraseña: <input type="text" id="edit-contrasena" name="Password"></label><br><br>
-        <label>Rol:</label>
-        <select name="authority" required>
-            <option value="ROLE_VENDEDOR">Empleado</option>
-            <option value="ROLE_ADMIN">Administrador</option>
-        </select>
-        <br><br>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-    </form>
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+        <form th:action="@{/users/editar}" method="post">
+            <h3>Editar Usuario</h3><br>
+            <input type="hidden" id="edit-id" name="ID_USUARIO">
+            <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br><br>
+            <label>Contraseña: <input type="text" id="edit-contrasena" name="Password"></label><br><br>
+            <label>Rol:</label>
+            <select name="authority" required>
+                <option value="ROLE_VENDEDOR">Empleado</option>
+                <option value="ROLE_ADMIN">Administrador</option>
+            </select>
+            <br><br>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+        </form>
+    </div>
 </div>
 
-<br>
 <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button>Volver al Inicio</button>
 </a>
 
 </body>

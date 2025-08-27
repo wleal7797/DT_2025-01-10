@@ -59,7 +59,7 @@
             // cantidad puede venir como número; ponemos display y hidden
             setDisplayDesdeRaw(cantidad, "edit-cantidad-display", "edit-cnt-hidden");
             document.getElementById("edit-estado").value = estado || "";
-            document.getElementById("edit-form").style.display = "block";
+            document.getElementById("edit-form").classList.add('show');
         }
 
         function eliminarAdelanto(id) {
@@ -75,7 +75,7 @@
         }
 
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "block";
+            document.getElementById("create-form").classList.add('show');
         }
 
         function ocultarYResetCrear() {
@@ -84,7 +84,7 @@
             // limpiar display y hidden manualmente
             document.getElementById("create-cantidad-display").value = "";
             document.getElementById("create-cnt-hidden").value = "";
-            document.getElementById("create-form").style.display = "none";
+            document.getElementById("create-form").classList.remove('show');
         }
 
         function cancelarEdicion() {
@@ -92,7 +92,7 @@
             form.reset();
             document.getElementById("edit-cantidad-display").value = "";
             document.getElementById("edit-cnt-hidden").value = "";
-            document.getElementById("edit-form").style.display = "none";
+            document.getElementById("edit-form").classList.remove('show');
         }
     </script>
 </head>
@@ -100,55 +100,63 @@
 <h2>Lista de Adelantos</h2>
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Adelanto</button>
-<br/><br/>
-<div id="create-form" style="display: none">
-    <h3>Registrar Nuevo Adelanto</h3>
-    <!-- nota: onsubmit llama a prepararAntesDeEnviar para validar el hidden -->
-    <form id="form-crear" action="/adelantos/crear" method="post" onsubmit="return prepararAntesDeEnviar(this)">
-        <label>Monto del Adelanto:</label>
-        <!-- input visible: sin 'name' para que no participe en validación nativa -->
-        <input
-                type="text"
-                id="create-cantidad-display"
-                placeholder="0"
-                required
-                oninput="actualizarDisplayYHidden('create-cantidad-display','create-cnt-hidden')"
-        />
-        <!-- input hidden que será el que realmente se envía -->
-        <input type="hidden" id="create-cnt-hidden" name="CNT_ADELANTO" value=""/>
 
+<br/>
+
+<div id="create-form" class="modal">
+
+    <div class="modal-content">
+        <h3>Registrar Nuevo Adelanto</h3>
+        <!-- nota: onsubmit llama a prepararAntesDeEnviar para validar el hidden -->
+        <form id="form-crear" action="/adelantos/crear" method="post" onsubmit="return prepararAntesDeEnviar(this)">
+            <label>Monto del Adelanto:</label>
+            <!-- input visible: sin 'name' para que no participe en validación nativa -->
+            <input
+                    type="text"
+                    id="create-cantidad-display"
+                    placeholder="0"
+                    required
+                    oninput="actualizarDisplayYHidden('create-cantidad-display','create-cnt-hidden')"
+            />
+            <!-- input hidden que será el que realmente se envía -->
+            <input type="hidden" id="create-cnt-hidden" name="CNT_ADELANTO" value=""/>
+
+            <br/>
+
+            <label>Fecha del Adelanto:</label>
+            <input type="date" name="FECHA_ADELANTO" required/>
+            <br/>
+
+            <label>Estado:</label>
+            <input
+                    type="text"
+                    name="ESTADO_ADELANTO"
+                    pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
+                    title="Digite un estado válido"
+                    required
+            />
+            <br/>
+
+            <label>Empleado:</label>
+            <input list="empleadoList" name="empleado.ID_EMPLEADO" required/>
+            <datalist id="empleadoList">
+                <option
+                        th:each="emp : ${empleados}"
+                        th:value="${emp.ID_EMPLEADO}"
+                        th:text="${emp.NOMBRE_EMPLEADO}"
+                ></option>
+            </datalist>
+            <br/>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <!-- usar botón normal que llama a la función para ocultar y resetear -->
+                <button type="button" onclick="ocultarYResetCrear()">Cancelar</button>
+            </div>
+        </form>
         <br/>
 
-        <label>Fecha del Adelanto:</label>
-        <input type="date" name="FECHA_ADELANTO" required/>
-        <br/>
-
-        <label>Estado:</label>
-        <input
-                type="text"
-                name="ESTADO_ADELANTO"
-                pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
-                title="Digite un estado válido"
-                required
-        />
-        <br/>
-
-        <label>Empleado:</label>
-        <input list="empleadoList" name="empleado.ID_EMPLEADO" required/>
-        <datalist id="empleadoList">
-            <option
-                    th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}"
-            ></option>
-        </datalist>
-        <br/>
-
-        <button type="submit">Guardar</button>
-        <!-- usar botón normal que llama a la función para ocultar y resetear -->
-        <button type="button" onclick="ocultarYResetCrear()">Cancelar</button>
-    </form>
-    <br/>
+    </div>
 </div>
 
 <div class="grid-2">
@@ -186,8 +194,10 @@
 </div>
 
 <!-- FORMULARIO EDICIÓN -->
-<div id="edit-form" style="display: none">
-    <form id="form-editar" th:action="@{/adelantos/editar}" method="post" onsubmit="return prepararAntesDeEnviar(this)">
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+
+        <form id="form-editar" th:action="@{/adelantos/editar}" method="post" onsubmit="return prepararAntesDeEnviar(this)">
         <h3>Editar Adelanto</h3>
 
         <input type="hidden" id="edit-id" name="ID_ADELANTO"/>
@@ -216,14 +226,18 @@
         />
         <br/>
 
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+        <div class="modal-actions">
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+        </div>
     </form>
+
+    </div>
 </div>
 
 <br/>
 <a href="/main/main">
-    <button style="padding: 5px 10px">Volver al Inicio</button>
+    <button>Volver al Inicio</button>
 </a>
 </body>
 </html>

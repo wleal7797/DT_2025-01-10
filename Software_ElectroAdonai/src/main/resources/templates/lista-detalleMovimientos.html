@@ -16,6 +16,7 @@
             margin-left: 8px;
         }
     </style>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const anulados = JSON.parse(localStorage.getItem("anulados") || "[]");
@@ -105,11 +106,11 @@
         }
 
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "block";
+            document.getElementById("create-form").classList.add('show');
         }
 
         function ocultarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "none";
+            document.getElementById("create-form").classList.remove('show');
         }
     </script>
 </head>
@@ -119,50 +120,58 @@
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Movimiento</button>
 
-<div id="create-form" style="display: none;">
-    <h3>Registrar Nuevo Movimiento y Detalle</h3>
-    <form action="/detalleMovimiento/crear" method="post">
-        <label>Fecha del Movimiento:</label>
-        <input type="date" name="FECHA_MOVIMIENTO" required><br><br>
+<div id="create-form" class="modal">
+    <div class="modal-content">
 
-        <label>Tipo de Movimiento:</label>
-        <select name="idTipoMovimiento" required>
-            <option th:each="tipo : ${tiposMovimiento}" th:value="${tipo.ID_TIPO_PRODUCTO}" th:text="${tipo.NOMBRE_MOVIMIENTO}"></option>
-        </select><br><br>
+        <h3>Registrar Nuevo Movimiento y Detalle</h3>
+        <form action="/detalleMovimiento/crear" method="post">
+            <br>
 
-        <label>Empleado:</label>
-        <select name="idEmpleado" required>
-            <option th:each="emp : ${empleados}" th:value="${emp.ID_EMPLEADO}" th:text="${emp.NOMBRE_EMPLEADO}"></option>
-        </select><br><br>
+            <label>Fecha del Movimiento:</label>
+            <input type="date" name="FECHA_MOVIMIENTO" required><br><br>
 
-        <label>Cantidad del Producto:</label>
-        <input type="number" name="CNT_PRODUCTO_MOVIMIENTO" required><br><br>
+            <label>Tipo de Movimiento:</label>
+            <select name="idTipoMovimiento" required>
+                <option th:each="tipo : ${tiposMovimiento}" th:value="${tipo.ID_TIPO_PRODUCTO}" th:text="${tipo.NOMBRE_MOVIMIENTO}"></option>
+            </select><br><br>
 
-        <label>Bodega Origen:</label>
-        <select name="ID_BODEGA_ORIGEN" required>
-            <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
-        </select><br><br>
+            <label>Empleado:</label>
+            <select name="idEmpleado" required>
+                <option th:each="emp : ${empleados}" th:value="${emp.ID_EMPLEADO}" th:text="${emp.NOMBRE_EMPLEADO}"></option>
+            </select><br><br>
 
-        <label>Bodega Destino:</label>
-        <select name="ID_BODEGA_DESTINO" required>
-            <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
-        </select><br><br>
+            <label>Cantidad del Producto:</label>
+            <input type="number" name="CNT_PRODUCTO_MOVIMIENTO" min="1" required><br><br>
 
-        <label>Producto:</label>
-        <select name="ID_PRODUCTO" required>
-            <option th:each="prod : ${productos}" th:value="${prod.ID_PRODUCTO}" th:text="${prod.NOMBRE_PRODUCTO}"></option>
-        </select><br><br>
+            <label>Bodega Origen:</label>
+            <select name="ID_BODEGA_ORIGEN" required>
+                <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+            </select><br><br>
 
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
-    </form>
+            <label>Bodega Destino:</label>
+            <select name="ID_BODEGA_DESTINO" required>
+                <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+            </select><br><br>
+
+            <label>Producto:</label>
+            <select name="ID_PRODUCTO" required>
+                <option th:each="prod : ${productos}" th:value="${prod.ID_PRODUCTO}" th:text="${prod.NOMBRE_PRODUCTO}"></option>
+            </select><br><br>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
 </div>
 
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 20px;">
-
+<br>
+<div class="grid-2">
     <div id="filtroContainer">
         <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
-               style="width: 80%; padding: 5px; margin-right: 60px;">
+               style="width: 250px;">
     </div>
 </div>
 
@@ -191,7 +200,7 @@
 
 <br>
 <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button>Volver al Inicio</button>
 </a>
 </body>
 </html>

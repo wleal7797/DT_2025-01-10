@@ -74,8 +74,9 @@
 </head>
 <body>
 <h2>Lista De Ventas</h2>
-<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-    <select id="atributo" style="margin-right: 10px;" onchange="actualizarFiltro()">
+
+<div class="grid-3">
+    <select id="atributo" style="width: 250px;" onchange="actualizarFiltro()">
         <option value="remision">Remisión</option>
         <option value="fecha">Fecha</option>
         <option value="producto">Producto</option>
@@ -83,12 +84,13 @@
     </select>
     <div id="filtroContainer">
         <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
-               style="width: 80%; padding: 5px; margin-right: 60px;">
+               style="width: 250px;">
     </div>
-    <a href="/serialVentaProducto/listarVendedor" style="margin-left: 30px;">
+    <a href="/serialVentaProducto/listarVendedor" style="width: 250px;">
         <button>Lista De Seriales Para Garantías</button>
     </a>
 </div>
+
 <div id="tabla-container" class="tabla-scroll">
     <table border="1">
         <tr>
@@ -113,10 +115,12 @@
         </tr>
     </table>
 </div>
+
 <br>
+
 <div style="text-align: left;">
     <a href="/mainVendedor/mainVendedor">
-        <button style="padding: 5px 10px;">Volver al Inicio</button>
+        <button>Volver al Inicio</button>
     </a>
 </div>
 </body>

@@ -86,22 +86,34 @@ body {
     display: flex;
     justify-content: center; /* Centra el conjunto */
     align-items: center; /* Alinea verticalmente */
-    gap: 10px; /* Espacio entre select y input */
+    gap: 10px;
 }
 
 .grid-2 select {
-    width: 150px; /* ancho fijo */
-    max-width: 200px; /* ancho máximo permitido */
+    width: auto; /* ancho fijo */
+    max-width: 250px; /* ancho máximo permitido */
 }
 
 .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px; /* espacio entre columnas */
-    place-items: center;
+    gap: 10px;              /* espacio entre columnas */
+    place-items: center;    /* centra cada ítem dentro de su celda */
+    place-content: center;  /* centra el grid dentro de su contenedor */
     text-align: center;
-    margin: 0.5rem 0; /* margen superior e inferior */
+    margin: 0.5rem 0;
     width: 100%;
+    height: 100%;           /* ocupa el alto del contenedor */
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.grid-3 input {
+    margin-bottom: 0;
+}
+
+.grid-3 select {
+    margin-bottom: 0;
 }
 
 .grid-4 {
@@ -434,8 +446,8 @@ table tr {
 table button {
     font-size: 1rem;
     font-weight: 600;
-    padding: 0.8rem 1.5rem;
-    margin-inline: 0.3rem;
+    padding: 0.5rem 0.5rem;
+    margin-inline: 0;
     margin-top: 0;
 }
 
@@ -450,6 +462,10 @@ form {
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
+}
+
+.sin-borde {
+    box-shadow: none;
 }
 
 form::before {
@@ -490,6 +506,15 @@ label {
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.acciones button {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+input[type="radio"]{
+    width: auto;
 }
 
 input,
@@ -906,7 +931,10 @@ footer {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
     width: 90%;
+    max-height: 80vh;
     max-width: 700px; /* más ancho para distribuir campos */
+    overflow-y: auto;
+
     transform: translateY(-20px);
     transition: transform 0.3s ease;
 }
@@ -937,6 +965,6 @@ textarea {
 .modal-actions {
     grid-column: span 2; /* que los botones ocupen todo el ancho */
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 1rem;
 }

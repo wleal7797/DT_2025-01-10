@@ -7,6 +7,9 @@
 </head>
 <body>
 <h2>Lista de Ventas</h2>
+<br>
+
+<div id="tabla-container" class="tabla-scroll">
 <table border="1">
     <tr>
         <th>Precio Total Venta</th>
@@ -23,9 +26,12 @@
         <td th:text="${venta.FECHA_VENTA}"></td>
     </tr>
 </table>
+</div>
+
+
 <br>
 <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button>Volver al Inicio</button>
 </a>
 </body>
 </html>

@@ -9,7 +9,7 @@
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-cantidad").value = cantidad;
-            document.getElementById("edit-form").style.display = "block";
+            document.getElementById("edit-form").classList.add('show');
         }
 
         function eliminarBodega(id) {
@@ -24,10 +24,10 @@
             }
         }
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "block";
+            document.getElementById("create-form").classList.add('show');
         }
         function ocultarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "none";
+            document.getElementById("create-form").classList.remove('show');
         }
     </script>
 </head>
@@ -36,28 +36,37 @@
 
 <button onclick="mostrarFormularioCreacion()">Nueva Bodega</button>
 
+<div id="create-form" class="modal">
+    <div class="modal-content">
 
-<div id="create-form" style="display: none;">
-<h3>Registrar Nueva Bodega</h3>
-<form action="/bodegas/crear" method="post">
-    <label>Nombre de la Bodega:</label>
-    <input type="text" name="N_BODEGA" required>
-    <br><br>
+        <h3>Registrar Nueva Bodega</h3>
+        <form action="/bodegas/crear" method="post">
+            <br>
+            <label>Nombre de la Bodega:</label>
+            <input type="text" name="N_BODEGA" required>
+            <br>
 
-    <label>Cantidad de Productos:</label>
-    <input type="number" name="CNT_PRODUCTOS" min="0" required>
-    <br><br>
+            <label>Cantidad de Productos:</label>
+            <input type="number" name="CNT_PRODUCTOS" min="0" required>
+            <br>
 
-    <label>Estado:</label>
-    <input type="text" name="ESTADO" required>
-    <br>
-    <br>
+            <label>Estado:</label>
+            
+            <input type="radio" id="opcion1" name="ESTADO" value="opcion1" required>
+            <label for="opcion1" class="alineado">Opción 1</label><br>
+            
+            <input type="radio" id="opcion2" name="ESTADO" value="opcion2">
+            <label for="opcion2" class="alineado">Opción 2</label>
+            <br><br>
 
-    <button type="submit">Guardar</button>
-    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
-</form>
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
 </div>
-
 
 <div id="tabla-container" class="tabla-scroll">
 <table border="1">
@@ -76,22 +85,29 @@
     </tr>
 </table>
 </div>
-<div id="edit-form" style="display:none;">
-    <form th:action="@{/bodegas/editar}" method="post">
-        <h3>Editar Bodega</h3><br>
-        <input type="hidden" id="edit-id" name="ID_BODEGA">
-        <label>Nombre: <input type="text" id="edit-nombre" name="N_BODEGA"></label><br>
-        <label>Cantidad de Productos: <input type="number" id="edit-cantidad" name="CNT_PRODUCTOS"></label><br>
-        <br>
-        <br>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
-    </form>
+
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+
+        <form th:action="@{/bodegas/editar}" method="post">
+            <h3>Editar Bodega</h3><br>
+            <input type="hidden" id="edit-id" name="ID_BODEGA">
+            <label>Nombre: <input type="text" id="edit-nombre" name="N_BODEGA"></label><br>
+            <label>Cantidad de Productos: <input type="number" id="edit-cantidad" name="CNT_PRODUCTOS"></label><br>
+            <br>
+            
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="document.getElementById('edit-form').classList.remove('show')">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
 </div>
 
 <br>
 <a href="/main/main">
-    <button style="padding: 5px 10px;">Volver al Inicio</button>
+    <button>Volver al Inicio</button>
 </a>
 </body>
 </html>
