@@ -7,4 +7,5 @@ RUN chown spring:spring app.jar
 USER spring
 EXPOSE 8080
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Configuración para Render - usa la variable PORT si está disponible
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -jar app.jar"]
