@@ -2,12 +2,10 @@
 FROM maven:3.8.5-openjdk-17-slim AS build
 WORKDIR /app
 
-# Copia los archivos de configuración de Maven primero (para cache de dependencias)
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copia todo el contenido del directorio Software_ElectroAdonai
+COPY Software_ElectroAdonai/ .
 
-# Copia el código fuente y compila
-COPY src ./src
+# Compila el proyecto
 RUN mvn clean package -DskipTests -B
 
 # Etapa 2: Runtime (Ejecución)
