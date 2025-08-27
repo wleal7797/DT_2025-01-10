@@ -1,5 +1,5 @@
 # Etapa 1: Build (Compilación)
-FROM maven:3.9.6-openjdk-17-slim AS build
+FROM maven:3.8.5-openjdk-17-slim AS build
 WORKDIR /app
 
 # Copia los archivos de configuración de Maven primero (para cache de dependencias)
