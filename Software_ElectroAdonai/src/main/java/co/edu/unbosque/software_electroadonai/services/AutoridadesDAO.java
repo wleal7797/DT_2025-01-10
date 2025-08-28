@@ -17,4 +17,12 @@ public class AutoridadesDAO {
         return authoritiesRepository.save(authorities);
     }
 
+    public Optional<Authorities> getByUsername(String username) {
+        return authoritiesRepository.findById(username);
+    }
+
+    public void deleteByUsername(String username) {
+        authoritiesRepository.deleteById(username);
+    }
 }
+

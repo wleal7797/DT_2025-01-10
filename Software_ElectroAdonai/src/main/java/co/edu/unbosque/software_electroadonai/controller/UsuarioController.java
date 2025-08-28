@@ -31,16 +31,7 @@ public class UsuarioController {
     @Autowired
     private AutoridadesDAO autoridadesDAO;
 
-    private PasswordEncoder cifrar;
-
-    public UsuarioController() {
-        cifrar = new BCryptPasswordEncoder();
-    }
-
-    @GetMapping("/")
-    public String inicio() {
-        return "main";
-    }
+    private final PasswordEncoder cifrar = new BCryptPasswordEncoder();
 
     @GetMapping("/registro")
     public String formularioRegistro(Model model) {
@@ -51,11 +42,27 @@ public class UsuarioController {
     }
 
     @PostMapping("/crear")
-    public String crearUsuario(@ModelAttribute Users usuario, Authorities authorities) {
-        usuario.setPassword(cifrar.encode(usuario.getPassword()));
+    public String crearUsuario(@RequestParam String username,
+                               @RequestParam String password,
+                               @RequestParam int empleadoId,
+                               @RequestParam String authority) {
+        // Crear usuario
+        Users usuario = new Users();
+        usuario.setUsername(username);
+        usuario.setPassword(cifrar.encode(password));
         usuario.setEnabled(true);
+
+        Empleado empleado = empleadoDAO.getEmpleadoById(empleadoId).orElse(null);
+        usuario.setEmpleado(empleado);
+
         usuarioDAO.saveOrUpdate(usuario);
-        autoridadesDAO.saveOrUpdate(authorities);
+
+        // Crear autoridad
+        Authorities rol = new Authorities();
+        rol.setUsername(usuario.getUsername()); // mismo username como PK
+        rol.setAuthority(authority);
+        autoridadesDAO.saveOrUpdate(rol);
+
         return "redirect:/users/listar";
     }
 
@@ -69,27 +76,44 @@ public class UsuarioController {
     }
 
     @PostMapping("/editar")
-    public String editarUsuario(@ModelAttribute Users nuevoUsuario) {
-        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(nuevoUsuario.getID_USUARIO());
+    public String editarUsuario(@RequestParam int id,
+                                @RequestParam String username,
+                                @RequestParam(required = false) String password,
+                                @RequestParam String authority) {
+        Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(id);
+
         if (usuarioExistente.isPresent()) {
             Users usuario = usuarioExistente.get();
-            usuario.setUsername(nuevoUsuario.getUsername());
-            usuario.setPassword(cifrar.encode(nuevoUsuario.getPassword()));
-            //lógica de autoridades pendiente
+            usuario.setUsername(username);
+
+            if (password != null && !password.isBlank()) {
+                usuario.setPassword(cifrar.encode(password));
+            }
+
             usuarioDAO.saveOrUpdate(usuario);
+
+            // Actualizar o crear rol
+            Authorities rol = autoridadesDAO.getByUsername(usuario.getUsername())
+                    .orElse(new Authorities());
+            rol.setUsername(usuario.getUsername());
+            rol.setAuthority(authority);
+            autoridadesDAO.saveOrUpdate(rol);
         }
+
         return "redirect:/users/listar";
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable int id) {
         Optional<Users> usuarioExistente = usuarioDAO.getUsuarioById(id);
+
         if (usuarioExistente.isPresent()) {
+            String username = usuarioExistente.get().getUsername();
             usuarioDAO.deleteUsuario(id);
+            autoridadesDAO.deleteByUsername(username);
             return ResponseEntity.ok("Usuario eliminado correctamente");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
     }
 }
-

@@ -5,10 +5,11 @@
     <title>Lista de Usuarios</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script>
-        function editarUsuario(id, nombre) {
+        function editarUsuario(id, nombre, rol) {
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-contrasena").value = "";
+            document.getElementById("edit-rol").value = rol;
             document.getElementById("edit-form").style.display = "block";
         }
 
@@ -25,11 +26,11 @@
         }
 
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").classList.add('show');
+            document.getElementById("create-form").style.display = "block";
         }
 
         function ocultarFormularioCreacion() {
-            document.getElementById("create-form").classList.remove('show');
+            document.getElementById("create-form").style.display = "none";
         }
     </script>
 </head>
@@ -39,62 +40,59 @@
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Usuario</button>
 
-<div id="create-form" class="modal">
+<!-- Crear Usuario -->
+<div id="create-form" class="modal" style="display:none;">
     <div class="modal-content">
         <h3>Registrar Nuevo Usuario</h3>
 
         <form th:action="@{/users/crear}" method="post">
-
             <label>Usuario:</label>
             <input type="text" name="username" required>
-
             <br>
 
             <label>Contraseña:</label>
             <input type="password" name="password" required>
-            
             <br>
 
             <label>Empleado:</label>
-            <input list="empleadoList" name="empleado.ID_EMPLEADO" id="empleado" required>
-            <datalist id="empleadoList">
+            <select name="empleadoId" required>
                 <option th:each="emp : ${empleados}"
                         th:value="${emp.ID_EMPLEADO}"
                         th:text="${emp.NOMBRE_EMPLEADO}">
                 </option>
-            </datalist>
-
+            </select>
             <br>
-            
+
             <label>Rol:</label>
             <select name="authority" required>
                 <option value="ROLE_VENDEDOR">Empleado</option>
                 <option value="ROLE_ADMIN">Administrador</option>
             </select>
-
             <br>
 
             <div class="grid-2">
                 <button type="submit">Guardar</button>
                 <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
             </div>
- 
         </form>
     </div>
 </div>
 
+<!-- Tabla de Usuarios -->
 <div id="tabla-container" class="tabla-scroll">
     <table border="1">
         <tr>
             <th>Usuario</th>
             <th>Nombre Empleado</th>
+            <th>Rol</th>
             <th>Acciones</th>
         </tr>
         <tr th:each="usuario : ${usuarios}">
             <td th:text="${usuario.Username}"></td>
-            <td th:text="${usuario.empleado != null} ? ${usuario.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td th:text="${usuario.empleado != null ? usuario.empleado.NOMBRE_EMPLEADO : 'N/A'}"></td>
+            <td th:text="${usuario.authorities != null and !usuario.authorities.isEmpty() ? usuario.authorities[0].authority : 'N/A'}"></td>
             <td>
-                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}')|">
+                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}', '${usuario.authorities[0].authority}')|">
                     Editar
                 </button>
                 <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
@@ -103,19 +101,25 @@
     </table>
 </div>
 
-<div id="edit-form" class="modal">
+<!-- Editar Usuario -->
+<div id="edit-form" class="modal" style="display:none;">
     <div class="modal-content">
         <form th:action="@{/users/editar}" method="post">
-            <h3>Editar Usuario</h3><br>
-            <input type="hidden" id="edit-id" name="ID_USUARIO">
-            <label>Nombre: <input type="text" id="edit-nombre" name="Username"></label><br><br>
-            <label>Contraseña: <input type="text" id="edit-contrasena" name="Password"></label><br><br>
+            <h3>Editar Usuario</h3>
+            <input type="hidden" id="edit-id" name="id">
+
+            <label>Nombre: <input type="text" id="edit-nombre" name="username"></label><br><br>
+
+            <label>Contraseña (déjalo vacío si no cambias):</label>
+            <input type="password" id="edit-contrasena" name="password"><br><br>
+
             <label>Rol:</label>
-            <select name="authority" required>
+            <select id="edit-rol" name="authority" required>
                 <option value="ROLE_VENDEDOR">Empleado</option>
                 <option value="ROLE_ADMIN">Administrador</option>
             </select>
             <br><br>
+
             <button type="submit">Guardar</button>
             <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
         </form>
