@@ -3,121 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="/css/styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        button {
+        .btn-editar {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            border-radius: 3px;
             cursor: pointer;
-            margin: 5px;
         }
 
-        button:hover {
+        .btn-editar:hover {
             background-color: #0056b3;
         }
 
         .btn-eliminar {
             background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
         }
 
         .btn-eliminar:hover {
             background-color: #c82333;
         }
 
-        .formulario {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        .overlay {
-            display: none;
+        /* Modal corregido - removido !important que causaba problemas */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none; /* Sin !important para permitir cambios desde JS */
         }
 
-        .formulario h3 {
-            margin-top: 0;
-            color: #333;
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
         }
 
-        .formulario label {
+        /* Cuando el modal está visible */
+        .modal.show {
             display: block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-top: 10px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .formulario input,
-        .formulario select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .botones {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .botones button {
-            margin-left: 10px;
-        }
-
-        .btn-cancelar {
-            background-color: #6c757d;
-        }
-
-        .btn-cancelar:hover {
-            background-color: #545b62;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
             margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         th, td {
             border: 1px solid #ddd;
-            padding: 12px;
+            padding: 8px;
             text-align: left;
         }
 
         th {
-            background-color: #f8f9fa;
+            background-color: #f2f2f2;
             font-weight: bold;
         }
 
@@ -125,18 +88,81 @@
             background-color: #f9f9f9;
         }
 
-        .volver {
-            margin-top: 30px;
-        }
-
-        .estado-activo {
-            color: #28a745;
+        /* Estilos mejorados para formularios */
+        .modal label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
         }
 
-        .estado-inactivo {
-            color: #dc3545;
-            font-weight: bold;
+        .modal input, .modal select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .modal button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .modal button[type="button"] {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .modal button[type="button"]:hover {
+            background-color: #5a6268;
+        }
+
+        /* Botón principal */
+        .btn-nuevo {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .btn-nuevo:hover {
+            background-color: #0056b3;
+        }
+
+        /* Botón de volver */
+        .btn-volver {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-volver:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -144,138 +170,150 @@
 
 <h2>Lista de Usuarios</h2>
 
-<button onclick="mostrarCrear()">Nuevo Usuario</button>
+<button class="btn-nuevo" onclick="mostrarFormularioCreacion()">Nuevo Usuario</button>
 
-<!-- Overlay para formularios -->
-<div id="overlay" class="overlay" onclick="cerrarFormularios()"></div>
+<!-- Crear Usuario -->
+<div id="create-form" class="modal">
+    <div class="modal-content">
+        <h3>Registrar Nuevo Usuario</h3>
 
-<!-- Formulario Crear Usuario -->
-<div id="form-crear" class="formulario">
-    <h3>Registrar Nuevo Usuario</h3>
-    <form th:action="@{/users/crear}" method="post">
-        <label>Usuario:</label>
-        <input type="text" name="username" required minlength="3" maxlength="50">
+        <form th:action="@{/users/crear}" method="post">
+            <label>Usuario:</label>
+            <input type="text" name="username" required minlength="3" maxlength="50" placeholder="Ingrese el nombre de usuario">
 
-        <label>Contraseña:</label>
-        <input type="password" name="password" required minlength="4">
+            <label>Contraseña:</label>
+            <input type="password" name="password" required minlength="4" placeholder="Mínimo 4 caracteres">
 
-        <label>Empleado:</label>
-        <select name="empleadoId" required>
-            <option value="">Seleccionar empleado...</option>
-            <option th:each="emp : ${empleados}"
-                    th:value="${emp.ID_EMPLEADO}"
-                    th:text="${emp.NOMBRE_EMPLEADO}">
-            </option>
-        </select>
+            <label>Empleado:</label>
+            <select name="empleadoId" required>
+                <option value="">Seleccionar empleado...</option>
+                <option th:each="emp : ${empleados}"
+                        th:value="${emp.ID_EMPLEADO}"
+                        th:text="${emp.NOMBRE_EMPLEADO}">
+                </option>
+            </select>
 
-        <label>Rol:</label>
-        <select name="authority" required>
-            <option value="">Seleccionar rol...</option>
-            <option value="ROLE_VENDEDOR">Vendedor</option>
-            <option value="ROLE_ADMIN">Administrador</option>
-        </select>
+            <label>Rol:</label>
+            <select name="authority" required>
+                <option value="">Seleccionar rol...</option>
+                <option value="ROLE_VENDEDOR">Vendedor</option>
+                <option value="ROLE_ADMIN">Administrador</option>
+            </select>
 
-        <div class="botones">
-            <button type="button" class="btn-cancelar" onclick="cerrarFormularios()">Cancelar</button>
-            <button type="submit">Guardar</button>
-        </div>
-    </form>
-</div>
-
-<!-- Formulario Editar Usuario -->
-<div id="form-editar" class="formulario">
-    <h3>Editar Usuario</h3>
-    <form th:action="@{/users/editar}" method="post">
-        <input type="hidden" id="edit-id" name="id">
-
-        <label>Nombre de Usuario:</label>
-        <input type="text" id="edit-nombre" name="username" required minlength="3" maxlength="50">
-
-        <label>Nueva Contraseña (opcional):</label>
-        <input type="password" id="edit-contrasena" name="password" minlength="4">
-
-        <label>Rol:</label>
-        <select id="edit-rol" name="authority" required>
-            <option value="ROLE_VENDEDOR">Vendedor</option>
-            <option value="ROLE_ADMIN">Administrador</option>
-        </select>
-
-        <div class="botones">
-            <button type="button" class="btn-cancelar" onclick="cerrarFormularios()">Cancelar</button>
-            <button type="submit">Guardar Cambios</button>
-        </div>
-    </form>
+            <div class="grid-2">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Tabla de Usuarios -->
-<table>
-    <thead>
-    <tr>
-        <th>Usuario</th>
-        <th>Nombre Empleado</th>
-        <th>Documento</th>
-        <th>Rol</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="usuario : ${usuarios}">
-        <td th:text="${usuario.username}"></td>
-        <td th:text="${usuario.empleado != null ? usuario.empleado.NOMBRE_EMPLEADO : 'N/A'}"></td>
-        <td th:text="${usuario.empleado != null ? usuario.empleado.N_DOCUMENTO : 'N/A'}"></td>
-        <td th:text="${usuarioRoles.get(usuario.username)}"></td>
-        <td>
-            <span th:if="${usuario.enabled}" class="estado-activo">Activo</span>
-            <span th:unless="${usuario.enabled}" class="estado-inactivo">Inactivo</span>
-        </td>
-        <td>
-            <button onclick="editarUsuario('${usuario.ID_USUARIO}', '${usuario.username}', '${usuarioRoles.get(usuario.username)}')">
-                Editar
-            </button>
-            <button class="btn-eliminar" onclick="eliminarUsuario(${usuario.ID_USUARIO})">
-                Eliminar
-            </button>
-        </td>
-    </tr>
-    <tr th:if="${#lists.isEmpty(usuarios)}">
-        <td colspan="6" style="text-align: center; color: #666;">
-            No hay usuarios registrados
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre Empleado</th>
+            <th>Documento Empleado</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.username}"></td>
+            <td th:text="${usuario.empleado != null ? usuario.empleado.NOMBRE_EMPLEADO : 'N/A'}"></td>
+            <td th:text="${usuario.empleado != null ? usuario.empleado.N_DOCUMENTO : 'N/A'}"></td>
+            <td th:text="${usuarioRoles.get(usuario.username)}"></td>
+            <td>
+                <span th:if="${usuario.enabled}"
+                      style="color: green; font-weight: bold;">Activo</span>
+                <span th:unless="${usuario.enabled}"
+                      style="color: red; font-weight: bold;">Inactivo</span>
+            </td>
+            <td>
+                <button type="button"
+                        th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.username}', '${usuarioRoles.get(usuario.username)}')|"
+                        class="btn-editar">
+                    Editar
+                </button>
+                <button type="button"
+                        th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|"
+                        class="btn-eliminar">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="6" style="text-align: center; color: #666;">
+                No hay usuarios registrados
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
-<div class="volver">
-    <a href="/main/main">
-        <button>Volver al Inicio</button>
-    </a>
+<!-- Editar Usuario -->
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+        <h3>Editar Usuario</h3>
+        <form th:action="@{/users/editar}" method="post">
+            <input type="hidden" id="edit-id" name="id">
+
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="edit-nombre" name="username" required minlength="3" maxlength="50">
+
+            <label>Nueva Contraseña (déjalo vacío si no deseas cambiarla):</label>
+            <input type="password" id="edit-contrasena" name="password" minlength="4" placeholder="Opcional - dejar vacío para mantener actual">
+
+            <label>Rol:</label>
+            <select id="edit-rol" name="authority" required>
+                <option value="ROLE_VENDEDOR">Vendedor</option>
+                <option value="ROLE_ADMIN">Administrador</option>
+            </select>
+
+            <div class="grid-2">
+                <button type="submit">Guardar Cambios</button>
+                <button type="button" onclick="ocultarFormularioEdicion()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="/main/main" class="btn-volver">Volver al Inicio</a>
 </div>
 
 <script>
-    function mostrarCrear() {
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('form-crear').style.display = 'block';
-    }
-
     function editarUsuario(id, nombre, rol) {
-        document.getElementById('edit-id').value = id;
-        document.getElementById('edit-nombre').value = nombre;
-        document.getElementById('edit-contrasena').value = '';
-        document.getElementById('edit-rol').value = rol || 'ROLE_VENDEDOR';
+        console.log("Editando usuario:", id, nombre, rol);
 
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('form-editar').style.display = 'block';
-    }
+        const editForm = document.getElementById("edit-form");
+        const editId = document.getElementById("edit-id");
+        const editNombre = document.getElementById("edit-nombre");
+        const editContrasena = document.getElementById("edit-contrasena");
+        const editRol = document.getElementById("edit-rol");
 
-    function cerrarFormularios() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('form-crear').style.display = 'none';
-        document.getElementById('form-editar').style.display = 'none';
+        if (!editForm || !editId || !editNombre || !editRol) {
+            console.error("No se encontraron elementos del formulario de edición");
+            return;
+        }
+
+        // Llenar los campos
+        editId.value = id;
+        editNombre.value = nombre;
+        editContrasena.value = "";
+        editRol.value = rol || "ROLE_VENDEDOR";
+
+        // Mostrar modal
+        editForm.classList.add('show');
+        editForm.style.display = 'block';
     }
 
     function eliminarUsuario(id) {
-        if (confirm('¿Seguro que deseas eliminar este usuario?')) {
+        if (confirm("¿Seguro que deseas eliminar este usuario?")) {
             fetch('/users/eliminar/' + id, {method: 'DELETE'})
                 .then(response => response.text())
                 .then(data => {
@@ -289,11 +327,70 @@
         }
     }
 
-    // Mensajes de éxito/error
+    function mostrarFormularioCreacion() {
+        console.log("Mostrando formulario de creación");
+
+        const createForm = document.getElementById("create-form");
+        if (!createForm) {
+            console.error("No se encontró el formulario de creación");
+            return;
+        }
+
+        // Limpiar campos del formulario
+        const form = createForm.querySelector('form');
+        if (form) {
+            form.reset();
+        }
+
+        createForm.classList.add('show');
+        createForm.style.display = 'block';
+        console.log("Formulario mostrado");
+    }
+
+    function ocultarFormularioCreacion() {
+        const createForm = document.getElementById("create-form");
+        if (createForm) {
+            createForm.classList.remove('show');
+            createForm.style.display = 'none';
+        }
+    }
+
+    function ocultarFormularioEdicion() {
+        const editForm = document.getElementById("edit-form");
+        if (editForm) {
+            editForm.classList.remove('show');
+            editForm.style.display = 'none';
+        }
+    }
+
+    // Cerrar modal al hacer click fuera de él
+    window.addEventListener('click', function(event) {
+        const createModal = document.getElementById("create-form");
+        const editModal = document.getElementById("edit-form");
+
+        if (event.target === createModal) {
+            ocultarFormularioCreacion();
+        }
+        if (event.target === editModal) {
+            ocultarFormularioEdicion();
+        }
+    });
+
+    // Cerrar modal con la tecla Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            ocultarFormularioCreacion();
+            ocultarFormularioEdicion();
+        }
+    });
+
+    // Mostrar mensajes de éxito o error
     window.onload = function() {
-        const params = new URLSearchParams(window.location.search);
-        const success = params.get('success');
-        const error = params.get('error');
+        console.log("Página cargada");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+        const error = urlParams.get('error');
 
         if (success) {
             let message = '';
@@ -330,8 +427,15 @@
             }
             alert(message);
         }
+
+        // Verificar que los elementos existen
+        console.log("create-form existe:", !!document.getElementById("create-form"));
+        console.log("edit-form existe:", !!document.getElementById("edit-form"));
     }
 </script>
 
 </body>
 </html>
+
+
+
