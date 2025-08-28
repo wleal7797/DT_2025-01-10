@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
@@ -21,7 +22,10 @@
                         alert(data);
                         location.reload();
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al eliminar el usuario');
+                    });
             }
         }
 
@@ -31,6 +35,53 @@
 
         function ocultarFormularioCreacion() {
             document.getElementById("create-form").style.display = "none";
+        }
+
+        function ocultarFormularioEdicion() {
+            document.getElementById("edit-form").style.display = "none";
+        }
+
+        // Mostrar mensajes de éxito o error
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+
+            if (success) {
+                let message = '';
+                switch(success) {
+                    case 'usuario_creado':
+                        message = 'Usuario creado exitosamente';
+                        break;
+                    case 'usuario_editado':
+                        message = 'Usuario editado exitosamente';
+                        break;
+                    default:
+                        message = 'Operación realizada exitosamente';
+                }
+                alert(message);
+            }
+
+            if (error) {
+                let message = '';
+                switch(error) {
+                    case 'empleado_ya_tiene_usuario':
+                        message = 'Error: Este empleado ya tiene un usuario asignado';
+                        break;
+                    case 'error_crear_usuario':
+                        message = 'Error al crear el usuario';
+                        break;
+                    case 'error_editar_usuario':
+                        message = 'Error al editar el usuario';
+                        break;
+                    case 'usuario_no_encontrado':
+                        message = 'Error: Usuario no encontrado';
+                        break;
+                    default:
+                        message = 'Ha ocurrido un error';
+                }
+                alert(message);
+            }
         }
     </script>
 </head>
@@ -47,28 +98,30 @@
 
         <form th:action="@{/users/crear}" method="post">
             <label>Usuario:</label>
-            <input type="text" name="username" required>
-            <br>
+            <input type="text" name="username" required minlength="3" maxlength="50">
+            <br><br>
 
             <label>Contraseña:</label>
-            <input type="password" name="password" required>
-            <br>
+            <input type="password" name="password" required minlength="4">
+            <br><br>
 
             <label>Empleado:</label>
             <select name="empleadoId" required>
+                <option value="">Seleccionar empleado...</option>
                 <option th:each="emp : ${empleados}"
                         th:value="${emp.ID_EMPLEADO}"
                         th:text="${emp.NOMBRE_EMPLEADO}">
                 </option>
             </select>
-            <br>
+            <br><br>
 
             <label>Rol:</label>
             <select name="authority" required>
-                <option value="ROLE_VENDEDOR">Empleado</option>
+                <option value="">Seleccionar rol...</option>
+                <option value="ROLE_VENDEDOR">Vendedor</option>
                 <option value="ROLE_ADMIN">Administrador</option>
             </select>
-            <br>
+            <br><br>
 
             <div class="grid-2">
                 <button type="submit">Guardar</button>
@@ -81,58 +134,89 @@
 <!-- Tabla de Usuarios -->
 <div id="tabla-container" class="tabla-scroll">
     <table border="1">
+        <thead>
         <tr>
             <th>Usuario</th>
             <th>Nombre Empleado</th>
+            <th>Documento Empleado</th>
             <th>Rol</th>
+            <th>Estado</th>
             <th>Acciones</th>
         </tr>
+        </thead>
+        <tbody>
         <tr th:each="usuario : ${usuarios}">
             <td th:text="${usuario.username}"></td>
             <td th:text="${usuario.empleado != null ? usuario.empleado.NOMBRE_EMPLEADO : 'N/A'}"></td>
-            <!-- Si Users aún no tiene authorities, mostramos N/A -->
-            <td th:text="${usuario.rol != null ? usuario.rol : 'N/A'}"></td>
+            <td th:text="${usuario.empleado != null ? usuario.empleado.N_DOCUMENTO : 'N/A'}"></td>
+            <td th:text="${usuarioRoles.get(usuario.username)}"></td>
             <td>
-                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.username}', '${usuario.rol}')|">
+                    <span th:if="${usuario.enabled}"
+                          style="color: green; font-weight: bold;">Activo</span>
+                <span th:unless="${usuario.enabled}"
+                      style="color: red; font-weight: bold;">Inactivo</span>
+            </td>
+            <td>
+                <button type="button"
+                        th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.username}', '${usuarioRoles.get(usuario.username)}')|"
+                        class="btn-editar">
                     Editar
                 </button>
-                <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
+                <button type="button"
+                        th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|"
+                        class="btn-eliminar">
+                    Eliminar
+                </button>
             </td>
         </tr>
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="6" style="text-align: center; color: #666;">
+                No hay usuarios registrados
+            </td>
+        </tr>
+        </tbody>
     </table>
 </div>
 
 <!-- Editar Usuario -->
 <div id="edit-form" class="modal" style="display:none;">
     <div class="modal-content">
+        <h3>Editar Usuario</h3>
         <form th:action="@{/users/editar}" method="post">
-            <h3>Editar Usuario</h3>
             <input type="hidden" id="edit-id" name="id">
 
-            <label>Nombre:</label>
-            <input type="text" id="edit-nombre" name="username" required>
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="edit-nombre" name="username" required minlength="3" maxlength="50">
             <br><br>
 
-            <label>Contraseña (déjalo vacío si no cambias):</label>
-            <input type="password" id="edit-contrasena" name="password">
+            <label>Nueva Contraseña (déjalo vacío si no deseas cambiarla):</label>
+            <input type="password" id="edit-contrasena" name="password" minlength="4">
             <br><br>
 
             <label>Rol:</label>
             <select id="edit-rol" name="authority" required>
-                <option value="ROLE_VENDEDOR">Empleado</option>
+                <option value="ROLE_VENDEDOR">Vendedor</option>
                 <option value="ROLE_ADMIN">Administrador</option>
             </select>
             <br><br>
 
-            <button type="submit">Guardar</button>
-            <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+            <div class="grid-2">
+                <button type="submit">Guardar Cambios</button>
+                <button type="button" onclick="ocultarFormularioEdicion()">Cancelar</button>
+            </div>
         </form>
     </div>
 </div>
 
-<a href="/main/main">
-    <button>Volver al Inicio</button>
-</a>
+<div style="margin-top: 20px;">
+    <a href="/main/main">
+        <button type="button">Volver al Inicio</button>
+    </a>
+</div>
 
 </body>
 </html>
+
+
+
+
