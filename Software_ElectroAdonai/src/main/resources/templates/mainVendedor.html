@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 </head>
 <body>
 
@@ -14,59 +13,49 @@
     <h1>Sistema de Gestión</h1>
 </header>
 
-<div class="container">
-    <h2>Bienvenido</h2>
-    <p>Seleccione una opción para gestionar registros o listas.</p>
+<main class="main-content">
+    <section class="welcome-section">
+        <h2>Bienvenido</h2>
+        <p>Seleccione una opción para gestionar registros o listas.</p>
+    </section>
 
-    <div class="dropdown-container">
-
+    <section class="dropdown-container">
         <div class="dropdown">
-            <button class="dropdown-btn">Bodegas</button>
+            <button class="dropdown-btn">📦 Bodegas</button>
             <div class="dropdown-content">
-                <a href="/bodegas/listarVendedor">Ver Lista De Bodegas</a>
-                <a href="/productos/listarVendedor">Ver Lista De Productos</a>
-                <a href="/detalleBodega/listarVendedores">Ver Lista De Artículos Por Bodega</a>
-
+                <a href="/bodegas/listarVendedor">🏢 Ver Lista De Bodegas</a>
+                <a href="/productos/listarVendedor">📋 Ver Lista De Productos</a>
+                <a href="/detalleBodega/listarVendedores">📊 Ver Lista De Artículos Por Bodega</a>
             </div>
         </div>
+
         <div class="dropdown">
-            <button class="dropdown-btn">Ventas</button>
+            <button class="dropdown-btn">💰 Ventas</button>
             <div class="dropdown-content">
-                <a href="/detallesVenta/registroVendedor">Registrar Nuevas Ventas</a>
-                <a href="/detallesVenta/listarVendedor">Ver Lista De Ventas</a>
+                <a href="/detallesVenta/registroVendedor">➕ Registrar Nuevas Ventas</a>
+                <a href="/detallesVenta/listarVendedor">📈 Ver Lista De Ventas</a>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!--
-<div class="dashboard">
-<div class="calendar">
-        <h3>Calendario</h3>
-        <iframe src="https://calendar.google.com/calendar/embed?src=es.colombian%23holiday%40group.v.calendar.google.com&ctz=America/Bogota"
-                style="border: 0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
-    </div>
-</div>
--->
+    <section class="info-section">
+        <div class="alert">
+            <strong>⚠️ Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
+            la seguridad del sistema.
+        </div>
 
-<div class="container" style="margin-top: 2rem">
-    <div class="alert alert-warning">
-        <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
-        la seguridad del sistema.
-    </div>
+        <form action="/logout" method="post" class="logout-form">
+            <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
+        </form>
+    </section>
+</main>
 
-    <form action="/logout" method="post" class="logout-form">
-        <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
-    </form>
-</div>
-
-<footer>
+<footer class="footer">
     <p>
-        &copy; 2025 Sistema de Gestión Empresarial Electrodomesticos Adonai - Todos los derechos
+        &copy; 2025 Sistema de Gestión Empresarial Electrodomésticos Adonai - Todos los derechos
         reservados
     </p>
 </footer>
 
 </body>
 </html>
-
