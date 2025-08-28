@@ -88,11 +88,12 @@
             <th>Acciones</th>
         </tr>
         <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.Username}"></td>
+            <td th:text="${usuario.username}"></td>
             <td th:text="${usuario.empleado != null ? usuario.empleado.NOMBRE_EMPLEADO : 'N/A'}"></td>
-            <td th:text="${usuario.authorities != null and !usuario.authorities.isEmpty() ? usuario.authorities[0].authority : 'N/A'}"></td>
+            <!-- Si Users aún no tiene authorities, mostramos N/A -->
+            <td th:text="${usuario.rol != null ? usuario.rol : 'N/A'}"></td>
             <td>
-                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.Username}', '${usuario.authorities[0].authority}')|">
+                <button th:attr="onclick=|editarUsuario('${usuario.ID_USUARIO}', '${usuario.username}', '${usuario.rol}')|">
                     Editar
                 </button>
                 <button th:attr="onclick=|eliminarUsuario('${usuario.ID_USUARIO}')|">Eliminar</button>
@@ -108,10 +109,13 @@
             <h3>Editar Usuario</h3>
             <input type="hidden" id="edit-id" name="id">
 
-            <label>Nombre: <input type="text" id="edit-nombre" name="username"></label><br><br>
+            <label>Nombre:</label>
+            <input type="text" id="edit-nombre" name="username" required>
+            <br><br>
 
             <label>Contraseña (déjalo vacío si no cambias):</label>
-            <input type="password" id="edit-contrasena" name="password"><br><br>
+            <input type="password" id="edit-contrasena" name="password">
+            <br><br>
 
             <label>Rol:</label>
             <select id="edit-rol" name="authority" required>
@@ -132,4 +136,3 @@
 
 </body>
 </html>
-
