@@ -82,11 +82,24 @@
     </style>
     <script>
         function editarUsuario(id, nombre, rol) {
-            document.getElementById("edit-id").value = id;
-            document.getElementById("edit-nombre").value = nombre;
-            document.getElementById("edit-contrasena").value = "";
-            document.getElementById("edit-rol").value = rol;
-            document.getElementById("edit-form").style.display = "block";
+            console.log("Editando usuario:", id, nombre, rol); // Para depurar
+
+            const editForm = document.getElementById("edit-form");
+            const editId = document.getElementById("edit-id");
+            const editNombre = document.getElementById("edit-nombre");
+            const editContrasena = document.getElementById("edit-contrasena");
+            const editRol = document.getElementById("edit-rol");
+
+            if (!editForm || !editId || !editNombre || !editRol) {
+                console.error("No se encontraron elementos del formulario de edición");
+                return;
+            }
+
+            editId.value = id;
+            editNombre.value = nombre;
+            editContrasena.value = "";
+            editRol.value = rol || "ROLE_VENDEDOR";
+            editForm.style.display = "block";
         }
 
         function eliminarUsuario(id) {
@@ -105,19 +118,36 @@
         }
 
         function mostrarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "block";
+            console.log("Mostrando formulario de creación"); // Para depurar
+
+            const createForm = document.getElementById("create-form");
+            if (!createForm) {
+                console.error("No se encontró el formulario de creación");
+                return;
+            }
+
+            createForm.style.display = "block";
+            console.log("Formulario mostrado, display:", createForm.style.display);
         }
 
         function ocultarFormularioCreacion() {
-            document.getElementById("create-form").style.display = "none";
+            const createForm = document.getElementById("create-form");
+            if (createForm) {
+                createForm.style.display = "none";
+            }
         }
 
         function ocultarFormularioEdicion() {
-            document.getElementById("edit-form").style.display = "none";
+            const editForm = document.getElementById("edit-form");
+            if (editForm) {
+                editForm.style.display = "none";
+            }
         }
 
         // Mostrar mensajes de éxito o error
         window.onload = function() {
+            console.log("Página cargada"); // Para depurar
+
             const urlParams = new URLSearchParams(window.location.search);
             const success = urlParams.get('success');
             const error = urlParams.get('error');
@@ -157,6 +187,10 @@
                 }
                 alert(message);
             }
+
+            // Verificar que los elementos existen
+            console.log("create-form existe:", !!document.getElementById("create-form"));
+            console.log("edit-form existe:", !!document.getElementById("edit-form"));
         }
     </script>
 </head>
