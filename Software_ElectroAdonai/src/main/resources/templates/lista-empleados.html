@@ -44,11 +44,6 @@
 
 <button onclick="mostrarFormularioCreacion()">Nuevo Vendedor</button>
 
-<!-- Error usuario duplicado -->
-<div th:if="${param.error != null and param.error.contains('duplicado')}" class="alert alert-danger">
-    Error: Verifique los datos. Puede que el número de documento ya esté registrado.
-</div>
-
 <div id="create-form" class="modal">
     <div class="modal-content">
         <form action="/empleados/crear" method="post">
