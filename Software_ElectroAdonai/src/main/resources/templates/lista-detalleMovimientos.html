@@ -439,7 +439,7 @@
             });
         }
 
-        function editarDetalle(id, fecha, cantidad) {
+        function anularDetalle(id, fecha, cantidad) {
             // Verificar si el movimiento es muy antiguo
             const fechaMovimiento = new Date(fecha);
             const fechaLimite = new Date();
@@ -456,42 +456,7 @@
             document.getElementById("edit-form").style.display = "block";
         }
 
-        function anularDetalle(id) {
-            const fila = document.getElementById("fila-" + id);
-
-            // Verificar si el movimiento es antiguo
-            if (fila.classList.contains('movimiento-antiguo')) {
-                mostrarAlerta('No se pueden anular movimientos de más de 30 días de antigüedad', 'warning');
-                return;
-            }
-
-            const confirmar = confirm("¿Está seguro que desea anular o desanular este movimiento?");
-            if (!confirmar) return;
-
-            const celdaAcciones = fila.querySelector(".celda-anular");
-            let anulados = JSON.parse(localStorage.getItem("anulados") || "[]");
-
-            const estaAnulado = anulados.includes(id);
-
-            if (estaAnulado) {
-                // Quitar ícono
-                const icono = celdaAcciones.querySelector(".icono-anulado");
-                if (icono) icono.remove();
-                fila.classList.remove("fila-anulada");
-
-                // Actualizar localStorage
-                anulados = anulados.filter(item => item !== id);
-                localStorage.setItem("anulados", JSON.stringify(anulados));
-
-                mostrarAlerta('Movimiento desanulado exitosamente', 'success');
-            } else {
-                marcarAnulado(id);
-                anulados.push(id);
-                localStorage.setItem("anulados", JSON.stringify(anulados));
-
-                mostrarAlerta('Movimiento anulado exitosamente', 'success');
-            }
-        }
+        
 
         function marcarAnulado(id) {
             const fila = document.getElementById("fila-" + id);
