@@ -23,7 +23,7 @@ public class MainController {
 
     @Autowired
     private DetalleVentaDAO detalleVentaDAO;
-
+//
     @GetMapping("/main")
     public String main(Model model) {
         // 🔔 Productos en bodega "Ingreso"
