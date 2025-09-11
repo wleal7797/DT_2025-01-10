@@ -14,6 +14,7 @@ public class DetalleBodegaDAO {
     @Autowired
     private DetalleBodegaRepository detalleBodegaRepository;
 
+
     public DetalleBodega saveOrUpdate(DetalleBodega detalleBodega) {
         return detalleBodegaRepository.save(detalleBodega);
     }
@@ -30,5 +31,10 @@ public class DetalleBodegaDAO {
     public void deleteDetalleBodega(int id) {
         detalleBodegaRepository.deleteById(id);
     }
+
+    public List<DetalleBodega> findByBodegaNombre(String nombreBodega) {
+        return detalleBodegaRepository.findByBodegaNombre(nombreBodega);
+    }
+
 }
 

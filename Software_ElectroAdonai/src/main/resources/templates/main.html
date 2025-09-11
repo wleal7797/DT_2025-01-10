@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=0.9"/>
@@ -84,25 +84,25 @@
         </div>
     </div>
 
+    <!-- DASHBOARD -->
     <div class="dashboard">
-        <div class="calendar">
-            <h3 class="text-gradient">📅 Calendario</h3>
-            <iframe
-                    src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
-                    style="border: 0"
-                    width="800"
-                    height="600"
-            ></iframe>
+        <!-- 📊 Gráfica en lugar del calendario -->
+        <div class="charts">
+            <h3 class="text-gradient">📊 Ventas por Empleado</h3>
+            <canvas id="ventasChart" width="800" height="400"></canvas>
         </div>
 
+        <!-- 🔔 Notificaciones -->
         <div class="notifications">
             <h3 class="text-gradient">🔔 Notificaciones</h3>
             <ul>
-                <li>🆕 Nueva actualización disponible</li>
-                <li>📅 Próxima reunión el 28 de abril</li>
-                <li>⚠️ Recordatorio: Falta arreglar el formulario de usuarios</li>
-                <li>✅ Sistema funcionando correctamente</li>
-                <li>📈 Reportes mensuales listos</li>
+                <li th:each="producto : ${pendientesIngreso}">
+                    ⚠️ El producto <strong th:text="${producto.producto.nombre}"></strong>
+                    está pendiente por dar ingreso en la bodega "Ingreso".
+                </li>
+                <li th:if="${#lists.isEmpty(pendientesIngreso)}">
+                    ✅ No hay productos pendientes por ingreso.
+                </li>
             </ul>
         </div>
     </div>
@@ -125,5 +125,30 @@
         </p>
     </footer>
 </div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    const ventasData = /*[[${ventasPorEmpleado}]]*/ {};
+    const ctx = document.getElementById('ventasChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(ventasData),
+            datasets: [{
+                label: 'Ventas ($)',
+                data: Object.values(ventasData),
+                borderWidth: 1,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
 </body>
 </html>

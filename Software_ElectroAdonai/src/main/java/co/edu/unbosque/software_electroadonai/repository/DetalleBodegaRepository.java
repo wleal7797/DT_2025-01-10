@@ -4,8 +4,10 @@ import co.edu.unbosque.software_electroadonai.model.DetalleBodega;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DetalleBodegaRepository extends CrudRepository<DetalleBodega, Integer> {
-
+    List<DetalleBodega> findByBodegaNombre(String nombre);
 
 }
