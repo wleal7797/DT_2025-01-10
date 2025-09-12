@@ -149,6 +149,27 @@
             font-weight: 500;
         }
 
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .debug-info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            color: #2980b9;
+            padding: 8px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
         .chart-loading {
             display: flex;
             justify-content: center;
@@ -166,6 +187,50 @@
             color: #e74c3c;
             text-align: center;
             padding: 20px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            border: 1px dashed #e74c3c;
+        }
+
+        .chart-no-data {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            color: #95a5a6;
+            text-align: center;
+            padding: 20px;
+            background: rgba(149, 165, 166, 0.1);
+            border-radius: 8px;
+            border: 1px dashed #95a5a6;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         @media (max-width: 1024px) {
@@ -200,6 +265,11 @@
             <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
             diferentes módulos del sistema.
         </div>
+
+        <!-- Mostrar información de debug si hay error -->
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <div th:if="${debugInfo}" class="debug-info" th:text="'Debug: ' + ${debugInfo}"></div>
+
         <div class="dropdown-container" style="position: relative; z-index: 10">
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">👥 Vendedores</button>
@@ -251,26 +321,46 @@
             <div class="charts-container">
                 <div class="chart-wrapper">
                     <h4>💼 Ventas por Empleado</h4>
-                    <div class="chart-loading" id="loading1">Cargando datos...</div>
-                    <canvas id="ventasEmpleadoChart" style="display: none;"></canvas>
+                    <div class="chart-loading" id="loading1">
+                        <div>⏳ Cargando datos de empleados...</div>
+                    </div>
+                    <canvas id="ventasEmpleadoChart" style="display: none; height: 300px;"></canvas>
                 </div>
                 <div class="chart-wrapper">
                     <h4>📈 Ventas Mensuales 2025</h4>
-                    <div class="chart-loading" id="loading2">Cargando datos...</div>
-                    <canvas id="ventasMensualesChart" style="display: none;"></canvas>
+                    <div class="chart-loading" id="loading2">
+                        <div>⏳ Cargando datos mensuales...</div>
+                    </div>
+                    <canvas id="ventasMensualesChart" style="display: none; height: 300px;"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="notifications">
             <h3 class="text-gradient">🔔 Notificaciones</h3>
-            <ul>
+
+            <!-- Indicador de estado del sistema -->
+            <div class="system-status" id="systemStatus">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">🔄 Verificando sistema...</span>
+            </div>
+
+            <ul id="notificationsList">
                 <li>✅ Sistema funcionando correctamente</li>
+
+                <!-- Mostrar error del sistema si existe -->
+                <div th:if="${error}">
+                    <li class="notification-header">
+                        🚨 <strong>Error del Sistema</strong>
+                    </li>
+                    <li class="error-message" th:text="${error}"></li>
+                </div>
 
                 <!-- Productos pendientes de ingreso -->
                 <div th:if="${productosPendientes != null && !productosPendientes.isEmpty()}">
                     <li class="notification-header">
                         🏪 <strong>Productos Pendientes de Ingreso</strong>
+                        <span class="pendiente-badge" th:text="${productosPendientes.size()} + ' productos'">0 productos</span>
                     </li>
                     <div th:each="producto : ${productosPendientes}" class="producto-pendiente">
                         <li>
@@ -281,8 +371,22 @@
                     </div>
                 </div>
 
-                <div th:if="${productosPendientes == null || productosPendientes.isEmpty()}">
+                <!-- Mensaje cuando no hay productos pendientes -->
+                <div th:if="${productosPendientes != null && productosPendientes.isEmpty()}">
                     <li class="success-message">✅ No hay productos pendientes de ingreso</li>
+                </div>
+
+                <!-- Mensaje cuando la lista es null (error de carga) -->
+                <div th:if="${productosPendientes == null}">
+                    <li class="error-message">⚠️ Error al cargar productos pendientes</li>
+                </div>
+
+                <!-- Información adicional de debug -->
+                <div th:if="${debugInfo}">
+                    <li class="debug-info">
+                        🔧 <strong>Información del sistema:</strong><br/>
+                        <span th:text="${debugInfo}">Debug info</span>
+                    </li>
                 </div>
             </ul>
         </div>
@@ -309,179 +413,310 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Iniciando dashboard del sistema de gestión...');
+
+        // Variables globales para el estado del sistema
+        let systemOK = true;
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const notificationsList = document.getElementById('notificationsList');
+
+        // Función para actualizar el estado del sistema
+        function updateSystemStatus(isOK, message) {
+            if (statusIndicator && statusText) {
+                if (isOK) {
+                    statusIndicator.className = 'status-indicator';
+                    statusText.textContent = '✅ ' + (message || 'Sistema funcionando correctamente');
+                } else {
+                    statusIndicator.className = 'status-indicator error';
+                    statusText.textContent = '🚨 ' + (message || 'Error en el sistema');
+                }
+            }
+        }
+
+        // Función para agregar notificaciones dinámicas
+        function addNotification(message, type = 'info') {
+            if (notificationsList) {
+                const li = document.createElement('li');
+                li.className = type === 'error' ? 'error-message' : (type === 'success' ? 'success-message' : '');
+                li.innerHTML = message;
+                notificationsList.appendChild(li);
+            }
+        }
+
+        // Test inicial de conectividad
+        console.log('🔍 Verificando conectividad del sistema...');
+        fetch('/main/api/debug')
+            .then(response => {
+                console.log('📡 Respuesta del debug endpoint:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('📊 Información de debug recibida:', data);
+
+                if (data.status === 'OK') {
+                    updateSystemStatus(true, 'Conexión verificada exitosamente');
+
+                    // Mostrar información útil en consola
+                    console.log('✅ Sistema operativo:');
+                    console.log('  - Total detalles de bodega:', data.totalDetallesBodega || 0);
+                    console.log('  - Total ventas:', data.totalVentas || 0);
+                    console.log('  - Productos en ingreso:', data.productosEnIngreso || 0);
+
+                    if (data.bodegas) {
+                        console.log('  - Bodegas encontradas:', data.bodegas);
+                    }
+
+                    // Agregar notificaciones informativas
+                    if (data.totalDetallesBodega === 0) {
+                        addNotification('ℹ️ No se encontraron detalles de bodega en el sistema', 'error');
+                    }
+                    if (data.totalVentas === 0) {
+                        addNotification('ℹ️ No se encontraron ventas registradas', 'error');
+                    }
+
+                } else {
+                    updateSystemStatus(false, 'Error en la verificación del sistema');
+                    addNotification('🚨 Error al verificar el estado del sistema: ' + (data.error || 'Error desconocido'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error en verificación del sistema:', error);
+                updateSystemStatus(false, 'No se pudo conectar con el servidor');
+                addNotification('🚨 Error de conectividad: ' + error.message, 'error');
+                systemOK = false;
+            });
+
         // Configuración común para las gráficas
         Chart.defaults.font.family = 'Inter';
         Chart.defaults.font.size = 12;
         Chart.defaults.plugins.legend.display = false;
+        Chart.defaults.responsive = true;
+        Chart.defaults.maintainAspectRatio = false;
 
-        // Función para mostrar error en caso de fallo
-        function showError(elementId, message) {
+        // Función para mostrar diferentes estados en las gráficas
+        function showChartState(elementId, state, message) {
             const element = document.getElementById(elementId);
             if (element) {
-                element.innerHTML = `<div class="chart-error">⚠️ ${message}</div>`;
+                let content = '';
+                switch(state) {
+                    case 'error':
+                        content = `<div class="chart-error">⚠️ ${message}</div>`;
+                        break;
+                    case 'no-data':
+                        content = `<div class="chart-no-data">📊 ${message}</div>`;
+                        break;
+                    case 'loading':
+                        content = `<div class="chart-loading">⏳ ${message}</div>`;
+                        break;
+                }
+                element.innerHTML = content;
             }
         }
 
-        // Gráfica de ventas por empleado
+        // Función para crear gráfica de barras
+        function createBarChart(canvasId, data) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            const ctx = canvas.getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels || [],
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: data.data || [],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)',
+                            'rgba(199, 199, 199, 0.8)',
+                            'rgba(83, 102, 255, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(199, 199, 199, 1)',
+                            'rgba(83, 102, 255, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return ' + new Intl.NumberFormat('es-CO').format(value);
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxRotation: 45, minRotation: 0 }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Ventas:  + new Intl.NumberFormat('es-CO').format(context.parsed.y);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Función para crear gráfica de líneas
+        function createLineChart(canvasId, data) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            const ctx = canvas.getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels || [],
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: data.data || [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
+                        pointHoverBorderColor: 'white'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return ' + new Intl.NumberFormat('es-CO').format(value);
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Ventas:  + new Intl.NumberFormat('es-CO').format(context.parsed.y);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Cargar gráfica de ventas por empleado
+        console.log('📊 Cargando datos de ventas por empleado...');
         fetch('/main/api/ventas-por-empleado')
             .then(response => {
-                if (!response.ok) throw new Error('Error al cargar datos de empleados');
+                console.log('📡 Status ventas-empleado:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Error del servidor`);
+                }
                 return response.json();
             })
             .then(data => {
+                console.log('📈 Datos ventas por empleado recibidos:', data);
+
                 document.getElementById('loading1').style.display = 'none';
                 const canvas = document.getElementById('ventasEmpleadoChart');
-                canvas.style.display = 'block';
 
-                const ctx = canvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.labels || [],
-                        datasets: [{
-                            label: 'Ventas ($)',
-                            data: data.data || [],
-                            backgroundColor: [
-                                'rgba(54, 162, 235, 0.8)',
-                                'rgba(255, 99, 132, 0.8)',
-                                'rgba(255, 206, 86, 0.8)',
-                                'rgba(75, 192, 192, 0.8)',
-                                'rgba(153, 102, 255, 0.8)',
-                                'rgba(255, 159, 64, 0.8)',
-                                'rgba(199, 199, 199, 0.8)',
-                                'rgba(83, 102, 255, 0.8)'
-                            ],
-                            borderColor: [
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)',
-                                'rgba(199, 199, 199, 1)',
-                                'rgba(83, 102, 255, 1)'
-                            ],
-                            borderWidth: 2,
-                            borderRadius: 6,
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0,0,0,0.1)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + new Intl.NumberFormat('es-CO').format(value);
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    maxRotation: 45,
-                                    minRotation: 0
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'Ventas: $' + new Intl.NumberFormat('es-CO').format(context.parsed.y);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                if (data.status === 'system_error') {
+                    showChartState('loading1', 'error', `Error del sistema: ${data.error || 'Error desconocido'}`);
+                    addNotification('🚨 Error en gráfica de empleados: ' + data.error, 'error');
+                } else if (data.status === 'no_data') {
+                    showChartState('loading1', 'no-data', 'No hay ventas registradas por empleados');
+                    addNotification('ℹ️ No se encontraron ventas por empleados', 'info');
+                } else if (data.status === 'processing_error') {
+                    showChartState('loading1', 'error', 'Error procesando datos de empleados');
+                    addNotification('⚠️ Error procesando datos de empleados', 'error');
+                } else if (!data.labels || data.labels.length === 0) {
+                    showChartState('loading1', 'no-data', 'No hay datos de empleados disponibles');
+                } else {
+                    canvas.style.display = 'block';
+                    createBarChart('ventasEmpleadoChart', data);
+                    addNotification(`✅ Gráfica de empleados cargada: ${data.labels.length} empleados`, 'success');
+                }
             })
             .catch(error => {
-                console.error('Error cargando datos de empleados:', error);
-                showError('loading1', 'Error al cargar datos de empleados');
+                console.error('❌ Error cargando ventas por empleado:', error);
+                showChartState('loading1', 'error', `Error de conexión: ${error.message}`);
+                addNotification('🚨 Error al cargar datos de empleados: ' + error.message, 'error');
             });
 
-        // Gráfica de ventas mensuales
+        // Cargar gráfica de ventas mensuales
+        console.log('📊 Cargando datos de ventas mensuales...');
         fetch('/main/api/ventas-mensuales')
             .then(response => {
-                if (!response.ok) throw new Error('Error al cargar datos mensuales');
+                console.log('📡 Status ventas-mensuales:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Error del servidor`);
+                }
                 return response.json();
             })
             .then(data => {
+                console.log('📈 Datos ventas mensuales recibidos:', data);
+
                 document.getElementById('loading2').style.display = 'none';
                 const canvas = document.getElementById('ventasMensualesChart');
-                canvas.style.display = 'block';
 
-                const ctx = canvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.labels || [],
-                        datasets: [{
-                            label: 'Ventas ($)',
-                            data: data.data || [],
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                            pointBorderColor: 'white',
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 8,
-                            pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
-                            pointHoverBorderColor: 'white'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0,0,0,0.1)'
-                                },
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + new Intl.NumberFormat('es-CO').format(value);
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'Ventas: $' + new Intl.NumberFormat('es-CO').format(context.parsed.y);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                if (data.status === 'system_error') {
+                    showChartState('loading2', 'error', `Error del sistema: ${data.error || 'Error desconocido'}`);
+                    addNotification('🚨 Error en gráfica mensual: ' + data.error, 'error');
+                } else if (data.status === 'no_data') {
+                    showChartState('loading2', 'no-data', 'No hay ventas registradas este año');
+                    addNotification('ℹ️ No se encontraron ventas mensuales', 'info');
+                } else {
+                    canvas.style.display = 'block';
+                    createLineChart('ventasMensualesChart', data);
+
+                    // Calcular total para notificación
+                    const total = data.data ? data.data.reduce((sum, val) => sum + val, 0) : 0;
+                    const totalFormatted = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(total);
+                    addNotification(`✅ Gráfica mensual cargada - Total 2025: ${totalFormatted}`, 'success');
+                }
             })
             .catch(error => {
-                console.error('Error cargando datos mensuales:', error);
-                showError('loading2', 'Error al cargar datos mensuales');
+                console.error('❌ Error cargando ventas mensuales:', error);
+                showChartState('loading2', 'error', `Error de conexión: ${error.message}`);
+                addNotification('🚨 Error al cargar datos mensuales: ' + error.message, 'error');
             });
+
+        console.log('✅ Inicialización del dashboard completada');
     });
 </script>
 
