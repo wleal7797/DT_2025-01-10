@@ -8,6 +8,4 @@ import java.util.List;
 
 @Repository
 public interface DetalleBodegaRepository extends CrudRepository<DetalleBodega, Integer> {
-    List<DetalleBodega> findByBodegaNombre(String nombre);
-
 }

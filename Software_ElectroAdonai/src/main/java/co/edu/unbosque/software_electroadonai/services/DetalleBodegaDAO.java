@@ -32,9 +32,6 @@ public class DetalleBodegaDAO {
         detalleBodegaRepository.deleteById(id);
     }
 
-    public List<DetalleBodega> findByBodegaNombre(String nombreBodega) {
-        return detalleBodegaRepository.findByBodegaNombre(nombreBodega);
-    }
 
 }
 
