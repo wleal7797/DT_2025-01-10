@@ -1,255 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=0.9"/>
     <title>Inicio - Sistema de Gestión</title>
     <link rel="stylesheet" href="/css/styles.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-        .dashboard {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            align-items: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .charts-section {
-            flex: 2;
-            min-width: 300px;
-            padding: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-        }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .chart-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .chart-wrapper h4 {
-            margin: 0 0 20px 0;
-            color: #2c3e50;
-            font-weight: 700;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .notifications {
-            flex: 1;
-            min-width: 250px;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(255, 154, 158, 0.3);
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .notifications::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .notifications::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-
-        .notifications::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
-
-        .notifications ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .notifications li {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            font-size: 14px;
-            line-height: 1.4;
-            color: #2c3e50;
-            transition: all 0.3s ease;
-        }
-
-        .notifications li:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 10px;
-            border-radius: 8px;
-        }
-
-        .notifications li:last-child {
-            border-bottom: none;
-        }
-
-        .notification-header {
-            font-weight: 700;
-            color: #e74c3c;
-            margin-top: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #e74c3c;
-        }
-
-        .producto-pendiente {
-            margin: 5px 0;
-            padding: 8px 15px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 8px;
-            border-left: 3px solid #f39c12;
-        }
-
-        .pendiente-badge {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
-            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
-        }
-
-        .text-gradient {
-            background: linear-gradient(45deg, #fff, #f8f9fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0 0 20px 0;
-            font-weight: 800;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .success-message {
-            background: rgba(46, 204, 113, 0.2);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            color: #27ae60;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-weight: 500;
-        }
-
-        .error-message {
-            background: rgba(231, 76, 60, 0.2);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-weight: 500;
-        }
-
-        .debug-info {
-            background: rgba(52, 152, 219, 0.2);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            color: #2980b9;
-            padding: 8px;
-            border-radius: 6px;
-            margin: 8px 0;
-            font-size: 12px;
-            font-family: monospace;
-        }
-
-        .chart-loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 300px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-
-        .chart-error {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 300px;
-            color: #e74c3c;
-            text-align: center;
-            padding: 20px;
-            background: rgba(231, 76, 60, 0.1);
-            border-radius: 8px;
-            border: 1px dashed #e74c3c;
-        }
-
-        .chart-no-data {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 300px;
-            color: #95a5a6;
-            text-align: center;
-            padding: 20px;
-            background: rgba(149, 165, 166, 0.1);
-            border-radius: 8px;
-            border: 1px dashed #95a5a6;
-        }
-
-        .system-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #27ae60;
-            animation: pulse 2s infinite;
-        }
-
-        .status-indicator.error {
-            background: #e74c3c;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        @media (max-width: 1024px) {
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard {
-                flex-direction: column;
-            }
-
-            .charts-section, .notifications {
-                width: 100%;
-                flex: none;
-            }
-        }
-    </style>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    />
 </head>
 
 <body>
@@ -265,15 +24,13 @@
             <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
             diferentes módulos del sistema.
         </div>
-
-        <!-- Mostrar información de debug si hay error -->
-        <div th:if="${error}" class="error-message" th:text="${error}"></div>
-        <div th:if="${debugInfo}" class="debug-info" th:text="'Debug: ' + ${debugInfo}"></div>
-
         <div class="dropdown-container" style="position: relative; z-index: 10">
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">👥 Vendedores</button>
-                <div class="dropdown-content" style="position: absolute; z-index: 10000; background: white">
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 10000; background: white"
+                >
                     <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
                     <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
                     <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
@@ -282,7 +39,10 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">🏪 Bodegas</button>
-                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
                     <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
                     <a href="/productos/listar">📦 Ver Lista De Productos</a>
                     <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
@@ -291,7 +51,10 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">🛒 Ventas</button>
-                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
                     <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
                     <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
                     <a href="/utilidadesPorProducto/listar">💹 Ver Utilidades Por Venta</a>
@@ -300,14 +63,20 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">📋 Movimientos</button>
-                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
                     <a href="/detalleMovimiento/listar">🔄 Ver Movimientos De Bodega</a>
                 </div>
             </div>
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">⚙️ Configuración</button>
-                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
+                <div
+                        class="dropdown-content"
+                        style="position: absolute; z-index: 9999; background: white"
+                >
                     <a href="/users/listar">👤 Gestionar Lista De Usuarios</a>
                     <a href="/tipos/listar">📋 Gestionar Tipos De Producto</a>
                 </div>
@@ -316,78 +85,24 @@
     </div>
 
     <div class="dashboard">
-        <div class="charts-section">
-            <h3 class="text-gradient">📊 Análisis de Ventas</h3>
-            <div class="charts-container">
-                <div class="chart-wrapper">
-                    <h4>💼 Ventas por Empleado</h4>
-                    <div class="chart-loading" id="loading1">
-                        <div>⏳ Cargando datos de empleados...</div>
-                    </div>
-                    <canvas id="ventasEmpleadoChart" style="display: none; height: 300px;"></canvas>
-                </div>
-                <div class="chart-wrapper">
-                    <h4>📈 Ventas Mensuales 2025</h4>
-                    <div class="chart-loading" id="loading2">
-                        <div>⏳ Cargando datos mensuales...</div>
-                    </div>
-                    <canvas id="ventasMensualesChart" style="display: none; height: 300px;"></canvas>
-                </div>
-            </div>
+        <div class="calendar">
+            <h3 class="text-gradient">📅 Calendario</h3>
+            <iframe
+                    src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
+                    style="border: 0"
+                    width="800"
+                    height="600"
+            ></iframe>
         </div>
 
         <div class="notifications">
             <h3 class="text-gradient">🔔 Notificaciones</h3>
-
-            <!-- Indicador de estado del sistema -->
-            <div class="system-status" id="systemStatus">
-                <div class="status-indicator" id="statusIndicator"></div>
-                <span id="statusText">🔄 Verificando sistema...</span>
-            </div>
-
-            <ul id="notificationsList">
+            <ul>
+                <li>🆕 Nueva actualización disponible</li>
+                <li>📅 Próxima reunión el 28 de abril</li>
+                <li>⚠️ Recordatorio: Falta arreglar el formulario de usuarios</li>
                 <li>✅ Sistema funcionando correctamente</li>
-
-                <!-- Mostrar error del sistema si existe -->
-                <div th:if="${error}">
-                    <li class="notification-header">
-                        🚨 <strong>Error del Sistema</strong>
-                    </li>
-                    <li class="error-message" th:text="${error}"></li>
-                </div>
-
-                <!-- Productos pendientes de ingreso -->
-                <div th:if="${productosPendientes != null && !productosPendientes.isEmpty()}">
-                    <li class="notification-header">
-                        🏪 <strong>Productos Pendientes de Ingreso</strong>
-                        <span class="pendiente-badge" th:text="${productosPendientes.size()} + ' productos'">0 productos</span>
-                    </li>
-                    <div th:each="producto : ${productosPendientes}" class="producto-pendiente">
-                        <li>
-                            📦 <span th:text="${producto.producto != null ? producto.producto.N_PRODUCTO : 'Producto sin nombre'}">Producto</span>
-                            - Cantidad: <span th:text="${producto.CNT_PRODUCTO}">0</span>
-                            <span class="pendiente-badge">⏳ Pendiente</span>
-                        </li>
-                    </div>
-                </div>
-
-                <!-- Mensaje cuando no hay productos pendientes -->
-                <div th:if="${productosPendientes != null && productosPendientes.isEmpty()}">
-                    <li class="success-message">✅ No hay productos pendientes de ingreso</li>
-                </div>
-
-                <!-- Mensaje cuando la lista es null (error de carga) -->
-                <div th:if="${productosPendientes == null}">
-                    <li class="error-message">⚠️ Error al cargar productos pendientes</li>
-                </div>
-
-                <!-- Información adicional de debug -->
-                <div th:if="${debugInfo}">
-                    <li class="debug-info">
-                        🔧 <strong>Información del sistema:</strong><br/>
-                        <span th:text="${debugInfo}">Debug info</span>
-                    </li>
-                </div>
+                <li>📈 Reportes mensuales listos</li>
             </ul>
         </div>
     </div>
@@ -410,315 +125,5 @@
         </p>
     </footer>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Iniciando dashboard del sistema de gestión...');
-
-        // Variables globales para el estado del sistema
-        let systemOK = true;
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const notificationsList = document.getElementById('notificationsList');
-
-        // Función para actualizar el estado del sistema
-        function updateSystemStatus(isOK, message) {
-            if (statusIndicator && statusText) {
-                if (isOK) {
-                    statusIndicator.className = 'status-indicator';
-                    statusText.textContent = '✅ ' + (message || 'Sistema funcionando correctamente');
-                } else {
-                    statusIndicator.className = 'status-indicator error';
-                    statusText.textContent = '🚨 ' + (message || 'Error en el sistema');
-                }
-            }
-        }
-
-        // Función para agregar notificaciones dinámicas
-        function addNotification(message, type = 'info') {
-            if (notificationsList) {
-                const li = document.createElement('li');
-                li.className = type === 'error' ? 'error-message' : (type === 'success' ? 'success-message' : '');
-                li.innerHTML = message;
-                notificationsList.appendChild(li);
-            }
-        }
-
-        // Test inicial de conectividad
-        console.log('🔍 Verificando conectividad del sistema...');
-        fetch('/main/api/debug')
-            .then(response => {
-                console.log('📡 Respuesta del debug endpoint:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('📊 Información de debug recibida:', data);
-
-                if (data.status === 'OK') {
-                    updateSystemStatus(true, 'Conexión verificada exitosamente');
-
-                    // Mostrar información útil en consola
-                    console.log('✅ Sistema operativo:');
-                    console.log('  - Total detalles de bodega:', data.totalDetallesBodega || 0);
-                    console.log('  - Total ventas:', data.totalVentas || 0);
-                    console.log('  - Productos en ingreso:', data.productosEnIngreso || 0);
-
-                    if (data.bodegas) {
-                        console.log('  - Bodegas encontradas:', data.bodegas);
-                    }
-
-                    // Agregar notificaciones informativas
-                    if (data.totalDetallesBodega === 0) {
-                        addNotification('ℹ️ No se encontraron detalles de bodega en el sistema', 'error');
-                    }
-                    if (data.totalVentas === 0) {
-                        addNotification('ℹ️ No se encontraron ventas registradas', 'error');
-                    }
-
-                } else {
-                    updateSystemStatus(false, 'Error en la verificación del sistema');
-                    addNotification('🚨 Error al verificar el estado del sistema: ' + (data.error || 'Error desconocido'), 'error');
-                }
-            })
-            .catch(error => {
-                console.error('❌ Error en verificación del sistema:', error);
-                updateSystemStatus(false, 'No se pudo conectar con el servidor');
-                addNotification('🚨 Error de conectividad: ' + error.message, 'error');
-                systemOK = false;
-            });
-
-        // Configuración común para las gráficas
-        Chart.defaults.font.family = 'Inter';
-        Chart.defaults.font.size = 12;
-        Chart.defaults.plugins.legend.display = false;
-        Chart.defaults.responsive = true;
-        Chart.defaults.maintainAspectRatio = false;
-
-        // Función para mostrar diferentes estados en las gráficas
-        function showChartState(elementId, state, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                let content = '';
-                switch(state) {
-                    case 'error':
-                        content = `<div class="chart-error">⚠️ ${message}</div>`;
-                        break;
-                    case 'no-data':
-                        content = `<div class="chart-no-data">📊 ${message}</div>`;
-                        break;
-                    case 'loading':
-                        content = `<div class="chart-loading">⏳ ${message}</div>`;
-                        break;
-                }
-                element.innerHTML = content;
-            }
-        }
-
-        // Función para crear gráfica de barras
-        function createBarChart(canvasId, data) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return null;
-
-            const ctx = canvas.getContext('2d');
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.labels || [],
-                    datasets: [{
-                        label: 'Ventas ($)',
-                        data: data.data || [],
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(199, 199, 199, 0.8)',
-                            'rgba(83, 102, 255, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(199, 199, 199, 1)',
-                            'rgba(83, 102, 255, 1)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 6,
-                        borderSkipped: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.1)' },
-                            ticks: {
-                                callback: function(value) {
-                                    return ' + new Intl.NumberFormat('es-CO').format(value);
-                                }
-                            }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { maxRotation: 45, minRotation: 0 }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Ventas:  + new Intl.NumberFormat('es-CO').format(context.parsed.y);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Función para crear gráfica de líneas
-        function createLineChart(canvasId, data) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return null;
-
-            const ctx = canvas.getContext('2d');
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels || [],
-                    datasets: [{
-                        label: 'Ventas ($)',
-                        data: data.data || [],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
-                        pointHoverBorderColor: 'white'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { intersect: false, mode: 'index' },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.1)' },
-                            ticks: {
-                                callback: function(value) {
-                                    return ' + new Intl.NumberFormat('es-CO').format(value);
-                                }
-                            }
-                        },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Ventas:  + new Intl.NumberFormat('es-CO').format(context.parsed.y);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Cargar gráfica de ventas por empleado
-        console.log('📊 Cargando datos de ventas por empleado...');
-        fetch('/main/api/ventas-por-empleado')
-            .then(response => {
-                console.log('📡 Status ventas-empleado:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Error del servidor`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('📈 Datos ventas por empleado recibidos:', data);
-
-                document.getElementById('loading1').style.display = 'none';
-                const canvas = document.getElementById('ventasEmpleadoChart');
-
-                if (data.status === 'system_error') {
-                    showChartState('loading1', 'error', `Error del sistema: ${data.error || 'Error desconocido'}`);
-                    addNotification('🚨 Error en gráfica de empleados: ' + data.error, 'error');
-                } else if (data.status === 'no_data') {
-                    showChartState('loading1', 'no-data', 'No hay ventas registradas por empleados');
-                    addNotification('ℹ️ No se encontraron ventas por empleados', 'info');
-                } else if (data.status === 'processing_error') {
-                    showChartState('loading1', 'error', 'Error procesando datos de empleados');
-                    addNotification('⚠️ Error procesando datos de empleados', 'error');
-                } else if (!data.labels || data.labels.length === 0) {
-                    showChartState('loading1', 'no-data', 'No hay datos de empleados disponibles');
-                } else {
-                    canvas.style.display = 'block';
-                    createBarChart('ventasEmpleadoChart', data);
-                    addNotification(`✅ Gráfica de empleados cargada: ${data.labels.length} empleados`, 'success');
-                }
-            })
-            .catch(error => {
-                console.error('❌ Error cargando ventas por empleado:', error);
-                showChartState('loading1', 'error', `Error de conexión: ${error.message}`);
-                addNotification('🚨 Error al cargar datos de empleados: ' + error.message, 'error');
-            });
-
-        // Cargar gráfica de ventas mensuales
-        console.log('📊 Cargando datos de ventas mensuales...');
-        fetch('/main/api/ventas-mensuales')
-            .then(response => {
-                console.log('📡 Status ventas-mensuales:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Error del servidor`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('📈 Datos ventas mensuales recibidos:', data);
-
-                document.getElementById('loading2').style.display = 'none';
-                const canvas = document.getElementById('ventasMensualesChart');
-
-                if (data.status === 'system_error') {
-                    showChartState('loading2', 'error', `Error del sistema: ${data.error || 'Error desconocido'}`);
-                    addNotification('🚨 Error en gráfica mensual: ' + data.error, 'error');
-                } else if (data.status === 'no_data') {
-                    showChartState('loading2', 'no-data', 'No hay ventas registradas este año');
-                    addNotification('ℹ️ No se encontraron ventas mensuales', 'info');
-                } else {
-                    canvas.style.display = 'block';
-                    createLineChart('ventasMensualesChart', data);
-
-                    // Calcular total para notificación
-                    const total = data.data ? data.data.reduce((sum, val) => sum + val, 0) : 0;
-                    const totalFormatted = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(total);
-                    addNotification(`✅ Gráfica mensual cargada - Total 2025: ${totalFormatted}`, 'success');
-                }
-            })
-            .catch(error => {
-                console.error('❌ Error cargando ventas mensuales:', error);
-                showChartState('loading2', 'error', `Error de conexión: ${error.message}`);
-                addNotification('🚨 Error al cargar datos mensuales: ' + error.message, 'error');
-            });
-
-        console.log('✅ Inicialización del dashboard completada');
-    });
-</script>
-
 </body>
 </html>
