@@ -1,14 +1,190 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=0.9"/>
     <title>Inicio - Sistema de Gestión</title>
     <link rel="stylesheet" href="/css/styles.css"/>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-            rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .dashboard {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .charts-section {
+            flex: 2;
+            min-width: 300px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .chart-wrapper h4 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-weight: 700;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .notifications {
+            flex: 1;
+            min-width: 250px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(255, 154, 158, 0.3);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .notifications::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notifications::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .notifications::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .notifications ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notifications li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+            line-height: 1.4;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .notifications li:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        .notifications li:last-child {
+            border-bottom: none;
+        }
+
+        .notification-header {
+            font-weight: 700;
+            color: #e74c3c;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .producto-pendiente {
+            margin: 5px 0;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            border-left: 3px solid #f39c12;
+        }
+
+        .pendiente-badge {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 20px 0;
+            font-weight: 800;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #27ae60;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .chart-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .chart-error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .charts-section, .notifications {
+                width: 100%;
+                flex: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -27,10 +203,7 @@
         <div class="dropdown-container" style="position: relative; z-index: 10">
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">👥 Vendedores</button>
-                <div
-                        class="dropdown-content"
-                        style="position: absolute; z-index: 10000; background: white"
-                >
+                <div class="dropdown-content" style="position: absolute; z-index: 10000; background: white">
                     <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
                     <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
                     <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
@@ -39,10 +212,7 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">🏪 Bodegas</button>
-                <div
-                        class="dropdown-content"
-                        style="position: absolute; z-index: 9999; background: white"
-                >
+                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
                     <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
                     <a href="/productos/listar">📦 Ver Lista De Productos</a>
                     <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
@@ -51,10 +221,7 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">🛒 Ventas</button>
-                <div
-                        class="dropdown-content"
-                        style="position: absolute; z-index: 9999; background: white"
-                >
+                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
                     <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
                     <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
                     <a href="/utilidadesPorProducto/listar">💹 Ver Utilidades Por Venta</a>
@@ -63,20 +230,14 @@
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">📋 Movimientos</button>
-                <div
-                        class="dropdown-content"
-                        style="position: absolute; z-index: 9999; background: white"
-                >
+                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
                     <a href="/detalleMovimiento/listar">🔄 Ver Movimientos De Bodega</a>
                 </div>
             </div>
 
             <div class="dropdown" style="position: relative; z-index: 10">
                 <button class="dropdown-btn">⚙️ Configuración</button>
-                <div
-                        class="dropdown-content"
-                        style="position: absolute; z-index: 9999; background: white"
-                >
+                <div class="dropdown-content" style="position: absolute; z-index: 9999; background: white">
                     <a href="/users/listar">👤 Gestionar Lista De Usuarios</a>
                     <a href="/tipos/listar">📋 Gestionar Tipos De Producto</a>
                 </div>
@@ -85,24 +246,44 @@
     </div>
 
     <div class="dashboard">
-        <div class="calendar">
-            <h3 class="text-gradient">📅 Calendario</h3>
-            <iframe
-                    src="https://calendar.google.com/calendar/embed?src=santiagosierra2003%40gmail.com&ctz=America%2FBogota"
-                    style="border: 0"
-                    width="800"
-                    height="600"
-            ></iframe>
+        <div class="charts-section">
+            <h3 class="text-gradient">📊 Análisis de Ventas</h3>
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h4>💼 Ventas por Empleado</h4>
+                    <div class="chart-loading" id="loading1">Cargando datos...</div>
+                    <canvas id="ventasEmpleadoChart" style="display: none;"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <h4>📈 Ventas Mensuales 2025</h4>
+                    <div class="chart-loading" id="loading2">Cargando datos...</div>
+                    <canvas id="ventasMensualesChart" style="display: none;"></canvas>
+                </div>
+            </div>
         </div>
 
         <div class="notifications">
             <h3 class="text-gradient">🔔 Notificaciones</h3>
             <ul>
-                <li>🆕 Nueva actualización disponible</li>
-                <li>📅 Próxima reunión el 28 de abril</li>
-                <li>⚠️ Recordatorio: Falta arreglar el formulario de usuarios</li>
                 <li>✅ Sistema funcionando correctamente</li>
-                <li>📈 Reportes mensuales listos</li>
+
+                <!-- Productos pendientes de ingreso -->
+                <div th:if="${productosPendientes != null && !productosPendientes.isEmpty()}">
+                    <li class="notification-header">
+                        🏪 <strong>Productos Pendientes de Ingreso</strong>
+                    </li>
+                    <div th:each="producto : ${productosPendientes}" class="producto-pendiente">
+                        <li>
+                            📦 <span th:text="${producto.producto != null ? producto.producto.N_PRODUCTO : 'Producto sin nombre'}">Producto</span>
+                            - Cantidad: <span th:text="${producto.CNT_PRODUCTO}">0</span>
+                            <span class="pendiente-badge">⏳ Pendiente</span>
+                        </li>
+                    </div>
+                </div>
+
+                <div th:if="${productosPendientes == null || productosPendientes.isEmpty()}">
+                    <li class="success-message">✅ No hay productos pendientes de ingreso</li>
+                </div>
             </ul>
         </div>
     </div>
@@ -125,5 +306,184 @@
         </p>
     </footer>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuración común para las gráficas
+        Chart.defaults.font.family = 'Inter';
+        Chart.defaults.font.size = 12;
+        Chart.defaults.plugins.legend.display = false;
+
+        // Función para mostrar error en caso de fallo
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<div class="chart-error">⚠️ ${message}</div>`;
+            }
+        }
+
+        // Gráfica de ventas por empleado
+        fetch('/main/api/ventas-por-empleado')
+            .then(response => {
+                if (!response.ok) throw new Error('Error al cargar datos de empleados');
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('loading1').style.display = 'none';
+                const canvas = document.getElementById('ventasEmpleadoChart');
+                canvas.style.display = 'block';
+
+                const ctx = canvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels || [],
+                        datasets: [{
+                            label: 'Ventas ($)',
+                            data: data.data || [],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(255, 206, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)',
+                                'rgba(255, 159, 64, 0.8)',
+                                'rgba(199, 199, 199, 0.8)',
+                                'rgba(83, 102, 255, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(199, 199, 199, 1)',
+                                'rgba(83, 102, 255, 1)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + new Intl.NumberFormat('es-CO').format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Ventas: $' + new Intl.NumberFormat('es-CO').format(context.parsed.y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error cargando datos de empleados:', error);
+                showError('loading1', 'Error al cargar datos de empleados');
+            });
+
+        // Gráfica de ventas mensuales
+        fetch('/main/api/ventas-mensuales')
+            .then(response => {
+                if (!response.ok) throw new Error('Error al cargar datos mensuales');
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('loading2').style.display = 'none';
+                const canvas = document.getElementById('ventasMensualesChart');
+                canvas.style.display = 'block';
+
+                const ctx = canvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels || [],
+                        datasets: [{
+                            label: 'Ventas ($)',
+                            data: data.data || [],
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
+                            pointHoverBorderColor: 'white'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.1)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + new Intl.NumberFormat('es-CO').format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Ventas: $' + new Intl.NumberFormat('es-CO').format(context.parsed.y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error cargando datos mensuales:', error);
+                showError('loading2', 'Error al cargar datos mensuales');
+            });
+    });
+</script>
+
 </body>
 </html>
