@@ -25,6 +25,14 @@
             padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border: 1px solid #e1e5e9;
+            height: 400px; /* Altura fija */
+            position: relative;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px; /* Altura específica para el canvas */
+            width: 100%;
         }
 
         .stats-summary {
@@ -33,6 +41,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            height: 400px; /* Misma altura que el chart */
         }
 
         .stat-item {
@@ -145,6 +154,14 @@
             100% { transform: rotate(360deg); }
         }
 
+        .loading-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
         .alert {
             padding: 1rem;
             margin-bottom: 1rem;
@@ -179,6 +196,11 @@
 
             .notification-badge {
                 align-self: flex-end;
+            }
+
+            .chart-container,
+            .stats-summary {
+                height: auto;
             }
         }
     </style>
@@ -284,10 +306,14 @@
     <div class="stats-container">
         <div class="chart-container">
             <h3 class="chart-title">📊 Distribución de Productos por Bodega</h3>
-            <canvas id="bodegasChart" width="400" height="300"></canvas>
-            <div id="chart-loading" style="text-align: center; padding: 2rem;">
+
+            <div id="chart-loading" class="loading-container">
                 <div class="loading"></div>
                 <p>Cargando estadísticas...</p>
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="bodegasChart"></canvas>
             </div>
         </div>
 
@@ -335,26 +361,38 @@
 <script>
     // Variables globales
     let chartInstance = null;
+    let isLoading = false;
 
     // Cargar estadísticas al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
+        // Esperar un momento para que la página se renderice completamente
         setTimeout(function() {
             cargarEstadisticasBodegas();
-        }, 500);
+        }, 1000);
     });
 
     function cargarEstadisticasBodegas() {
+        if (isLoading) return; // Prevenir múltiples cargas simultáneas
+
+        isLoading = true;
         const loadingDiv = document.getElementById('chart-loading');
-        const chartCanvas = document.getElementById('bodegasChart');
+        const chartWrapper = document.querySelector('.chart-wrapper');
+
+        console.log('Iniciando carga de estadísticas...');
 
         // Mostrar loading
-        if (loadingDiv) loadingDiv.style.display = 'block';
-        if (chartCanvas) chartCanvas.style.display = 'none';
+        if (loadingDiv) {
+            loadingDiv.style.display = 'block';
+        }
+        if (chartWrapper) {
+            chartWrapper.style.display = 'none';
+        }
 
         fetch('/main/estadisticas/bodegas')
             .then(response => {
+                console.log('Respuesta recibida:', response.status);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
@@ -362,21 +400,31 @@
                 console.log('Datos recibidos:', data);
 
                 // Ocultar loading
-                if (loadingDiv) loadingDiv.style.display = 'none';
-                if (chartCanvas) chartCanvas.style.display = 'block';
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+                if (chartWrapper) {
+                    chartWrapper.style.display = 'block';
+                }
 
                 // Actualizar estadísticas resumidas
                 actualizarEstadisticasResumen(data);
 
                 // Crear gráfico
                 crearGraficoBodegas(data);
+
+                isLoading = false;
             })
             .catch(error => {
                 console.error('Error al cargar estadísticas:', error);
 
                 // Ocultar loading y mostrar datos de ejemplo
-                if (loadingDiv) loadingDiv.style.display = 'none';
-                if (chartCanvas) chartCanvas.style.display = 'block';
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+                if (chartWrapper) {
+                    chartWrapper.style.display = 'block';
+                }
 
                 const datosEjemplo = {
                     labels: ['INGRESO', 'ALMACEN', 'EXHIBICION'],
@@ -388,6 +436,8 @@
 
                 actualizarEstadisticasResumen(datosEjemplo);
                 crearGraficoBodegas(datosEjemplo);
+
+                isLoading = false;
             });
     }
 
@@ -422,69 +472,100 @@
 
     function crearGraficoBodegas(data) {
         const ctx = document.getElementById('bodegasChart');
-        if (!ctx) return;
+        if (!ctx) {
+            console.error('Canvas no encontrado');
+            return;
+        }
 
         // Destruir gráfico existente si existe
         if (chartInstance) {
             chartInstance.destroy();
+            chartInstance = null;
         }
 
         // Validar datos
         if (!data.labels || !data.data || data.labels.length === 0) {
-            console.warn('No hay datos para mostrar en el gráfico');
+            console.warn('No hay datos válidos para mostrar en el gráfico');
+            ctx.width = ctx.offsetWidth;
+            ctx.height = ctx.offsetHeight;
+            const context = ctx.getContext('2d');
+            context.fillStyle = '#666';
+            context.font = '16px Arial';
+            context.textAlign = 'center';
+            context.fillText('No hay datos disponibles', ctx.width/2, ctx.height/2);
             return;
         }
 
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    data: data.data,
-                    backgroundColor: data.colors || ['#FF6384', '#36A2EB', '#FFCE56'],
-                    borderColor: '#ffffff',
-                    borderWidth: 2,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            font: {
-                                size: 12
+        console.log('Creando gráfico con datos:', data);
+
+        try {
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: data.colors || [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                            '#9966FF', '#FF9F40', '#FF6B6B', '#4ECDC4'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                                    return `${label}: ${value} productos (${percentage}%)`;
+                                }
                             }
                         }
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                                return `${label}: ${value} productos (${percentage}%)`;
-                            }
-                        }
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1000
                     }
-                },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
                 }
-            }
-        });
+            });
+
+            console.log('Gráfico creado exitosamente');
+
+        } catch (error) {
+            console.error('Error al crear gráfico:', error);
+        }
     }
 
-    // Actualizar estadísticas cada 5 minutos
-    setInterval(function() {
-        cargarEstadisticasBodegas();
-    }, 300000); // 5 minutos = 300000ms
+    // Manejar redimensionamiento de ventana
+    window.addEventListener('resize', function() {
+        if (chartInstance) {
+            setTimeout(function() {
+                chartInstance.resize();
+            }, 300);
+        }
+    });
+
+    // Actualizar estadísticas cada 5 minutos (opcional)
+    // setInterval(cargarEstadisticasBodegas, 300000);
 </script>
 
 </body>
