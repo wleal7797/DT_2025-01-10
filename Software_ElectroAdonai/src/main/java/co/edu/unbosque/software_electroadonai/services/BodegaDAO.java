@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BodegaDAO {
@@ -19,15 +21,26 @@ public class BodegaDAO {
     }
 
     public List<Bodega> getAllBodegas() {
-        return (List<Bodega>) bodegaRepository.findAll();
+        return StreamSupport.stream(bodegaRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     public Optional<Bodega> getBodegaById(int id) {
-
         return bodegaRepository.findById(id);
+    }
+
+    public Optional<Bodega> getBodegaByNombre(String nombre) {
+        return getAllBodegas().stream()
+                .filter(bodega -> nombre.equalsIgnoreCase(bodega.getN_BODEGA()))
+                .findFirst();
     }
 
     public void deleteBodega(int id) {
         bodegaRepository.deleteById(id);
+    }
+
+    public long countBodegas() {
+        return StreamSupport.stream(bodegaRepository.findAll().spliterator(), false)
+                .count();
     }
 }

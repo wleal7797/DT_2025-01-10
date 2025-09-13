@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class DetalleBodegaDAO {
@@ -14,17 +16,16 @@ public class DetalleBodegaDAO {
     @Autowired
     private DetalleBodegaRepository detalleBodegaRepository;
 
-
     public DetalleBodega saveOrUpdate(DetalleBodega detalleBodega) {
         return detalleBodegaRepository.save(detalleBodega);
     }
 
     public List<DetalleBodega> getAllDetallesBodega() {
-        return (List<DetalleBodega>) detalleBodegaRepository.findAll();
+        return StreamSupport.stream(detalleBodegaRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     public Optional<DetalleBodega> getDetalleBodegaById(int id) {
-
         return detalleBodegaRepository.findById(id);
     }
 
@@ -32,6 +33,9 @@ public class DetalleBodegaDAO {
         detalleBodegaRepository.deleteById(id);
     }
 
-
+    public List<DetalleBodega> getDetallesByBodegaId(int bodegaId) {
+        return getAllDetallesBodega().stream()
+                .filter(detalle -> detalle.getBodega().getID_BODEGA() == bodegaId)
+                .collect(Collectors.toList());
+    }
 }
-
