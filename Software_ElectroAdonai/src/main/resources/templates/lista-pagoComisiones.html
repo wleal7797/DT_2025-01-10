@@ -1,14 +1,215 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lista De Comisiones</title>
     <link rel="stylesheet" href="/css/styles.css" />
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        #filtroContainer {
+            display: flex;
+            align-items: center;
+        }
+
+        #filtro {
+            width: 100%;
+            max-width: 350px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        #filtro:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .sin-borde {
+            display: inline-block;
+        }
+
+        .sin-borde button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tabla-scroll {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+            color: #495057;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-pago {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            margin-right: 0.5rem;
+            font-size: 0.9rem !important;
+        }
+
+        .btn-pago:hover {
+            background-color: #45a049 !important;
+        }
+
+        .btn-por-pagar {
+            background-color: #ff9800 !important;
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        .btn-por-pagar:hover {
+            background-color: #e68900 !important;
+        }
+
+        .btn-volver {
+            background: white;
+            color: #667eea;
+            padding: 1rem 2rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-volver:hover {
+            background: #f8f9fa;
+        }
+
+        .estado-cancelado {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .estado-pendiente {
+            color: #ff9800;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            #filtro {
+                max-width: 100%;
+            }
+
+            .tabla-scroll {
+                padding: 1rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 
     <script>
         function cambiarEstado(id, nuevoEstado) {
+            if (!confirm('¿Está seguro de cambiar el estado de esta comisión?')) {
+                return;
+            }
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '/pagoComisiones/cambiarEstado';
@@ -23,6 +224,18 @@
             inputEstado.name = 'ESTADO';
             inputEstado.value = nuevoEstado;
 
+            // Agregar token CSRF si existe
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+
+            if (csrfToken && csrfHeader) {
+                const inputCsrf = document.createElement('input');
+                inputCsrf.type = 'hidden';
+                inputCsrf.name = csrfToken.getAttribute('content');
+                inputCsrf.value = csrfHeader.getAttribute('content');
+                form.appendChild(inputCsrf);
+            }
+
             form.appendChild(inputId);
             form.appendChild(inputEstado);
             document.body.appendChild(form);
@@ -31,14 +244,13 @@
 
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
-            const filas = document.querySelectorAll("table tr");
+            const filas = document.querySelectorAll("table tbody tr");
 
-            filas.forEach((fila, index) => {
-                if (index === 0) return;
+            filas.forEach((fila) => {
                 const celdas = fila.getElementsByTagName("td");
                 let coincide = false;
 
-                for (let i = 0; i < celdas.length; i++) {
+                for (let i = 0; i < celdas.length - 1; i++) { // Excluir columna de acciones
                     if (celdas[i].textContent.toUpperCase().includes(filtro)) {
                         coincide = true;
                         break;
@@ -66,7 +278,6 @@
                 id="filtro"
                 onkeyup="filtrarTabla()"
                 placeholder="Buscar..."
-                style="width: 250px;"
         />
     </div>
 
@@ -74,13 +285,12 @@
         <button type="submit">Generar Comisiones</button>
     </form>
 
-    <button onclick="exportarExcel()">
-        Exportar a Excel
-    </button>
+    <button onclick="exportarExcel()">Exportar a Excel</button>
 </div>
 
-<div id="tabla-container" class="tabla-scroll">
-    <table border="1">
+<div class="tabla-scroll">
+    <table>
+        <thead>
         <tr>
             <th>Fecha</th>
             <th>Comisión</th>
@@ -90,37 +300,37 @@
             <th>Vendedor</th>
             <th>Acciones</th>
         </tr>
+        </thead>
+        <tbody>
         <tr th:each="pagoComision : ${pagoComisiones}">
             <td th:text="${pagoComision.FECHA}"></td>
-            <td th:text="${pagoComision.COMISION}"></td>
-            <td
-                    th:text="${pagoComision.adelantos != null} ? ${pagoComision.adelantos.CNT_ADELANTO} : 'N/A'"
-            ></td>
-            <td th:text="${pagoComision.SALDO}"></td>
-            <td th:text="${pagoComision.ESTADO}"></td>
-            <td
-                    th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"
-            ></td>
+            <td th:text="${#numbers.formatDecimal(pagoComision.COMISION, 0, 'COMMA', 1, 'POINT')}"></td>
+            <td th:text="${pagoComision.adelantos != null} ? ${#numbers.formatDecimal(pagoComision.adelantos.CNT_ADELANTO, 0, 'COMMA', 1, 'POINT')} : 'N/A'"></td>
+            <td th:text="${#numbers.formatDecimal(pagoComision.SALDO, 0, 'COMMA', 1, 'POINT')}"></td>
+            <td>
+                        <span th:text="${pagoComision.ESTADO}"
+                              th:classappend="${pagoComision.ESTADO == 'CANCELADO'} ? 'estado-cancelado' : 'estado-pendiente'">
+                        </span>
+            </td>
+            <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
             <td>
                 <button
-                        th:attr="onclick=|cambiarEstado('${pagoComision.ID_COMISIONES}', 'CANCELADO')|"
-                        style="background-color: #4CAF50; color: white; margin-right: 5px;"
-                >
+                        class="btn-pago"
+                        th:onclick="|cambiarEstado('${pagoComision.ID_COMISIONES}', 'CANCELADO')|">
                     PAGO
                 </button>
                 <button
-                        th:attr="onclick=|cambiarEstado('${pagoComision.ID_COMISIONES}', 'PENDIENTE')|"
-                        style="background-color: #ff9800; color: white;"
-                >
+                        class="btn-por-pagar"
+                        th:onclick="|cambiarEstado('${pagoComision.ID_COMISIONES}', 'PENDIENTE')|">
                     POR PAGAR
                 </button>
             </td>
         </tr>
+        </tbody>
     </table>
 </div>
 
-<br>
-<a href="/main/main">
+<a href="/main/main" class="btn-volver">
     <button>Volver al Inicio</button>
 </a>
 </body>
