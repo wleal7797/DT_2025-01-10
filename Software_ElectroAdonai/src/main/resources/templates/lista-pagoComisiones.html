@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <title>Lista De Comisiones</title>
     <link rel="stylesheet" href="/css/styles.css" />
@@ -8,127 +8,120 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
-      function editarPago(id, fecha, comision, saldo, estado) {
-        document.getElementById("edit-id").value = id;
-        document.getElementById("edit-fecha").value = fecha;
-        document.getElementById("edit-comision").value = comision;
-        document.getElementById("edit-saldo").value = saldo;
-        document.getElementById("edit-estado").value = estado;
-        document.getElementById("edit-form").style.display = "block";
-      }
+        function cambiarEstado(id, nuevoEstado) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/pagoComisiones/cambiarEstado';
 
-      function filtrarTabla() {
-        const filtro = document.getElementById("filtro").value.toUpperCase();
-        const filas = document.querySelectorAll("table tr");
+            const inputId = document.createElement('input');
+            inputId.type = 'hidden';
+            inputId.name = 'ID_COMISIONES';
+            inputId.value = id;
 
-        filas.forEach((fila, index) => {
-          if (index === 0) return;
-          const celdas = fila.getElementsByTagName("td");
-          let coincide = false;
+            const inputEstado = document.createElement('input');
+            inputEstado.type = 'hidden';
+            inputEstado.name = 'ESTADO';
+            inputEstado.value = nuevoEstado;
 
-          for (let i = 0; i < celdas.length; i++) {
-            if (celdas[i].textContent.toUpperCase().includes(filtro)) {
-              coincide = true;
-              break;
-            }
-          }
+            form.appendChild(inputId);
+            form.appendChild(inputEstado);
+            document.body.appendChild(form);
+            form.submit();
+        }
 
-          fila.style.display = coincide ? "" : "none";
-        });
-      }
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
 
-      function exportarExcel() {
-        const tabla = document.querySelector("table");
-        const wb = XLSX.utils.table_to_book(tabla, { sheet: "Comisiones" });
-        XLSX.writeFile(wb, "lista_comisiones.xlsx");
-      }
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+
+        function exportarExcel() {
+            const tabla = document.querySelector("table");
+            const wb = XLSX.utils.table_to_book(tabla, { sheet: "Comisiones" });
+            XLSX.writeFile(wb, "lista_comisiones.xlsx");
+        }
     </script>
-  </head>
-  <body>
-    <h2>Lista De Comisiones</h2>
+</head>
+<body>
+<h2>Lista De Comisiones</h2>
 
-    <div class="grid-3">
-      <div id="filtroContainer">
+<div class="grid-3">
+    <div id="filtroContainer">
         <input
-          type="text"
-          id="filtro"
-          onkeyup="filtrarTabla()"
-          placeholder="Buscar..."
-          style="width: 250px;"
+                type="text"
+                id="filtro"
+                onkeyup="filtrarTabla()"
+                placeholder="Buscar..."
+                style="width: 250px;"
         />
-      </div>
-
-      <form action="/pagoComisiones/generar" method="post" class="sin-borde">
-        <button type="submit">Generar Comisiones</button>
-      </form>
-
-      <button onclick="exportarExcel()">
-        Exportar a Excel
-      </button>
     </div>
 
-    <div id="tabla-container" class="tabla-scroll">
-      <table border="1">
+    <form action="/pagoComisiones/generar" method="post" class="sin-borde">
+        <button type="submit">Generar Comisiones</button>
+    </form>
+
+    <button onclick="exportarExcel()">
+        Exportar a Excel
+    </button>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
         <tr>
-          <th>Fecha</th>
-          <th>Comisión</th>
-          <th>Adelantos</th>
-          <th>Saldo</th>
-          <th>Estado</th>
-          <th>Vendedor</th>
-          <th>Acciones</th>
+            <th>Fecha</th>
+            <th>Comisión</th>
+            <th>Adelantos</th>
+            <th>Saldo</th>
+            <th>Estado</th>
+            <th>Vendedor</th>
+            <th>Acciones</th>
         </tr>
         <tr th:each="pagoComision : ${pagoComisiones}">
-          <td th:text="${pagoComision.FECHA}"></td>
-          <td th:text="${pagoComision.COMISION}"></td>
-          <td
-            th:text="${pagoComision.adelantos != null} ? ${pagoComision.adelantos.CNT_ADELANTO} : 'N/A'"
-          ></td>
-          <td th:text="${pagoComision.SALDO}"></td>
-          <td th:text="${pagoComision.ESTADO}"></td>
-          <td
-            th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"
-          ></td>
-          <td>
-            <button
-              th:attr="onclick=|editarPago('${pagoComision.ID_COMISIONES}', '${pagoComision.FECHA}', '${pagoComision.COMISION}', '${pagoComision.SALDO}', '${pagoComision.ESTADO}')|"
-            >
-              Editar
-            </button>
-          </td>
+            <td th:text="${pagoComision.FECHA}"></td>
+            <td th:text="${pagoComision.COMISION}"></td>
+            <td
+                    th:text="${pagoComision.adelantos != null} ? ${pagoComision.adelantos.CNT_ADELANTO} : 'N/A'"
+            ></td>
+            <td th:text="${pagoComision.SALDO}"></td>
+            <td th:text="${pagoComision.ESTADO}"></td>
+            <td
+                    th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"
+            ></td>
+            <td>
+                <button
+                        th:attr="onclick=|cambiarEstado('${pagoComision.ID_COMISIONES}', 'CANCELADO')|"
+                        style="background-color: #4CAF50; color: white; margin-right: 5px;"
+                >
+                    PAGO
+                </button>
+                <button
+                        th:attr="onclick=|cambiarEstado('${pagoComision.ID_COMISIONES}', 'PENDIENTE')|"
+                        style="background-color: #ff9800; color: white;"
+                >
+                    POR PAGAR
+                </button>
+            </td>
         </tr>
-      </table>
-    </div>
-    <div id="edit-form" style="display: none">
-      <form th:action="@{/pagoComisiones/editar}" method="post">
-        <h3>Editar Pago de Comisión</h3>
-        <br />
-        <input type="hidden" id="edit-id" name="ID_COMISIONES" />
-        <label>Fecha: <input type="date" id="edit-fecha" name="FECHA" /></label
-        ><br />
-        <label
-          >Comisión:
-          <input type="number" id="edit-comision" name="COMISION" /></label
-        ><br />
-        <label
-          >Saldo: <input type="number" id="edit-saldo" name="SALDO" /></label
-        ><br />
-        <label
-          >Estado: <input type="text" id="edit-estado" name="ESTADO" /></label
-        ><br />
-        <button type="submit">Guardar</button>
-        <button
-          type="button"
-          onclick="document.getElementById('edit-form').style.display='none'"
-        >
-          Cancelar
-        </button>
-      </form>
-    </div>
+    </table>
+</div>
 
-    <br>
-    <a href="/main/main">
-      <button>Volver al Inicio</button>
-    </a>
-  </body>
+<br>
+<a href="/main/main">
+    <button>Volver al Inicio</button>
+</a>
+</body>
 </html>
