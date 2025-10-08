@@ -71,5 +71,25 @@ public class PagoComisionesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pago de comisión no encontrado");
         }
     }
+    @PostMapping("/actualizarEstado")
+    @ResponseBody
+    public ResponseEntity<String> actualizarEstado(
+            @RequestParam("ID_COMISIONES") int id,
+            @RequestParam("ESTADO") String estado) {
+        try {
+            Optional<PagoComisiones> existente = pagoComisionesDAO.getPagoComisionesById(id);
+            if (existente.isPresent()) {
+                PagoComisiones pago = existente.get();
+                pago.setESTADO(estado);
+                pagoComisionesDAO.saveOrUpdate(pago);
+                return ResponseEntity.ok("Estado actualizado correctamente");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comisión no encontrada");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el estado");
+        }
+    }
 }
 

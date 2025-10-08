@@ -39,16 +39,18 @@
             formData.append("ID_COMISIONES", id);
             formData.append("ESTADO", nuevoEstado);
 
-            fetch("/pagoComisiones/editar", {
+            fetch("/pagoComisiones/actualizarEstado", {
                 method: "POST",
                 body: formData
             })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Estado actualizado correctamente a " + nuevoEstado);
-                        location.reload();
-                    } else {
-                        alert("Error al actualizar el estado");
+                .then(response => response.text())
+                .then(text => {
+                    alert(text);
+
+                    // Actualiza directamente el texto del estado en la tabla
+                    const fila = document.querySelector(`button[onclick*="${id}"]`).closest("tr");
+                    if (fila) {
+                        fila.querySelector("td:nth-child(5)").textContent = nuevoEstado;
                     }
                 })
                 .catch(() => alert("Error al conectar con el servidor"));
@@ -124,3 +126,4 @@
 </a>
 </body>
 </html>
+
