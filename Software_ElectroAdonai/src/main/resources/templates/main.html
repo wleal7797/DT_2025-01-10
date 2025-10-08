@@ -1,494 +1,353 @@
 <!DOCTYPE html>
-    <html lang="es" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=0.9"/>
-        <title>Inicio - Sistema de Gestión</title>
-        <link rel="stylesheet" href="/css/styles.css"/>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.9" />
+    <title>Inicio - Sistema de Gestión</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        /* Estilos para las estadísticas */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
 
-            body {
-                font-family: 'Inter', sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 1rem;
-            }
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e5e9;
+            height: auto; /* Altura fija */
+            position: relative;
+        }
 
-            .main-wrapper {
-                max-width: 100%;
-                margin: 0 auto;
-            }
+        .chart-wrapper {
+            position: relative;
+            height: 300px; /* Altura específica para el canvas */
+            width: auto;
+        }
 
-            .header {
-                background: white;
-                padding: 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                margin-bottom: 1rem;
-                text-align: center;
-            }
+        .stats-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            height: 400px; /* Misma altura que el chart */
+        }
 
-            .header h1 {
-                color: #667eea;
-                font-size: 2rem;
-                font-weight: 700;
-                margin-bottom: 0.5rem;
-            }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-            .header h5 {
-                color: #6c757d;
-                font-weight: 400;
-            }
+        .stat-item:last-child {
+            border-bottom: none;
+        }
 
-            /* Layout principal - Grid optimizado */
-            .main-grid {
-                display: grid;
-                grid-template-columns: repeat(12, 1fr);
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Estilos para notificaciones */
+        .notifications ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .notification-item.warning {
+            border-left-color: #ffc107;
+        }
+
+        .notification-item.info {
+            border-left-color: #17a2b8;
+        }
+
+        .notification-item.success {
+            border-left-color: #28a745;
+        }
+
+        .notification-item.danger {
+            border-left-color: #dc3545;
+        }
+
+        .notification-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .notification-badge.success {
+            background: #28a745;
+        }
+
+        .notification-badge.info {
+            background: #17a2b8;
+        }
+
+        .notification-badge.warning {
+            background: #ffc107;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
                 gap: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            /* Alertas en la parte superior */
-            .alert-section {
-                grid-column: 1 / -1;
-            }
-
-            .alert {
-                padding: 1rem;
-                margin-bottom: 0;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                background: white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-
-            .alert-info {
-                color: #0c5460;
-                background-color: #d1ecf1;
-                border-color: #bee5eb;
-            }
-
-            .alert-warning {
-                color: #856404;
-                background-color: #fff3cd;
-                border-color: #ffeaa7;
-            }
-
-            /* Menús dropdown - Ocupa 8 columnas */
-            .dropdown-section {
-                grid-column: 1 / 9;
-                background: white;
-                padding: 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-            .dropdown-section h2 {
-                margin-bottom: 1rem;
-                color: #495057;
-                font-size: 1.5rem;
-            }
-
-            .dropdown-container {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 1rem;
-            }
-
-            .dropdown {
-                position: relative;
-            }
-
-            .dropdown-btn {
-                width: 100%;
-                padding: 1rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 1rem;
-                font-weight: 600;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            .dropdown-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-            }
-
-            .dropdown-content {
-                display: none;
-                position: absolute;
-                background: white;
-                min-width: 100%;
-                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-                z-index: 1000;
-                border-radius: 8px;
-                margin-top: 0.5rem;
-                overflow: hidden;
-            }
-
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-
-            .dropdown-content a {
-                color: #495057;
-                padding: 0.75rem 1rem;
-                text-decoration: none;
-                display: block;
-                transition: background 0.2s ease;
-            }
-
-            .dropdown-content a:hover {
-                background: #f8f9fa;
-                color: #667eea;
-            }
-
-            /* Notificaciones - Ocupa 4 columnas */
-            .notifications-section {
-                grid-column: 9 / -1;
-                background: white;
-                padding: 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-            .notifications-section h3 {
-                margin-bottom: 1rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                font-size: 1.3rem;
-            }
-
-            .notifications ul {
-                list-style: none;
-                padding: 0;
             }
 
             .notification-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0.75rem;
-                margin: 0.5rem 0;
-                background: #f8f9fa;
-                border-radius: 8px;
-                border-left: 4px solid #28a745;
-                transition: all 0.3s ease;
-            }
-
-            .notification-item:hover {
-                background: #e9ecef;
-                transform: translateX(5px);
-            }
-
-            .notification-item.warning {
-                border-left-color: #ffc107;
-            }
-
-            .notification-item.info {
-                border-left-color: #17a2b8;
-            }
-
-            .notification-item.success {
-                border-left-color: #28a745;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
             }
 
             .notification-badge {
-                background: #dc3545;
-                color: white;
-                border-radius: 50%;
-                padding: 0.3rem 0.7rem;
-                font-size: 0.9rem;
-                font-weight: bold;
-                min-width: 30px;
-                text-align: center;
+                align-self: flex-end;
             }
 
-            .notification-badge.success {
-                background: #28a745;
-            }
-
-            .notification-badge.info {
-                background: #17a2b8;
-            }
-
-            .notification-badge.warning {
-                background: #ffc107;
-            }
-
-            /* Gráfico - Ocupa 7 columnas */
-            .chart-section {
-                grid-column: 1 / 8;
-                background: white;
-                border-radius: 12px;
-                padding: 1.5rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                display: flex;
-                flex-direction: column;
-            }
-
-            .chart-title {
-                text-align: center;
-                margin-bottom: 1rem;
-                color: #495057;
-                font-weight: 600;
-                font-size: 1.3rem;
-            }
-
-            .chart-wrapper {
-                position: relative;
-                flex: 1;
-                min-height: 350px;
-            }
-
-            /* Estadísticas resumen - Ocupa 5 columnas */
+            .chart-container,
             .stats-summary {
-                grid-column: 8 / -1;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border-radius: 12px;
-                padding: 1.5rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                display: flex;
-                flex-direction: column;
+                height: auto;
             }
+        }
+    </style>
+</head>
 
-            .stats-summary h3 {
-                text-align: center;
-                margin-bottom: 1.5rem;
-                font-size: 1.3rem;
-            }
+<body>
+<div class="main-wrapper">
+    <header class="header">
+        <h1>Sistema de Gestión</h1>
+        <h5>Plataforma integral para la administración empresarial</h5>
+    </header>
 
-            .stat-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1rem 0;
-                border-bottom: 1px solid rgba(255,255,255,0.2);
-            }
-
-            .stat-item:last-child {
-                border-bottom: none;
-            }
-
-            .stat-value {
-                font-size: 1.8rem;
-                font-weight: 700;
-            }
-
-            /* Logout section */
-            .logout-section {
-                grid-column: 1 / -1;
-                background: white;
-                padding: 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-            .logout-form {
-                margin-top: 1rem;
-                text-align: center;
-            }
-
-            .btn-danger {
-                padding: 1rem 2rem;
-                background: #dc3545;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 1rem;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-
-            .btn-danger:hover {
-                background: #c82333;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-            }
-
-            /* Footer */
-            footer {
-                grid-column: 1 / -1;
-                text-align: center;
-                padding: 1.5rem;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                color: #6c757d;
-                margin-top: 1rem;
-            }
-
-            /* Loading spinner */
-            .loading {
-                display: inline-block;
-                width: 40px;
-                height: 40px;
-                border: 4px solid #f3f3f3;
-                border-top: 4px solid #667eea;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }
-
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-
-            .loading-container {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                text-align: center;
-            }
-
-            /* Responsive design */
-            @media (max-width: 1200px) {
-                .dropdown-section {
-                    grid-column: 1 / -1;
-                }
-
-                .notifications-section {
-                    grid-column: 1 / -1;
-                }
-
-                .chart-section {
-                    grid-column: 1 / -1;
-                }
-
-                .stats-summary {
-                    grid-column: 1 / -1;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .dropdown-container {
-                    grid-template-columns: 1fr;
-                }
-
-                .header h1 {
-                    font-size: 1.5rem;
-                }
-
-                .stat-value {
-                    font-size: 1.4rem;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-    <div class="main-wrapper">
-        <header class="header">
-            <h1>Sistema de Gestión</h1>
-            <h5>Plataforma integral para la administración empresarial</h5>
-        </header>
-
-        <div class="main-grid">
-            <!-- Alerta Superior -->
-            <div class="alert-section">
-                <div class="alert alert-info">
-                    <strong>Bienvenido al sistema</strong> - Seleccione una opción del menú para gestionar los
-                    diferentes módulos del sistema. <span th:text="'Fecha: ' + ${fechaActual}"></span>
-                </div>
+    <div class="grid-cont">
+        <div class="container">
+            <h2>Panel de Control</h2>
+            <div class="alert alert-info">
+                <strong>Bienvenido al sistema</strong> - Seleccione una opción del
+                menú para gestionar los diferentes módulos del sistema.
+                <span th:text="'Fecha: ' + ${fechaActual}"></span>
             </div>
 
             <!-- Menús Dropdown -->
-            <div class="dropdown-section">
-                <h2>Panel de Control</h2>
-                <div class="dropdown-container">
-                    <div class="dropdown">
-                        <button class="dropdown-btn">👥 Vendedores</button>
-                        <div class="dropdown-content">
-                            <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
-                            <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
-                            <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
-                        </div>
+            <div
+                    class="dropdown-container"
+                    style="position: relative; z-index: 10"
+            >
+                <div class="dropdown" style="position: relative; z-index: 10">
+                    <button class="dropdown-btn">👥 Vendedores</button>
+                    <div
+                            class="dropdown-content"
+                            style="position: absolute; z-index: 10000; background: white"
+                    >
+                        <a href="/empleados/listar">👨‍💼 Ver Lista De Vendedores</a>
+                        <a href="/adelantos/listar">💰 Ver Lista De Adelantos</a>
+                        <a href="/pagoComisiones/listar">🎯 Ver Lista De Comisiones</a>
                     </div>
+                </div>
 
-                    <div class="dropdown">
-                        <button class="dropdown-btn">🏪 Bodegas</button>
-                        <div class="dropdown-content">
-                            <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
-                            <a href="/productos/listar">📦 Ver Lista De Productos</a>
-                            <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
-                        </div>
+                <div class="dropdown" style="position: relative; z-index: 10">
+                    <button class="dropdown-btn">🏪 Bodegas</button>
+                    <div
+                            class="dropdown-content"
+                            style="position: absolute; z-index: 9999; background: white"
+                    >
+                        <a href="/bodegas/listar">🏬 Ver Lista De Bodegas</a>
+                        <a href="/productos/listar">📦 Ver Lista De Productos</a>
+                        <a href="/detalleBodega/listar">📋 Ver Artículos Por Bodega</a>
                     </div>
+                </div>
 
-                    <div class="dropdown">
-                        <button class="dropdown-btn">🛒 Ventas</button>
-                        <div class="dropdown-content">
-                            <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
-                            <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
-                            <a href="/utilidadesPorProducto/listar">💹 Ver Utilidades Por Venta</a>
-                        </div>
+                <div class="dropdown" style="position: relative; z-index: 10">
+                    <button class="dropdown-btn">🛒 Ventas</button>
+                    <div
+                            class="dropdown-content"
+                            style="position: absolute; z-index: 9999; background: white"
+                    >
+                        <a href="/detallesVenta/registro">➕ Registrar Nueva Venta</a>
+                        <a href="/detallesVenta/listar">📊 Ver Lista De Ventas</a>
+                        <a href="/utilidadesPorProducto/listar"
+                        >💹 Ver Utilidades Por Venta</a
+                        >
                     </div>
+                </div>
 
-                    <div class="dropdown">
-                        <button class="dropdown-btn">📋 Movimientos</button>
-                        <div class="dropdown-content">
-                            <a href="/detalleMovimiento/listar">🔄 Ver Movimientos De Bodega</a>
-                        </div>
+                <div class="dropdown" style="position: relative; z-index: 10">
+                    <button class="dropdown-btn">📋 Movimientos</button>
+                    <div
+                            class="dropdown-content"
+                            style="position: absolute; z-index: 9999; background: white"
+                    >
+                        <a href="/detalleMovimiento/listar"
+                        >🔄 Ver Movimientos De Bodega</a
+                        >
                     </div>
+                </div>
 
-                    <div class="dropdown">
-                        <button class="dropdown-btn">⚙️ Configuración</button>
-                        <div class="dropdown-content">
-                            <a href="/users/listar">👤 Gestionar Lista De Usuarios</a>
-                            <a href="/tipos/listar">📋 Gestionar Tipos De Producto</a>
-                        </div>
+                <div class="dropdown" style="position: relative; z-index: 10">
+                    <button class="dropdown-btn">⚙️ Configuración</button>
+                    <div
+                            class="dropdown-content"
+                            style="position: absolute; z-index: 9999; background: white"
+                    >
+                        <a href="/users/listar">👤 Gestionar Lista De Usuarios</a>
+                        <a href="/tipos/listar">📋 Gestionar Tipos De Producto</a>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Notificaciones -->
-            <div class="notifications-section">
-                <h3>🔔 Notificaciones del Sistema</h3>
+        <!-- Panel de Notificaciones -->
+        <div class="dashboard">
+            <div class="notifications">
+                <h3 class="text-gradient">🔔 Notificaciones del Sistema</h3>
                 <ul>
                     <li class="notification-item success">
                         <span>📦 Productos en bodega INGRESO:</span>
-                        <span class="notification-badge success" th:text="${productosEnIngreso}">0</span>
+                        <span
+                                class="notification-badge success"
+                                th:text="${productosEnIngreso}"
+                        >0</span
+                        >
                     </li>
                     <li class="notification-item info">
                         <span>🆕 Productos con pocas existencias (≤5):</span>
-                        <span class="notification-badge info" th:text="${productosNuevos}">0</span>
+                        <span
+                                class="notification-badge info"
+                                th:text="${productosNuevos}"
+                        >0</span
+                        >
                     </li>
                     <li class="notification-item warning">
                         <span>📊 Productos con existencias disponibles:</span>
-                        <span class="notification-badge warning" th:text="${productosConExistencias}">0</span>
+                        <span
+                                class="notification-badge warning"
+                                th:text="${productosConExistencias}"
+                        >0</span
+                        >
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
 
-            <!-- Gráfico -->
-            <div class="chart-section">
+    <div class="grid-main">
+        <!-- Estadísticas y Gráficos -->
+        <div class="stats-container">
+            <div class="chart-container">
                 <h3 class="chart-title">📊 Distribución de Productos por Bodega</h3>
+
                 <div id="chart-loading" class="loading-container">
                     <div class="loading"></div>
                     <p>Cargando estadísticas...</p>
                 </div>
+
                 <div class="chart-wrapper">
                     <canvas id="bodegasChart"></canvas>
                 </div>
             </div>
 
-            <!-- Estadísticas Resumen -->
             <div class="stats-summary">
-                <h3>📈 Resumen Estadístico</h3>
+                <h3 style="text-align: center; margin-bottom: 1.5rem">
+                    📈 Resumen Estadístico
+                </h3>
                 <div class="stat-item">
                     <span>🏪 Total de Bodegas:</span>
                     <span class="stat-value" id="totalBodegas">-</span>
@@ -506,217 +365,255 @@
                     <span class="stat-value" id="bodegaTop">-</span>
                 </div>
             </div>
-
-            <!-- Logout Section -->
-            <div class="logout-section">
-                <div class="alert alert-warning">
-                    <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su trabajo para mantener
-                    la seguridad del sistema.
-                </div>
-                <form action="/logout" method="post" class="logout-form">
-                    <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
-                </form>
-            </div>
         </div>
+        <!-- Botón de Cerrar Sesión -->
+        <div class="container right" style="margin-top: 1rem">
+            <div class="alert alert-warning">
+                <strong>Importante:</strong> Recuerde cerrar sesión al finalizar su
+                trabajo para mantener la seguridad del sistema.
+            </div>
 
-        <footer>
-            <p>&copy; 2025 Sistema de Gestión Empresarial Electrodomésticos Adonai - Todos los derechos reservados</p>
-        </footer>
+            <form action="/logout" method="post" class="logout-form">
+                <button type="submit" class="btn-danger">🚪 Cerrar Sesión</button>
+            </form>
+        </div>
     </div>
 
-    <script>
-        let chartInstance = null;
-        let isLoading = false;
+    <footer>
+        <p>
+            &copy; 2025 Sistema de Gestión Empresarial Electrodomésticos Adonai -
+            Todos los derechos reservados
+        </p>
+    </footer>
+</div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                cargarEstadisticasBodegas();
-            }, 1000);
-        });
+<script>
+    // Variables globales
+    let chartInstance = null;
+    let isLoading = false;
 
-        function cargarEstadisticasBodegas() {
-            if (isLoading) return;
+    // Cargar estadísticas al cargar la página
+    document.addEventListener("DOMContentLoaded", function () {
+        // Esperar un momento para que la página se renderice completamente
+        setTimeout(function () {
+            cargarEstadisticasBodegas();
+        }, 1000);
+    });
 
-            isLoading = true;
-            const loadingDiv = document.getElementById('chart-loading');
-            const chartWrapper = document.querySelector('.chart-wrapper');
+    function cargarEstadisticasBodegas() {
+        if (isLoading) return; // Prevenir múltiples cargas simultáneas
 
-            console.log('Iniciando carga de estadísticas...');
+        isLoading = true;
+        const loadingDiv = document.getElementById("chart-loading");
+        const chartWrapper = document.querySelector(".chart-wrapper");
 
-            if (loadingDiv) {
-                loadingDiv.style.display = 'block';
-            }
-            if (chartWrapper) {
-                chartWrapper.style.display = 'none';
-            }
+        console.log("Iniciando carga de estadísticas...");
 
-            fetch('/main/estadisticas/bodegas')
-                .then(response => {
-                    console.log('Respuesta recibida:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Datos recibidos:', data);
-
-                    if (loadingDiv) {
-                        loadingDiv.style.display = 'none';
-                    }
-                    if (chartWrapper) {
-                        chartWrapper.style.display = 'block';
-                    }
-
-                    actualizarEstadisticasResumen(data);
-                    crearGraficoBodegas(data);
-
-                    isLoading = false;
-                })
-                .catch(error => {
-                    console.error('Error al cargar estadísticas:', error);
-
-                    if (loadingDiv) {
-                        loadingDiv.style.display = 'none';
-                    }
-                    if (chartWrapper) {
-                        chartWrapper.style.display = 'block';
-                    }
-
-                    const datosEjemplo = {
-                        labels: ['INGRESO', 'ALMACEN', 'EXHIBICION'],
-                        data: [150, 300, 75],
-                        colors: ['#FF6384', '#36A2EB', '#FFCE56'],
-                        totalBodegas: 3,
-                        totalProductos: 525
-                    };
-
-                    actualizarEstadisticasResumen(datosEjemplo);
-                    crearGraficoBodegas(datosEjemplo);
-
-                    isLoading = false;
-                });
+        // Mostrar loading
+        if (loadingDiv) {
+            loadingDiv.style.display = "block";
+        }
+        if (chartWrapper) {
+            chartWrapper.style.display = "none";
         }
 
-        function actualizarEstadisticasResumen(data) {
-            const totalBodegas = document.getElementById('totalBodegas');
-            const totalProductos = document.getElementById('totalProductos');
-            const promedioProductos = document.getElementById('promedioProductos');
-            const bodegaTop = document.getElementById('bodegaTop');
+        fetch("/main/estadisticas/bodegas")
+            .then((response) => {
+                console.log("Respuesta recibida:", response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Datos recibidos:", data);
 
-            if (totalBodegas) totalBodegas.textContent = data.totalBodegas || 0;
-            if (totalProductos) totalProductos.textContent = data.totalProductos || 0;
+                // Ocultar loading
+                if (loadingDiv) {
+                    loadingDiv.style.display = "none";
+                }
+                if (chartWrapper) {
+                    chartWrapper.style.display = "block";
+                }
 
-            const promedio = data.totalBodegas > 0 ?
-                Math.round(data.totalProductos / data.totalBodegas) : 0;
-            if (promedioProductos) promedioProductos.textContent = promedio;
+                // Actualizar estadísticas resumidas
+                actualizarEstadisticasResumen(data);
 
-            let maxIndex = 0;
-            let maxValue = 0;
-            if (data.data && Array.isArray(data.data)) {
-                data.data.forEach((value, index) => {
-                    if (value > maxValue) {
-                        maxValue = value;
-                        maxIndex = index;
-                    }
-                });
-            }
+                // Crear gráfico
+                crearGraficoBodegas(data);
 
-            const nombreBodegaTop = (data.labels && data.labels[maxIndex]) || 'N/A';
-            if (bodegaTop) bodegaTop.textContent = nombreBodegaTop;
+                isLoading = false;
+            })
+            .catch((error) => {
+                console.error("Error al cargar estadísticas:", error);
+
+                // Ocultar loading y mostrar datos de ejemplo
+                if (loadingDiv) {
+                    loadingDiv.style.display = "none";
+                }
+                if (chartWrapper) {
+                    chartWrapper.style.display = "block";
+                }
+
+                const datosEjemplo = {
+                    labels: ["INGRESO", "ALMACEN", "EXHIBICION"],
+                    data: [150, 300, 75],
+                    colors: ["#FF6384", "#36A2EB", "#FFCE56"],
+                    totalBodegas: 3,
+                    totalProductos: 525,
+                };
+
+                actualizarEstadisticasResumen(datosEjemplo);
+                crearGraficoBodegas(datosEjemplo);
+
+                isLoading = false;
+            });
+    }
+
+    function actualizarEstadisticasResumen(data) {
+        const totalBodegas = document.getElementById("totalBodegas");
+        const totalProductos = document.getElementById("totalProductos");
+        const promedioProductos = document.getElementById("promedioProductos");
+        const bodegaTop = document.getElementById("bodegaTop");
+
+        if (totalBodegas) totalBodegas.textContent = data.totalBodegas || 0;
+        if (totalProductos)
+            totalProductos.textContent = data.totalProductos || 0;
+
+        const promedio =
+            data.totalBodegas > 0
+                ? Math.round(data.totalProductos / data.totalBodegas)
+                : 0;
+        if (promedioProductos) promedioProductos.textContent = promedio;
+
+        // Encontrar bodega con más productos
+        let maxIndex = 0;
+        let maxValue = 0;
+        if (data.data && Array.isArray(data.data)) {
+            data.data.forEach((value, index) => {
+                if (value > maxValue) {
+                    maxValue = value;
+                    maxIndex = index;
+                }
+            });
         }
 
-        function crearGraficoBodegas(data) {
-            const ctx = document.getElementById('bodegasChart');
-            if (!ctx) {
-                console.error('Canvas no encontrado');
-                return;
-            }
+        const nombreBodegaTop = (data.labels && data.labels[maxIndex]) || "N/A";
+        if (bodegaTop) bodegaTop.textContent = nombreBodegaTop;
+    }
 
-            if (chartInstance) {
-                chartInstance.destroy();
-                chartInstance = null;
-            }
+    function crearGraficoBodegas(data) {
+        const ctx = document.getElementById("bodegasChart");
+        if (!ctx) {
+            console.error("Canvas no encontrado");
+            return;
+        }
 
-            if (!data.labels || !data.data || data.labels.length === 0) {
-                console.warn('No hay datos válidos para mostrar en el gráfico');
-                ctx.width = ctx.offsetWidth;
-                ctx.height = ctx.offsetHeight;
-                const context = ctx.getContext('2d');
-                context.fillStyle = '#666';
-                context.font = '16px Arial';
-                context.textAlign = 'center';
-                context.fillText('No hay datos disponibles', ctx.width/2, ctx.height/2);
-                return;
-            }
+        // Destruir gráfico existente si existe
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
 
-            console.log('Creando gráfico con datos:', data);
+        // Validar datos
+        if (!data.labels || !data.data || data.labels.length === 0) {
+            console.warn("No hay datos válidos para mostrar en el gráfico");
+            ctx.width = ctx.offsetWidth;
+            ctx.height = ctx.offsetHeight;
+            const context = ctx.getContext("2d");
+            context.fillStyle = "#666";
+            context.font = "16px Arial";
+            context.textAlign = "center";
+            context.fillText(
+                "No hay datos disponibles",
+                ctx.width / 2,
+                ctx.height / 2
+            );
+            return;
+        }
 
-            try {
-                chartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
+        console.log("Creando gráfico con datos:", data);
+
+        try {
+            chartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
                             data: data.data,
                             backgroundColor: data.colors || [
-                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                                '#9966FF', '#FF9F40', '#FF6B6B', '#4ECDC4'
+                                "#FF6384",
+                                "#36A2EB",
+                                "#FFCE56",
+                                "#4BC0C0",
+                                "#9966FF",
+                                "#FF9F40",
+                                "#FF6B6B",
+                                "#4ECDC4",
                             ],
-                            borderColor: '#ffffff',
+                            borderColor: "#ffffff",
                             borderWidth: 2,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 15,
-                                    usePointStyle: true,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed || 0;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                                        return `${label}: ${value} productos (${percentage}%)`;
-                                    }
-                                }
-                            }
+                            hoverOffset: 10,
                         },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true,
-                            duration: 1000
-                        }
-                    }
-                });
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 11,
+                                },
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || "";
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce(
+                                        (a, b) => a + b,
+                                        0
+                                    );
+                                    const percentage =
+                                        total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
+                                    return `${label}: ${value} productos (${percentage}%)`;
+                                },
+                            },
+                        },
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1000,
+                    },
+                },
+            });
 
-                console.log('Gráfico creado exitosamente');
-
-            } catch (error) {
-                console.error('Error al crear gráfico:', error);
-            }
+            console.log("Gráfico creado exitosamente");
+        } catch (error) {
+            console.error("Error al crear gráfico:", error);
         }
+    }
 
-        window.addEventListener('resize', function() {
-            if (chartInstance) {
-                setTimeout(function() {
-                    chartInstance.resize();
-                }, 300);
-            }
-        });
-    </script>
+    // Manejar redimensionamiento de ventana
+    window.addEventListener("resize", function () {
+        if (chartInstance) {
+            setTimeout(function () {
+                chartInstance.resize();
+            }, 300);
+        }
+    });
 
-    </body>
-    </html>
+    // Actualizar estadísticas cada 5 minutos (opcional)
+    // setInterval(cargarEstadisticasBodegas, 300000);
+</script>
+</body>
+</html>
+
