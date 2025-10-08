@@ -192,6 +192,11 @@
             </div>
 
             <div id="tabla-special" class="tabla-scroll">
+                <div id="filtroContainer">
+                    <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+                           style="width: 250px; margin-top: 40px;">
+                </div>
+
                 <table border="1">
                     <tr>
                         <th>Nombre Producto</th>
@@ -473,6 +478,50 @@
             campoTotal.value = campoTotal.value.replace(/[^\d]/g, "");
         }
         return true;
+    }
+
+    function actualizarFiltro() {
+        const atributo = document.getElementById("atributo").value;
+        const filtroContainer = document.getElementById("filtroContainer");
+        filtroContainer.innerHTML = "";
+
+        if (atributo === "fecha") {
+            const inputFecha = document.createElement("input");
+            inputFecha.type = "date";
+            inputFecha.id = "filtro";
+            inputFecha.onchange = filtrarTabla;
+            filtroContainer.appendChild(inputFecha);
+        } else {
+            const inputTexto = document.createElement("input");
+            inputTexto.type = "text";
+            inputTexto.id = "filtro";
+            inputTexto.onkeyup = filtrarTabla;
+            inputTexto.placeholder = "Buscar...";
+            inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+            filtroContainer.appendChild(inputTexto);
+        }
+    }
+
+    function filtrarTabla() {
+        const filtro = document.getElementById("filtro").value.toUpperCase();
+        const filas = document.querySelectorAll("table tr");
+
+        filas.forEach((fila, index) => {
+            if (index === 0) return; // omitir encabezado
+
+            const celdas = fila.getElementsByTagName("td");
+            let coincide = false;
+
+            for (let i = 0; i < celdas.length; i++) {
+                const texto = celdas[i].textContent.toUpperCase();
+                if (texto.includes(filtro)) {
+                    coincide = true;
+                    break;
+                }
+            }
+
+            fila.style.display = coincide ? "" : "none";
+        });
     }
 </script>
 </body>
