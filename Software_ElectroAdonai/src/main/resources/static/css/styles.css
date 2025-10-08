@@ -60,8 +60,8 @@
 }
 
 body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
@@ -71,8 +71,8 @@ body {
 
 /* Layout principal */
 .main-wrapper {
-    padding: 2rem;
-    max-width: 1400px;
+    padding: 1rem;
+    width: 100%;
     margin: 0 auto;
     position: relative;
 }
@@ -98,11 +98,29 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+.grid-cont {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    align-items: center; /* Asegura que todos los elementos tengan el mismo alto */
+    justify-items: center; /* Hace que se expandan uniformemente en el ancho disponible */
+    gap: 10px; /* Espacio opcional entre columnas */
+}
+
+.grid-main {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    align-items: center;
+    gap: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
 .grid-2 {
     display: flex;
     justify-content: center; /* Centra el conjunto */
     align-items: center; /* Alinea verticalmente */
-    gap: 10px;
+    gap: 20px;
 }
 
 .grid-2 select {
@@ -113,13 +131,13 @@ body {
 .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;              /* espacio entre columnas */
-    place-items: center;    /* centra cada ítem dentro de su celda */
-    place-content: center;  /* centra el grid dentro de su contenedor */
+    gap: 10px; /* espacio entre columnas */
+    place-items: center; /* centra cada ítem dentro de su celda */
+    place-content: center; /* centra el grid dentro de su contenedor */
     text-align: center;
     margin: 0.5rem 0;
     width: 100%;
-    height: 100%;           /* ocupa el alto del contenedor */
+    height: 100%; /* ocupa el alto del contenedor */
     margin-top: 30px;
     margin-bottom: 20px;
 }
@@ -173,7 +191,7 @@ h1 {
 
 h2 {
     font-size: clamp(1.8rem, 3vw, 3rem);
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 h1::after,
@@ -185,7 +203,11 @@ h2::after {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--accent-color)
+    );
     border-radius: 2px;
     animation: pulse 2s ease-in-out infinite;
 }
@@ -214,7 +236,6 @@ h5 {
     color: rgba(255, 255, 255, 0.9);
     text-align: center;
     font-weight: 500;
-    margin-bottom: 2rem;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -224,8 +245,8 @@ h5 {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--border-radius-lg);
-    padding: 2rem;
     margin: 0 auto;
+    padding: 1rem;
     max-width: 95%;
     width: 100%;
     box-shadow: var(--shadow-xl);
@@ -235,6 +256,23 @@ h5 {
     animation: fadeInUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     z-index: 10;
 }
+
+.left {
+    justify-self: start;  /* Alinea a la izquierda dentro de su celda */
+    align-self: center;   /* Centra verticalmente */
+    max-height: 200px;
+}
+
+.right {
+    justify-self: start;  /* Alinea a la izquierda dentro de su celda */
+    align-self: start;    /* Alinea arriba */
+}
+
+.chart-wrapper canvas {
+    max-width: 120% !important;
+    max-height: 100% !important;
+}
+
 
 .container:hover {
     transform: translateY(-5px);
@@ -300,25 +338,41 @@ h5 {
 }
 
 .alert-info {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(34, 211, 238, 0.1));
+    background: linear-gradient(
+            135deg,
+            rgba(6, 182, 212, 0.1),
+            rgba(34, 211, 238, 0.1)
+    );
     color: var(--info-color);
     border-left: 4px solid var(--info-color);
 }
 
 .alert-success {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
+    background: linear-gradient(
+            135deg,
+            rgba(16, 185, 129, 0.1),
+            rgba(52, 211, 153, 0.1)
+    );
     color: var(--success-color);
     border-left: 4px solid var(--success-color);
 }
 
 .alert-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+    background: linear-gradient(
+            135deg,
+            rgba(245, 158, 11, 0.1),
+            rgba(251, 191, 36, 0.1)
+    );
     color: var(--warning-color);
     border-left: 4px solid var(--warning-color);
 }
 
 .alert-danger {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.1));
+    background: linear-gradient(
+            135deg,
+            rgba(239, 68, 68, 0.1),
+            rgba(248, 113, 113, 0.1)
+    );
     color: var(--danger-color);
     border-left: 4px solid var(--danger-color);
 }
@@ -326,10 +380,10 @@ h5 {
 /* Dropdowns funcionales con hover */
 .dropdown-container {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 .dropdown {
@@ -339,7 +393,11 @@ h5 {
 }
 
 .dropdown-btn {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-hover)
+    );
     color: white;
     padding: 1rem 2rem;
     border: none;
@@ -358,6 +416,8 @@ h5 {
 
 .header {
     position: relative;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
 }
 
@@ -368,7 +428,12 @@ h5 {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+    );
     transition: left 0.6s;
 }
 
@@ -417,14 +482,22 @@ h5 {
 }
 
 #tabla-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--accent-color)
+    );
     border-radius: 6px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
 #tabla-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, var(--primary-hover), var(--accent-hover));
+    background: linear-gradient(
+            135deg,
+            var(--primary-hover),
+            var(--accent-hover)
+    );
 }
 
 table {
@@ -442,7 +515,11 @@ td {
 }
 
 table th {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-hover)
+    );
     color: white;
     padding: 1rem 1.25rem;
     font-weight: 700;
@@ -539,7 +616,7 @@ label {
     vertical-align: middle;
 }
 
-input[type="radio"]{
+input[type="radio"] {
     width: auto;
 }
 
@@ -569,7 +646,11 @@ textarea:focus {
 
 /* Botones espectaculares */
 button {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-hover)
+    );
     color: white;
     padding: 1rem 2.5rem;
     border: none;
@@ -592,7 +673,12 @@ button::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+    );
     transition: left 0.6s;
 }
 
@@ -611,7 +697,11 @@ button:active {
 
 /* Variantes de botones premium */
 .btn-success {
-    background: linear-gradient(135deg, var(--success-color), var(--success-light));
+    background: linear-gradient(
+            135deg,
+            var(--success-color),
+            var(--success-light)
+    );
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
@@ -620,7 +710,11 @@ button:active {
 }
 
 .btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), var(--warning-light));
+    background: linear-gradient(
+            135deg,
+            var(--warning-color),
+            var(--warning-light)
+    );
     box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
 }
 
@@ -652,6 +746,7 @@ button:active {
     grid-template-columns: 1fr 420px;
     gap: 2.5rem;
     margin-top: 3rem;
+    height: fit-content;
 }
 
 .calendar,
@@ -660,7 +755,7 @@ button:active {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--border-radius-lg);
-    padding: 2.5rem;
+    padding: 1rem;
     box-shadow: var(--shadow-xl);
     position: relative;
     overflow: hidden;
@@ -731,7 +826,11 @@ button:active {
 }
 
 .notifications li:hover {
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(6, 182, 212, 0.1));
+    background: linear-gradient(
+            135deg,
+            rgba(79, 70, 229, 0.1),
+            rgba(6, 182, 212, 0.1)
+    );
     padding-left: 2.5rem;
     transform: translateX(8px);
     box-shadow: var(--shadow-sm);
@@ -853,7 +952,11 @@ footer {
 
 /* Utilidades adicionales */
 .text-gradient {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--accent-color)
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
