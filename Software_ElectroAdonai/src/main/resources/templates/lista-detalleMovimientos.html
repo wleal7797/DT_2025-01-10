@@ -677,17 +677,18 @@
 </div>
 
 <br>
-<div class="grid-2">
+<div class="grid-3">
     <div id="filtroContainer">
         <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar en movimientos..."
                style="width: 250px;">
     </div>
-    <div>
-        <label>
-            <input type="checkbox" id="mostrarAnulados" onchange="toggleMovimientosAnulados()" checked>
-            Mostrar movimientos anulados
-        </label>
-    </div>
+    <a href="/detalleBodega/listar" class="btn btn-primary m-2">
+        <button>📋 Ver Artículos Por Bodega</button>
+    </a>
+
+    <a href="/productos/listar" class="btn btn-success m-2">
+        <button>📦 Ver Lista de Productos</button>
+    </a>
 </div>
 
 <div id="tabla-container" class="tabla-scroll">
