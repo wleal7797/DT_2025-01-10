@@ -486,7 +486,25 @@
             input.style.padding = "5px";
             contenedor.appendChild(input);
         }
+        function filtrarTablab() {
+            const filtro = document.getElementById("filtrob").value.toUpperCase();
+            const filas = document.querySelectorAll("#tabla-detalles tr");
 
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // Saltar encabezado
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
         function filtrarTabla() {
             const filtro = document.getElementById("filtro").value.toUpperCase();
             const filas = document.querySelectorAll("#tabla-detalles tr");
@@ -652,7 +670,7 @@
         </div>
 
         <div id="tabla-special" class="tabla-scroll">
-            <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+            <input type="text" id="filtrob" onkeyup="filtrarTablab()" placeholder="Buscar..."
                    style="width: 250px; margin-top: 40px;">
             <h4>Stock Actual por Bodega</h4>
             <table border="1">
