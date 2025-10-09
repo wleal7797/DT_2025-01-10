@@ -1079,6 +1079,22 @@ footer {
     display: block;
 }
 
+.info-icon {
+    display: inline-block;
+    margin-left: 5px;
+    color: #555;
+    font-weight: bold;
+    cursor: help;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    background-color: #e0e0e0;
+}
+
+
 .form-grid select,
 .form-grid input,
 .form-grid textarea {

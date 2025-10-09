@@ -84,11 +84,20 @@
     <table border="1">
         <tr>
             <th>Fecha</th>
-            <th>Comisión</th>
-            <th>Adelantos</th>
-            <th>Saldo</th>
-            <th>Estado</th>
+            <th>Comisión
+            <span class="info-icon" title="Ganancias obtenidas por el vendedor.">i</span>
+            </th>
+            <th>Adelantos
+            <span class="info-icon" title="Anticipos de pago generados por el vendedor, se descuentan al generar nuevas comisiones.">i</span>
+            </th>
+            <th>Saldo
+            <span class="info-icon" title="Comsión final por pagar al vendedor.">i</span>
+            </th>
+            <th>Estado
+                <span class="info-icon" title="Esado de la comsión, es decir paga al vendedor o pendiente, puede ajustar el estado en el apartado de acciones.">i</span>
+            </th>
             <th>Vendedor</th>
+            <th>Documento</th>
             <th>Acciones</th>
         </tr>
         <tr th:each="pagoComision : ${pagoComisiones}">
@@ -99,9 +108,8 @@
             </td>
             <td th:text="${pagoComision.SALDO}"></td>
             <td th:text="${pagoComision.ESTADO}"></td>
-            <td
-                    th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'">
-            </td>
+            <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.N_DOCUMENTO} : 'N/A'"></td>
             <td>
                 <button
                         type="button"

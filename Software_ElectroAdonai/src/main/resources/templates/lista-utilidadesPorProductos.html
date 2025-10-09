@@ -16,6 +16,7 @@
             padding: 8px;
             text-align: left;
         }
+
     </style>
     <script>
         function actualizarFiltro() {
@@ -71,10 +72,18 @@
         <tr>
             <th>Remisión</th>
             <th>Producto</th>
-            <th>Cantidad Vendida</th>
-            <th>Precio de Venta</th>
-            <th>Utilidad Bruta</th>
-            <th>Utilidad Final</th>
+            <th>Cantidad Vendida
+            <span class="info-icon" title="Cantidad de productos en venta.">i</span>
+            </th>
+            <th>Precio de Venta
+            <span class="info-icon" title="Precio definido por el vendedor.">i</span>
+            </th>
+            <th>Utilidad Bruta
+            <span class="info-icon" title="Precio de venta del producto menos su costo.">i</span>
+            </th>
+            <th>Utilidad Final
+            <span class="info-icon" title="Utilidad Bruta menos el 50% de comisión.">i</span>
+            </th>
             <th>Estado</th>
         </tr>
         <tr th:each="util : ${utilidadesPorProductos}">
