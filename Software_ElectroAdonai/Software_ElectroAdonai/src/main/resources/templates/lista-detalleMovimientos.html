@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Detalles de Movimientos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .fila-anulada {
+            background-color: #ffe5e5;
+            color: #a00;
+            font-style: italic;
+        }
+
+        .icono-anulado {
+            color: red;
+            margin-left: 8px;
+        }
+
+        /* Estilos para alertas de excepción */
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+            position: relative;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.7;
+        }
+
+        .alert .close-btn:hover {
+            opacity: 1;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .alert i {
+            margin-right: 10px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Estilos para campos inválidos */
+        .campo-invalido {
+            border: 2px solid #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .mensaje-stock {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .stock-bajo {
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .sin-stock {
+            color: #721c24;
+            font-weight: bold;
+        }
+
+        /* Estilo para movimientos antiguos */
+        .movimiento-antiguo {
+            background-color: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .movimiento-antiguo .celda-anular button {
+            background-color: #6c757d;
+            color: white;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <script>
+        let detallesBodegaData = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Cargar datos reales de la tabla de detalles de bodega
+            inicializarDatosReales();
+
+            const anulados = JSON.parse(localStorage.getItem("anulados") || "[]");
+            anulados.forEach(id => marcarAnulado(id));
+
+            // Verificar si hay mensajes de error/éxito del servidor
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const success = urlParams.get('success');
+
+            if (error) {
+                mostrarAlerta(decodeURIComponent(error), 'error');
+            }
+            if (success) {
+                mostrarAlerta(decodeURIComponent(success), 'success');
+            }
+
+            // Marcar movimientos antiguos
+            marcarMovimientosAntiguos();
+
+            // Agregar eventos para validación en tiempo real
+            agregarValidacionTiempoReal();
+        });
+
+        function inicializarDatosReales() {
+            // Extraer datos reales de la tabla de detalles de bodega
+            const tablaDetalles = document.querySelector('#tabla-special table');
+            if (tablaDetalles) {
+                const filas = tablaDetalles.querySelectorAll('tr');
+
+                // Empezar desde la fila 1 para saltar el encabezado
+                for (let i = 1; i < filas.length; i++) {
+                    const celdas = filas[i].querySelectorAll('td');
+                    if (celdas.length >= 5) {
+                        const nombreProducto = celdas[0].textContent.trim();
+                        const referencia = celdas[1].textContent.trim();
+                        const nombreBodega = celdas[2].textContent.trim();
+                        const cantidadDisponible = parseInt(celdas[3].textContent.trim()) || 0;
+
+                        // Buscar el ID del producto y bodega desde los selects
+                        const idProducto = buscarIdProductoPorNombre(nombreProducto, referencia);
+                        const idBodega = buscarIdBodegaPorNombre(nombreBodega);
+
+                        if (idProducto && idBodega) {
+                            detallesBodegaData.push({
+                                idProducto: idProducto,
+                                idBodega: idBodega,
+                                cantidadDisponible: cantidadDisponible,
+                                nombreProducto: nombreProducto,
+                                nombreBodega: nombreBodega
+                            });
+                        }
+                    }
+                }
+            }
+
+            console.log('Datos de detalles de bodega cargados:', detallesBodegaData);
+        }
+
+        function buscarIdProductoPorNombre(nombreProducto, referencia) {
+            const productoSelect = document.querySelector('select[name="ID_PRODUCTO"]');
+            if (productoSelect) {
+                const opciones = productoSelect.querySelectorAll('option');
+                for (let opcion of opciones) {
+                    const texto = opcion.textContent;
+                    if (texto.includes(nombreProducto) && texto.includes(referencia)) {
+                        return parseInt(opcion.value);
+                    }
+                }
+            }
+            return null;
+        }
+
+        function buscarIdBodegaPorNombre(nombreBodega) {
+            const bodegaSelect = document.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+            if (bodegaSelect) {
+                const opciones = bodegaSelect.querySelectorAll('option');
+                for (let opcion of opciones) {
+                    if (opcion.textContent.trim() === nombreBodega) {
+                        return parseInt(opcion.value);
+                    }
+                }
+            }
+            return null;
+        }
+
+        function mostrarAlerta(mensaje, tipo = 'error') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo} show`;
+
+            let icono;
+            switch(tipo) {
+                case 'error': icono = 'fa-exclamation-triangle'; break;
+                case 'success': icono = 'fa-check-circle'; break;
+                case 'warning': icono = 'fa-exclamation-circle'; break;
+                case 'info': icono = 'fa-info-circle'; break;
+                default: icono = 'fa-info-circle';
+            }
+
+            alert.innerHTML = `
+                <i class="fas ${icono}"></i>
+                ${mensaje}
+                <button class="close-btn" onclick="cerrarAlerta(this)">&times;</button>
+            `;
+
+            alertContainer.appendChild(alert);
+
+            // Auto-cerrar después de 8 segundos para errores, 5 para éxito
+            const timeout = tipo === 'error' ? 8000 : 5000;
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    cerrarAlerta(alert.querySelector('.close-btn'));
+                }
+            }, timeout);
+        }
+
+        function cerrarAlerta(boton) {
+            const alert = boton.parentElement;
+            alert.style.animation = 'slideUp 0.3s ease-out';
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 300);
+        }
+
+        function agregarValidacionTiempoReal() {
+            const cantidadInput = document.querySelector('input[name="CNT_PRODUCTO_MOVIMIENTO"]');
+            const productoSelect = document.querySelector('select[name="ID_PRODUCTO"]');
+            const bodegaOrigenSelect = document.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+            const bodegaDestinoSelect = document.querySelector('select[name="ID_BODEGA_DESTINO"]');
+
+            if (cantidadInput && productoSelect && bodegaOrigenSelect) {
+                [cantidadInput, productoSelect, bodegaOrigenSelect].forEach(element => {
+                    element.addEventListener('change', validarStockTiempoReal);
+                    element.addEventListener('input', validarStockTiempoReal);
+                });
+            }
+
+            if (bodegaOrigenSelect && bodegaDestinoSelect) {
+                [bodegaOrigenSelect, bodegaDestinoSelect].forEach(element => {
+                    element.addEventListener('change', validarBodegasDiferentes);
+                });
+            }
+        }
+
+        function validarStockTiempoReal() {
+            const cantidadInput = document.querySelector('input[name="CNT_PRODUCTO_MOVIMIENTO"]');
+            const productoSelect = document.querySelector('select[name="ID_PRODUCTO"]');
+            const bodegaOrigenSelect = document.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+
+            if (!cantidadInput || !productoSelect || !bodegaOrigenSelect) return;
+
+            const cantidad = parseInt(cantidadInput.value);
+            const idProducto = parseInt(productoSelect.value);
+            const idBodegaOrigen = parseInt(bodegaOrigenSelect.value);
+
+            if (!cantidad || !idProducto || !idBodegaOrigen) {
+                // Limpiar mensaje anterior si no hay datos completos
+                const mensajeAnterior = cantidadInput.parentNode.querySelector('.mensaje-stock');
+                if (mensajeAnterior) {
+                    mensajeAnterior.remove();
+                }
+                cantidadInput.classList.remove('campo-invalido');
+                return;
+            }
+
+            // Obtener stock real desde los datos cargados
+            const stockActual = obtenerStockReal(idProducto, idBodegaOrigen);
+
+            // Remover mensaje anterior
+            const mensajeAnterior = cantidadInput.parentNode.querySelector('.mensaje-stock');
+            if (mensajeAnterior) {
+                mensajeAnterior.remove();
+            }
+
+            // Crear nuevo mensaje
+            const mensajeStock = document.createElement('div');
+            mensajeStock.className = 'mensaje-stock';
+
+            if (stockActual === 0) {
+                mensajeStock.className += ' sin-stock';
+                mensajeStock.textContent = 'Sin stock disponible en esta bodega';
+                cantidadInput.classList.add('campo-invalido');
+            } else if (cantidad > stockActual) {
+                mensajeStock.className += ' sin-stock';
+                mensajeStock.textContent = `Stock insuficiente. Disponible: ${stockActual} unidades`;
+                cantidadInput.classList.add('campo-invalido');
+            } else if (stockActual <= 10) {
+                mensajeStock.className += ' stock-bajo';
+                mensajeStock.textContent = `Stock bajo. Disponible: ${stockActual} unidades`;
+                cantidadInput.classList.remove('campo-invalido');
+            } else {
+                mensajeStock.textContent = `Stock disponible: ${stockActual} unidades`;
+                cantidadInput.classList.remove('campo-invalido');
+            }
+
+            cantidadInput.parentNode.appendChild(mensajeStock);
+        }
+
+        function obtenerStockReal(idProducto, idBodegaOrigen) {
+            // Buscar en los datos reales cargados desde la tabla
+            const detalle = detallesBodegaData.find(item =>
+                item.idProducto === idProducto && item.idBodega === idBodegaOrigen
+            );
+
+            return detalle ? detalle.cantidadDisponible : 0;
+        }
+
+        function validarBodegasDiferentes() {
+            const bodegaOrigenSelect = document.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+            const bodegaDestinoSelect = document.querySelector('select[name="ID_BODEGA_DESTINO"]');
+
+            if (!bodegaOrigenSelect || !bodegaDestinoSelect) return;
+
+            if (bodegaOrigenSelect.value && bodegaDestinoSelect.value &&
+                bodegaOrigenSelect.value === bodegaDestinoSelect.value) {
+
+                bodegaDestinoSelect.classList.add('campo-invalido');
+                mostrarAlerta('La bodega origen y destino deben ser diferentes', 'warning');
+            } else {
+                bodegaDestinoSelect.classList.remove('campo-invalido');
+            }
+        }
+
+        function validarFormulario() {
+            const cantidadInput = document.querySelector('input[name="CNT_PRODUCTO_MOVIMIENTO"]');
+            const productoSelect = document.querySelector('select[name="ID_PRODUCTO"]');
+            const bodegaOrigenSelect = document.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+            const bodegaDestinoSelect = document.querySelector('select[name="ID_BODEGA_DESTINO"]');
+
+            // Limpiar estilos previos
+            [cantidadInput, productoSelect, bodegaOrigenSelect, bodegaDestinoSelect].forEach(element => {
+                if (element) element.classList.remove('campo-invalido');
+            });
+
+            let esValido = true;
+
+            // Validar cantidad
+            const cantidad = parseInt(cantidadInput.value);
+            if (!cantidad || cantidad <= 0) {
+                cantidadInput.classList.add('campo-invalido');
+                mostrarAlerta('La cantidad debe ser mayor a 0', 'error');
+                esValido = false;
+            }
+
+            // Validar bodegas diferentes
+            if (bodegaOrigenSelect.value === bodegaDestinoSelect.value) {
+                bodegaDestinoSelect.classList.add('campo-invalido');
+                mostrarAlerta('La bodega origen y destino no pueden ser la misma', 'error');
+                esValido = false;
+            }
+
+            // Validar stock usando datos reales
+            const idProducto = parseInt(productoSelect.value);
+            const idBodegaOrigen = parseInt(bodegaOrigenSelect.value);
+
+            if (idProducto && idBodegaOrigen && cantidad) {
+                const stockActual = obtenerStockReal(idProducto, idBodegaOrigen);
+
+                if (stockActual < cantidad) {
+                    cantidadInput.classList.add('campo-invalido');
+                    mostrarAlerta(`Stock insuficiente. Disponible: ${stockActual} unidades`, 'error');
+                    esValido = false;
+                }
+            }
+
+            return esValido;
+        }
+
+        function marcarMovimientosAntiguos() {
+            const filas = document.querySelectorAll('[id^="fila-"]');
+            const fechaLimite = new Date();
+            fechaLimite.setDate(fechaLimite.getDate() - 30); // 30 días atrás
+
+            filas.forEach(fila => {
+                const celdaFecha = fila.querySelector('td:first-child');
+                if (celdaFecha) {
+                    const fechaTexto = celdaFecha.textContent.trim();
+                    try {
+                        const fechaMovimiento = new Date(fechaTexto);
+                        if (fechaMovimiento < fechaLimite) {
+                            fila.classList.add('movimiento-antiguo');
+                            const botonAnular = fila.querySelector('.celda-anular button');
+                            if (botonAnular) {
+                                botonAnular.disabled = true;
+                                botonAnular.title = "No se pueden anular movimientos de más de 30 días";
+                                botonAnular.onclick = function() {
+                                    mostrarAlerta('No se pueden anular movimientos de más de 30 días de antigüedad', 'warning');
+                                };
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Error al parsear fecha:', fechaTexto);
+                    }
+                }
+            });
+        }
+
+        function anularDetalle(id, fecha, cantidad) {
+            // Verificar si el movimiento es muy antiguo
+            const fechaMovimiento = new Date(fecha);
+            const fechaLimite = new Date();
+            fechaLimite.setDate(fechaLimite.getDate() - 30);
+
+            if (fechaMovimiento < fechaLimite) {
+                mostrarAlerta('No se pueden editar movimientos de más de 30 días de antigüedad', 'warning');
+                return;
+            }
+
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-fecha").value = fecha;
+            document.getElementById("edit-cantidad").value = cantidad;
+            document.getElementById("edit-form").style.display = "block";
+        }
+
+        
+
+        function marcarAnulado(id) {
+            const fila = document.getElementById("fila-" + id);
+            const celdaAcciones = fila.querySelector(".celda-anular");
+
+            if (!celdaAcciones.querySelector(".icono-anulado")) {
+                const icono = document.createElement("i");
+                icono.className = "fas fa-ban icono-anulado";
+                icono.title = "Movimiento anulado";
+                celdaAcciones.appendChild(icono);
+            }
+
+            fila.classList.add("fila-anulada");
+        }
+
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const contenedor = document.getElementById("filtroContainer");
+            contenedor.innerHTML = "";
+
+            const input = document.createElement("input");
+            input.id = "filtro";
+            input.placeholder = "Buscar...";
+            input.oninput = filtrarTabla;
+            input.type = "text";
+            input.style.width = "80%";
+            input.style.padding = "5px";
+            contenedor.appendChild(input);
+        }
+        function filtrarTablab() {
+            const filtro = document.getElementById("filtrob").value.toUpperCase();
+            const filas = document.querySelectorAll("#tabla-detalles tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // Saltar encabezado
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("#tabla-detalles tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // Saltar encabezado
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").classList.add('show');
+        }
+
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").classList.remove('show');
+
+            // Limpiar campos del formulario
+            const form = document.querySelector('#create-form form');
+            if (form) {
+                form.reset();
+
+                // Limpiar estilos de validación
+                const campos = form.querySelectorAll('.campo-invalido');
+                campos.forEach(campo => campo.classList.remove('campo-invalido'));
+
+                // Limpiar mensajes de stock
+                const mensajes = form.querySelectorAll('.mensaje-stock');
+                mensajes.forEach(mensaje => mensaje.remove());
+            }
+        }
+
+        // Función para validar el formulario antes del envío
+        function validarFormularioCompleto() {
+            const form = document.querySelector('#create-form form');
+            const cantidadInput = form.querySelector('input[name="CNT_PRODUCTO_MOVIMIENTO"]');
+            const productoSelect = form.querySelector('select[name="ID_PRODUCTO"]');
+            const bodegaOrigenSelect = form.querySelector('select[name="ID_BODEGA_ORIGEN"]');
+            const bodegaDestinoSelect = form.querySelector('select[name="ID_BODEGA_DESTINO"]');
+            const fechaInput = form.querySelector('input[name="FECHA_MOVIMIENTO"]');
+
+            let esValido = true;
+
+            // Validar fecha
+            if (!fechaInput.value) {
+                fechaInput.classList.add('campo-invalido');
+                mostrarAlerta('Debe seleccionar una fecha', 'error');
+                esValido = false;
+            } else {
+                const fechaSeleccionada = new Date(fechaInput.value);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+
+                if (fechaSeleccionada > hoy) {
+                    fechaInput.classList.add('campo-invalido');
+                    mostrarAlerta('La fecha no puede ser futura', 'error');
+                    esValido = false;
+                }
+            }
+
+            // Validar cantidad
+            const cantidad = parseInt(cantidadInput.value);
+            if (!cantidad || cantidad <= 0) {
+                cantidadInput.classList.add('campo-invalido');
+                mostrarAlerta('La cantidad debe ser mayor a 0', 'error');
+                esValido = false;
+            }
+
+            // Validar bodegas diferentes
+            if (bodegaOrigenSelect.value === bodegaDestinoSelect.value) {
+                bodegaDestinoSelect.classList.add('campo-invalido');
+                mostrarAlerta('La bodega origen y destino no pueden ser la misma', 'error');
+                esValido = false;
+            }
+
+            // Validar stock usando datos reales
+            const idProducto = parseInt(productoSelect.value);
+            const idBodegaOrigen = parseInt(bodegaOrigenSelect.value);
+
+            if (idProducto && idBodegaOrigen && cantidad) {
+                const stockActual = obtenerStockReal(idProducto, idBodegaOrigen);
+
+                if (stockActual < cantidad) {
+                    cantidadInput.classList.add('campo-invalido');
+                    mostrarAlerta(`Stock insuficiente. Disponible: ${stockActual} unidades`, 'error');
+                    esValido = false;
+                }
+            }
+
+            return esValido;
+        }
+    </script>
+</head>
+
+<body>
+<h2>Lista de Detalles de Movimientos</h2>
+
+<!-- Contenedor para alertas -->
+<div id="alert-container"></div>
+
+<button onclick="mostrarFormularioCreacion()">Nuevo Movimiento</button>
+
+<div id="create-form" class="modal">
+    <div class="grid-special">
+        <div class="modal-content">
+            <h3>Registrar Nuevo Movimiento y Detalle</h3>
+            <form action="/detalleMovimiento/crear" method="post" onsubmit="return validarFormularioCompleto()">
+                <br>
+                <label>Fecha del Movimiento:</label>
+                <input type="date" name="FECHA_MOVIMIENTO" required><br><br>
+
+                <label>Tipo de Movimiento:</label>
+                <select name="idTipoMovimiento" required>
+                    <option value="">Seleccione un tipo</option>
+                    <option th:each="tipo : ${tiposMovimiento}" th:value="${tipo.ID_TIPO_PRODUCTO}"
+                            th:text="${tipo.NOMBRE_MOVIMIENTO}"></option>
+                </select><br><br>
+
+                <label>Empleado:</label>
+                <select name="idEmpleado" required>
+                    <option value="">Seleccione un empleado</option>
+                    <option th:each="emp : ${empleados}" th:value="${emp.ID_EMPLEADO}"
+                            th:text="${emp.NOMBRE_EMPLEADO}"></option>
+                </select><br><br>
+
+                <label>Producto:</label>
+                <select name="ID_PRODUCTO" required>
+                    <option value="">Seleccione un producto</option>
+                    <option th:each="prod : ${productos}" th:value="${prod.ID_PRODUCTO}"
+                            th:text="${prod.NOMBRE_PRODUCTO + ' - Ref: ' + prod.REFERENCIA}"></option>
+                </select><br><br>
+
+                <label>Bodega Origen:</label>
+                <select name="ID_BODEGA_ORIGEN" required>
+                    <option value="">Seleccione bodega origen</option>
+                    <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+                </select><br><br>
+
+                <label>Bodega Destino:</label>
+                <select name="ID_BODEGA_DESTINO" required>
+                    <option value="">Seleccione bodega destino</option>
+                    <option th:each="bod : ${bodegas}" th:value="${bod.ID_BODEGA}" th:text="${bod.N_BODEGA}"></option>
+                </select><br><br>
+
+                <label>Cantidad del Producto:</label>
+                <input type="number" name="CNT_PRODUCTO_MOVIMIENTO" min="1" required><br><br>
+
+                <div class="modal-actions">
+                    <button type="submit">Guardar</button>
+                    <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="tabla-special" class="tabla-scroll">
+            <input type="text" id="filtrob" onkeyup="filtrarTablab()" placeholder="Buscar..."
+                   style="width: 250px; margin-top: 40px;">
+            <h4>Stock Actual por Bodega</h4>
+            <table border="1">
+                <tr>
+                    <th>Nombre Producto</th>
+                    <th>Referencia</th>
+                    <th>Bodega</th>
+                    <th>Cantidad Disponible</th>
+                    <th>Existencias Totales</th>
+                </tr>
+                <tr th:each="detalles : ${detallesBodega}">
+                    <td th:text="${detalles.producto != null} ? ${detalles.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+                    <td th:text="${detalles.producto != null} ? ${detalles.producto.REFERENCIA} : 'N/A'"></td>
+                    <td th:text="${detalles.bodega != null} ? ${detalles.bodega.N_BODEGA} : 'N/A'"></td>
+                    <td th:text="${detalles.CNT_PRODUCTO_BODEGA}"
+                        th:class="${detalles.CNT_PRODUCTO_BODEGA <= 10} ? 'stock-bajo' : (${detalles.CNT_PRODUCTO_BODEGA == 0} ? 'sin-stock' : '')"></td>
+                    <td th:text="${detalles.producto != null} ? ${detalles.producto.EXISTENCIAS} : 'N/A'"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<br>
+<div class="grid-3">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar en movimientos..."
+               style="width: 250px;">
+    </div>
+    <a href="/detalleBodega/listar" class="btn btn-primary m-2">
+        <button>📋 Ver Artículos Por Bodega</button>
+    </a>
+
+    <a href="/productos/listar" class="btn btn-primary m-2">
+        <button>📦 Ver Lista de Productos</button>
+    </a>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table id="tabla-detalles" border="1">
+        <tr>
+            <th>Fecha Movimiento</th>
+            <th>Nombre Producto</th>
+            <th>Cantidad</th>
+            <th>Bodega origen</th>
+            <th>Bodega destino</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="detalle : ${detalles}" th:id="'fila-' + ${detalle.ID_DETALLE_MOVIMIENTO}">
+            <td th:text="${detalle.ID_MOVIMIENTO_BODEGA != null ? detalle.ID_MOVIMIENTO_BODEGA.FECHA_MOVIMIENTO : 'N/A'}"></td>
+            <td th:text="${detalle.producto != null ? detalle.producto.NOMBRE_PRODUCTO : 'N/A'}"></td>
+            <td th:text="${detalle.CNT_PRODUCTO_MOVIMIENTO}"></td>
+            <td th:text="${detalle.ID_BODEGA_ORIGEN != null ? detalle.ID_BODEGA_ORIGEN.N_BODEGA : 'N/A'}"></td>
+            <td th:text="${detalle.ID_BODEGA_DESTINO != null ? detalle.ID_BODEGA_DESTINO.N_BODEGA : 'N/A'}"></td>
+            <td>
+                <span class="estado-activo">Activo</span>
+            </td>
+            <td class="celda-anular">
+                <button th:attr="onclick=|anularDetalle('${detalle.ID_DETALLE_MOVIMIENTO}')|"
+                        class="btn-anular">
+                    <i class="fas fa-ban"></i> Anular
+                </button>
+                <button th:attr="onclick=|editarDetalle('${detalle.ID_DETALLE_MOVIMIENTO}', '${detalle.ID_MOVIMIENTO_BODEGA.FECHA_MOVIMIENTO}', '${detalle.CNT_PRODUCTO_MOVIMIENTO}')|"
+                        class="btn-editar">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- Formulario de edición (oculto por defecto) -->
+<div id="edit-form" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>Editar Detalle de Movimiento</h3>
+        <form action="/detalleMovimiento/actualizar" method="post">
+            <input type="hidden" id="edit-id" name="id">
+
+            <label>Fecha del Movimiento:</label>
+            <input type="date" id="edit-fecha" name="fecha" required><br><br>
+
+            <label>Nueva Cantidad:</label>
+            <input type="number" id="edit-cantidad" name="cantidad" min="1" required><br><br>
+
+            <div class="modal-actions">
+                <button type="submit">Actualizar</button>
+                <button type="button" onclick="document.getElementById('edit-form').style.display='none'">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<a href="/main/main">
+    <button>Volver al Inicio</button>
+</a>
+
+<script>
+    function toggleMovimientosAnulados() {
+        const mostrar = document.getElementById("mostrarAnulados").checked;
+        const filasAnuladas = document.querySelectorAll(".fila-anulada");
+
+        filasAnuladas.forEach(fila => {
+            fila.style.display = mostrar ? "" : "none";
+        });
+    }
+
+    // Agregar estilos adicionales dinámicamente
+    const estilosAdicionales = `
+        .estado-activo { color: #28a745; font-weight: bold; }
+        .estado-anulado { color: #dc3545; font-weight: bold; }
+        .btn-anular, .btn-editar {
+            margin: 2px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-anular { background-color: #dc3545; color: white; }
+        .btn-anular:hover { background-color: #c82333; }
+        .btn-editar { background-color: #007bff; color: white; }
+        .btn-editar:hover { background-color: #0056b3; }
+        .btn-anular:disabled, .btn-editar:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    `;
+
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = estilosAdicionales;
+    document.head.appendChild(styleSheet);
+
+    function actualizarFiltro() {
+        const atributo = document.getElementById("atributo").value;
+        const filtroContainer = document.getElementById("filtroContainer");
+        filtroContainer.innerHTML = "";
+
+        if (atributo === "fecha") {
+            const inputFecha = document.createElement("input");
+            inputFecha.type = "date";
+            inputFecha.id = "filtro";
+            inputFecha.onchange = filtrarTabla;
+            filtroContainer.appendChild(inputFecha);
+        } else {
+            const inputTexto = document.createElement("input");
+            inputTexto.type = "text";
+            inputTexto.id = "filtro";
+            inputTexto.onkeyup = filtrarTabla;
+            inputTexto.placeholder = "Buscar...";
+            inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+            filtroContainer.appendChild(inputTexto);
+        }
+    }
+
+    function filtrarTabla() {
+        const filtro = document.getElementById("filtro").value.toUpperCase();
+        const filas = document.querySelectorAll("table tr");
+
+        filas.forEach((fila, index) => {
+            if (index === 0) return; // omitir encabezado
+
+            const celdas = fila.getElementsByTagName("td");
+            let coincide = false;
+
+            for (let i = 0; i < celdas.length; i++) {
+                const texto = celdas[i].textContent.toUpperCase();
+                if (texto.includes(filtro)) {
+                    coincide = true;
+                    break;
+                }
+            }
+
+            fila.style.display = coincide ? "" : "none";
+        });
+    }
+</script>
+
+</body>
+</html>

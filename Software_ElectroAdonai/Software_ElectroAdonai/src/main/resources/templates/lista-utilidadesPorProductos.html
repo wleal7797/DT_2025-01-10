@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Utilidades por Producto</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .tabla-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+    </style>
+    <script>
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const contenedor = document.getElementById("filtroContainer");
+            contenedor.innerHTML = "";
+
+            const input = document.createElement("input");
+            input.id = "filtro";
+            input.placeholder = "Buscar...";
+            input.oninput = filtrarTabla;
+            input.type = "text";
+            input.style.width = "80%";
+            input.style.padding = "5px";
+            contenedor.appendChild(input);
+        }
+
+
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // Saltar encabezado
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+    </script>
+</head>
+
+<body>
+<h2>Lista de Utilidades por Producto</h2>
+
+<div class="grid-2">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+    </div>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table id="tabla-utilidades" border="1">
+        <tr>
+            <th>Remisión</th>
+            <th>Producto</th>
+            <th>Cantidad Vendida
+            <span class="info-icon" title="Cantidad de productos en venta.">i</span>
+            </th>
+            <th>Precio de Venta
+            <span class="info-icon" title="Precio definido por el vendedor.">i</span>
+            </th>
+            <th>Utilidad Bruta
+            <span class="info-icon" title="Precio de venta del producto menos su costo.">i</span>
+            </th>
+            <th>Utilidad Final
+            <span class="info-icon" title="Utilidad Bruta menos el 50% de comisión.">i</span>
+            </th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="util : ${utilidadesPorProductos}">
+            <td th:text="${util.detalle_venta.venta != null ? util.detalle_venta.venta.REMISION : 'N/A'}"></td>
+            <td th:text="${util.producto != null ? util.producto.NOMBRE_PRODUCTO : 'N/A'}"></td>
+            <td th:text="${util.detalle_venta != null ? util.detalle_venta.CNT_PRODUCTO_VENTA : 'N/A'}"></td>
+            <td th:text="${util.detalle_venta != null ? #numbers.formatCurrency(util.detalle_venta.PRECIO_VENTA_PRODUCTO) : 'N/A'}"></td>
+            <td th:text="${#numbers.formatCurrency(util.UTILIDAD_BRUTA)}"></td>
+            <td th:text="${#numbers.formatCurrency(util.UTILIDAD_FINAL)}"></td>
+            <td th:text="${util.ESTADO}"></td>
+        </tr>
+    </table>
+</div>
+
+<br>
+<a href="/main/main">
+    <button style="padding: 5px 10px;">Volver al Inicio</button>
+</a>
+</body>
+</html>
+

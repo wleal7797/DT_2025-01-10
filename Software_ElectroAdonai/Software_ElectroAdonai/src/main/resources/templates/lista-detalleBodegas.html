@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Artículos por Bodega</title>
+    <link rel="stylesheet" href="/css/styles.css">
+
+    <script>
+        function actualizarFiltro() {
+            const atributo = document.getElementById("atributo").value;
+            const filtroContainer = document.getElementById("filtroContainer");
+            filtroContainer.innerHTML = "";
+
+            if (atributo === "fecha") {
+                const inputFecha = document.createElement("input");
+                inputFecha.type = "date";
+                inputFecha.id = "filtro";
+                inputFecha.onchange = filtrarTabla;
+                filtroContainer.appendChild(inputFecha);
+            } else {
+                const inputTexto = document.createElement("input");
+                inputTexto.type = "text";
+                inputTexto.id = "filtro";
+                inputTexto.onkeyup = filtrarTabla;
+                inputTexto.placeholder = "Buscar...";
+                inputTexto.style = "width: 80%; padding: 5px; margin-right: 60px;";
+                filtroContainer.appendChild(inputTexto);
+            }
+        }
+
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    const texto = celdas[i].textContent.toUpperCase();
+                    if (texto.includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+
+        function editarDetalle(id, cantidad) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-cantidad").value = cantidad;
+            document.getElementById("edit-form").classList.add('show');
+        }
+
+        function eliminarDetalle(id) {
+            if (confirm("¿Seguro que deseas eliminar este detalle?")) {
+                fetch('/detalleBodega/eliminar/' + id, { method: 'DELETE' })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").classList.add('show');
+        }
+        function ocultarFormularioCreacion() {
+            document.getElementById("create-form").classList.remove('show');
+        }
+    </script>
+</head>
+<body>
+<h2>Lista de Artículos por Bodega</h2>
+<button onclick="mostrarFormularioCreacion()">Nuevo Detalle de Bodega</button>
+
+
+<div id="create-form" class="modal">
+
+    <div class="modal-content">
+
+        <h3>Registrar Detalle de Bodega</h3>
+        <form action="/detalleBodega/crear" method="post">
+            <br>
+            <label>Cantidad de Producto en Bodega:</label>
+            <input type="number" name="CNT_PRODUCTO_BODEGA" min="0" required>
+            <br>
+
+            <label>Producto:</label>
+            <input list="productoList" name="producto.ID_PRODUCTO" required>
+            <datalist id="productoList">
+                <option th:each="p : ${productos}"
+                        th:value="${p.ID_PRODUCTO}"
+                        th:text="${p.NOMBRE_PRODUCTO}"></option>
+            </datalist>
+            <br>
+
+            <label>Bodega:</label>
+            <input list="bodegaList" name="bodega.ID_BODEGA" required>
+            <datalist id="bodegaList">
+                <option th:each="b : ${bodegas}"
+                        th:value="${b.ID_BODEGA}"
+                        th:text="${b.N_BODEGA}"></option>
+            </datalist>
+            <br>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="ocultarFormularioCreacion()">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<br><br>
+<div class="grid-2">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 250px;">
+    </div>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
+        <tr>
+            <th>Nombre Producto</th>
+            <th>Referencia</th>
+            <th>Bodega</th>
+            <th>Cantidad</th>
+            <th>Existencias Totales del Producto</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="detalle : ${detalles}">
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.NOMBRE_PRODUCTO} : 'N/A'"></td>
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.REFERENCIA} : 'N/A'"></td>
+            <td th:text="${detalle.bodega != null} ? ${detalle.bodega.N_BODEGA} : 'N/A'"></td>
+            <td th:text="${detalle.CNT_PRODUCTO_BODEGA}"></td>
+            <td th:text="${detalle.producto != null} ? ${detalle.producto.EXISTENCIAS} : 'N/A'"></td>
+            <td>
+                <button th:attr="onclick=|editarDetalle('${detalle.ID_DETALLE_BODEGA}', '${detalle.CNT_PRODUCTO_BODEGA}')|">Editar</button>
+                <button th:attr="onclick=|eliminarDetalle('${detalle.ID_DETALLE_BODEGA}')|">Eliminar</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+
+        <form th:action="@{/detalleBodega/editar}" method="post">
+            <h3>Editar Detalle</h3>
+            <input type="hidden" id="edit-id" name="ID_DETALLE_BODEGA">
+            <label>Cantidad en Bodega: <input type="number" id="edit-cantidad" name="CNT_PRODUCTO_BODEGA"></label><br><br>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="document.getElementById('edit-form').classList.remove('show')">Cancelar</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<br>
+<a href="/main/main"><button>Volver al Inicio</button></a>
+</body>
+</html>

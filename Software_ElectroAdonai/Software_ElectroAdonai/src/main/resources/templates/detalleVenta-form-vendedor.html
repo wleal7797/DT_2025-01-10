@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Registrar Nueva Venta</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+
+<body>
+<div class="grid-3">
+    <a href="/detallesVenta/listarVendedor" style="margin-left: 30px">
+        <button style="margin: 10px">Ver todas las ventas</button>
+    </a>
+
+    <h2>Registrar Nueva Venta</h2>
+
+    <a href="/serialVentaProducto/listarVendedor" style="margin-left: 30px">
+        <button style="max-width: 250px">Números de serie por producto</button>
+    </a>
+</div>
+
+<!-- Mensaje de error si hay problemas con el inventario -->
+<div th:if="${errorInventario}" class="alert alert-danger" role="alert">
+    <span th:text="${errorInventario}">Ocurrió un error</span>
+</div>
+
+<!-- Información de la venta -->
+<div class="form-section">
+    <form id="ventaFormVendedor"
+          th:action="@{/detallesVenta/crearVendedor}"
+          method="post"
+          onsubmit="return validarTabla() && limpiarFormatoAntesDeEnviar(this)">
+        <h3>Información de la Venta</h3>
+
+        <div class="grid-3">
+            <div>
+                <label for="empleado">Empleado Responsable</label>
+                <select id="empleado" name="idEmpleado" required>
+                    <option value="">-- Selecciona un empleado --</option>
+                    <option
+                            th:each="emp : ${empleados}"
+                            th:value="${emp.ID_EMPLEADO}"
+                            th:text="${emp.N_DOCUMENTO + ' - ' + emp.NOMBRE_EMPLEADO}">
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="remision">Número de Remisión</label>
+                <p th:if="${ultimaRemision != null}" class="ultima-remision">
+                    Última remisión registrada:
+                    <strong th:text="${ultimaRemision}">0000</strong>
+                </p>
+                <input
+                        type="text"
+                        id="remision"
+                        name="remision"
+                        pattern="^[0-9]{1,12}$"
+                        title="Por favor ingrese un número de remisión válido (solo dígitos)"
+                        required
+                />
+            </div>
+
+            <div>
+                <label for="precioVentaTotal"><b>Precio Total</b></label>
+                <input
+                        type="text"
+                        id="precioVentaTotal"
+                        name="precioVentaTotal"
+                        readonly
+                        placeholder="Calculado automáticamente"
+                />
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <button type="button" class="btn btn-success" onclick="agregarProducto()">
+                Agregar Producto
+            </button>
+
+            <button type="submit" class="btn btn-primary">Guardar Venta</button>
+
+            <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="window.location.href='/mainVendedor/mainVendedor'">
+                Cancelar
+            </button>
+        </div>
+
+        <br/>
+        <hr/>
+
+        <!-- Tabla de productos de la venta -->
+        <h3>Productos en la Venta</h3>
+        <div class="centro">
+            <div id="tabla-container" class="tabla-scroll">
+                <table border="1">
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Producto</th>
+                        <th>Bodega</th>
+                        <th>Seriales</th>
+                        <th>Precio unitario</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<br/>
+
+<!-- Formulario emergente para agregar producto -->
+<div id="create-detalle">
+    <div class="modal">
+        <div class="modal-content">
+            <form>
+                <h3>Agregar Producto</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Producto</label>
+                        <select name="idProducto" class="select-producto" required onchange="mostrarCosto(this)">
+                            <option value="">-- Selecciona un producto --</option>
+                            <option
+                                    th:each="prod : ${productos}"
+                                    th:value="${prod.ID_PRODUCTO}"
+                                    th:data-costo="${prod.COSTO}"
+                                    th:text="${prod.NOMBRE_PRODUCTO}">
+                            </option>
+                        </select>
+
+                        <p id="costoProducto" style="margin-top: 5px; font-weight: bold; color: #333;"></p>
+                    </div>
+
+                    <div>
+                        <label>Cantidad</label>
+                        <input
+                                type="number"
+                                name="cntProductoVenta"
+                                min="1"
+                                required
+                                oninput="actualizarTotal()"
+                        />
+                    </div>
+
+                    <div>
+                        <label>Precio Unitario</label>
+                        <input
+                                type="number"
+                                name="precioVentaProducto"
+                                step="1000"
+                                min="0"
+                                required
+                                oninput="actualizarTotal()"
+                        />
+                    </div>
+
+                    <div>
+                        <label>Bodega</label>
+                        <select id="idBodega" name="idBodega" required>
+                            <option value="">-- Selecciona una bodega --</option>
+                            <option
+                                    th:each="bod : ${bodegas}"
+                                    th:value="${bod.ID_BODEGA}"
+                                    th:text="${bod.N_BODEGA}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div style="grid-column: span 2">
+                        <label>Seriales del Producto (uno por línea)</label>
+                        <textarea
+                                name="serialesTexto"
+                                rows="3"
+                                placeholder="Ej: ABC123&#10;DEF456"></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit">Guardar Producto</button>
+                        <button type="reset" onclick="cerrarModal()">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery (requerido por Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS (opcional) -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Funciones de la tabla y el formulario emergente -->
+<script>
+    // Asegura limpiar el total al enviar (solo dígitos)
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("ventaFormVendedor");
+        form.addEventListener("submit", function () {
+            const campo = document.getElementById("precioVentaTotal");
+            campo.value = campo.value.replace(/[^\d]/g, "");
+        });
+
+        document.getElementById("precioVentaTotal").value = "";
+        calcularPrecioTotal();
+    });
+
+    function calcularPrecioTotal() {
+        let total = 0;
+
+        document
+            .querySelectorAll("#tabla-container .precio-input")
+            .forEach((td) => (total += Number(td.dataset.precio) || 0));
+
+        const campoTotal = document.getElementById("precioVentaTotal");
+        if (total === 0) {
+            campoTotal.value = "";
+        } else {
+            campoTotal.value = "$" + total.toLocaleString("es-CO");
+        }
+    }
+
+    function agregarProducto() {
+        document.querySelector("#create-detalle .modal").classList.add("show");
+    }
+
+    function cerrarModal() {
+        document.querySelector("#create-detalle form").reset();
+        document.querySelector("#create-detalle .modal").classList.remove("show");
+    }
+
+    function validarTabla() {
+        const filas = document.querySelectorAll("#tabla-container table tr");
+        let filaValidaEncontrada = false;
+
+        filas.forEach((fila, index) => {
+            if (index === 0) return; // saltar encabezado
+
+            const celdas = fila.querySelectorAll("td");
+            const todasLlenas = Array.from(celdas).every((td, i) => {
+                if (i === celdas.length - 1) return true; // acciones
+                return td.textContent.trim() !== "";
+            });
+
+            if (todasLlenas) {
+                filaValidaEncontrada = true;
+            }
+        });
+
+        if (filaValidaEncontrada) {
+            return true;
+        } else {
+            alert("Debes agregar al menos un producto a la venta.");
+            return false;
+        }
+    }
+
+    function limpiarNumero(texto) {
+        let limpio = texto.replace(/[^\d,.-]/g, "");
+        limpio = limpio.replace(/\.(?=\d{3}(\D|$))/g, "");
+        return limpio;
+    }
+
+    function buscarValorSelect(select, textoBuscado) {
+        for (let option of select.options) {
+            if (option.text.trim() === textoBuscado) {
+                return option.value;
+            }
+        }
+        return "";
+    }
+
+    function actualizarTotal() {
+        calcularPrecioTotal();
+    }
+</script>
+
+<!-- Remisiones: evitar duplicados -->
+<script th:inline="javascript">
+    const remisionesExistentes = /*[[${remisionesExistentes}]]*/ [];
+
+    const inputRemision = document.getElementById("remision");
+    const formRemision = document.getElementById("ventaFormVendedor");
+
+    inputRemision.addEventListener("blur", () => {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+            alert("⚠️ La remisión ya existe. Por favor ingresa una remisión diferente.");
+            inputRemision.value = "";
+            inputRemision.focus();
+        }
+    });
+
+    formRemision.addEventListener("submit", function (e) {
+        const valor = inputRemision.value.trim();
+        if (remisionesExistentes.includes(valor)) {
+            e.preventDefault();
+            alert("❌ No se puede enviar el formulario. La remisión ya existe.");
+            inputRemision.value = "";
+            inputRemision.focus();
+        }
+    });
+</script>
+
+<!-- Función para agregar/editar productos a la tabla -->
+<script>
+    function reindexarDetalles() {
+        const filas = document.querySelectorAll("#tabla-container table tr");
+
+        let index = 0;
+        filas.forEach((fila, i) => {
+            if (i === 0) return;
+
+            const inputs = fila.querySelectorAll("input[type=hidden]");
+            inputs.forEach((input) => {
+                input.name = input.name.replace(/detalles\[\d+\]/, `detalles[${index}]`);
+            });
+
+            index++;
+        });
+    }
+
+    function editarProducto(boton) {
+        const fila = boton.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+
+        const modal = document.querySelector("#create-detalle .modal");
+        const form = modal.querySelector("form");
+
+        form.cntProductoVenta.value = celdas[0].textContent.trim();
+        form.idProducto.value = buscarValorSelect(form.idProducto, celdas[1].textContent.trim());
+        form.idBodega.value = buscarValorSelect(form.idBodega, celdas[2].textContent.trim());
+        form.serialesTexto.value = celdas[3].textContent.trim().replace(/,\s*/g, "\n");
+
+        const precioUnitText = limpiarNumero(celdas[4].textContent);
+        form.precioVentaProducto.value = precioUnitText ? Number(precioUnitText) : "";
+
+        form.dataset.filaEditada = fila.rowIndex;
+        modal.classList.add("show");
+    }
+
+    document.querySelector("#create-detalle .modal form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const cantidad = parseFloat(form.cntProductoVenta.value) || 0;
+        const productoId = form.idProducto.value;
+        const productoTexto = form.idProducto.options[form.idProducto.selectedIndex].text;
+
+        const bodegaSelect = form.querySelector('[name="idBodega"]');
+        const bodegaId = bodegaSelect.value;
+        const bodegaTexto = bodegaSelect.options[bodegaSelect.selectedIndex].text;
+
+        const precioUnitario = parseFloat(form.precioVentaProducto.value) || 0;
+        const serialesTexto = form.serialesTexto.value.trim().replace(/\n/g, ", ").replace(/\s*,\s*$/, "");
+        const precioTotal = cantidad * precioUnitario;
+
+        const tabla = document.querySelector("#tabla-container table");
+
+        if (form.dataset.filaEditada) {
+            const fila = tabla.rows[form.dataset.filaEditada];
+            fila.cells[0].textContent = cantidad;
+            fila.cells[1].textContent = productoTexto;
+            fila.cells[2].textContent = bodegaTexto;
+            fila.cells[3].textContent = serialesTexto;
+            fila.cells[4].textContent = `$${precioUnitario.toLocaleString("es-CO")}`;
+            fila.cells[5].textContent = `$${precioTotal.toLocaleString("es-CO")}`;
+            fila.cells[5].dataset.precio = precioTotal;
+
+            fila.querySelector('input[name$=".cntProductoVenta"]').value = cantidad;
+            fila.querySelector('input[name$=".idProducto"]').value = productoId;
+            fila.querySelector('input[name$=".idBodega"]').value = bodegaId;
+            fila.querySelector('input[name$=".serialesTexto"]').value = serialesTexto;
+            fila.querySelector('input[name$=".precioVentaProducto"]').value = precioUnitario;
+
+            delete form.dataset.filaEditada;
+        } else {
+            const index = tabla.rows.length - 1;
+            const fila = tabla.insertRow(-1);
+
+            fila.innerHTML = `
+                <td>${cantidad}</td>
+                <td>${productoTexto}</td>
+                <td>${bodegaTexto}</td>
+                <td>${serialesTexto}</td>
+                <td>$${precioUnitario.toLocaleString("es-CO")}</td>
+                <td class="precio-input" data-precio="${precioTotal}">$${precioTotal.toLocaleString("es-CO")}</td>
+                <td>
+                    <button type="button" onclick="editarProducto(this)">Editar</button>
+                    <button type="button" onclick="eliminarFila(this)">Eliminar</button>
+                </td>
+                <input type="hidden" name="detalles[${index}].cntProductoVenta" value="${cantidad}">
+                <input type="hidden" name="detalles[${index}].idProducto" value="${productoId}">
+                <input type="hidden" name="detalles[${index}].idBodega" value="${bodegaId}">
+                <input type="hidden" name="detalles[${index}].serialesTexto" value="${serialesTexto}">
+                <input type="hidden" name="detalles[${index}].precioVentaProducto" value="${precioUnitario}">
+            `;
+        }
+
+        reindexarDetalles();
+        calcularPrecioTotal();
+
+        form.closest(".modal").classList.remove("show");
+        form.reset();
+    });
+
+    function eliminarFila(boton) {
+        const fila = boton.closest("tr");
+        fila.remove();
+        reindexarDetalles();
+        calcularPrecioTotal();
+    }
+
+    function mostrarCosto(select) {
+        const selectedOption = select.options[select.selectedIndex];
+        const costo = selectedOption ? selectedOption.getAttribute("data-costo") : null;
+        const labelCosto = document.getElementById("costoProducto");
+        if (costo) {
+            labelCosto.textContent = "Costo: $" + Number(costo).toLocaleString("es-CO");
+        } else {
+            labelCosto.textContent = "";
+        }
+    }
+
+    function limpiarFormatoAntesDeEnviar(form) {
+        const campoTotal = form.querySelector("#precioVentaTotal");
+        if (campoTotal && campoTotal.value) {
+            campoTotal.value = campoTotal.value.replace(/[^\d]/g, "");
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

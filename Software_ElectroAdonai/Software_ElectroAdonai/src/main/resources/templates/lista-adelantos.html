@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Lista de Adelantos</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
+    <script>
+        /* ---------- UTILIDADES DE FORMATO / VALIDACIÓN ---------- */
+
+        // Formatea un input visible y actualiza el input hidden con sólo dígitos
+        function actualizarDisplayYHidden(displayId, hiddenId) {
+            const display = document.getElementById(displayId);
+            const hidden = document.getElementById(hiddenId);
+            let soloDigitos = (display.value || "").replace(/\D/g, "");
+            display.value = soloDigitos ? new Intl.NumberFormat("es-CO").format(soloDigitos) : "";
+            hidden.value = soloDigitos;
+        }
+
+        // Setea valores (cuando abrimos el formulario de edición)
+        function setDisplayDesdeRaw(rawValue, displayId, hiddenId) {
+            const display = document.getElementById(displayId);
+            const hidden = document.getElementById(hiddenId);
+            const soloDigitos = String(rawValue || "").replace(/\D/g, "");
+            display.value = soloDigitos ? new Intl.NumberFormat("es-CO").format(soloDigitos) : "";
+            hidden.value = soloDigitos;
+        }
+
+        // Validación antes de enviar: comprueba que el hidden tenga solo dígitos y >0
+        function prepararAntesDeEnviar(form) {
+            const hidden = form.querySelector("[name='CNT_ADELANTO']");
+            if (!hidden) return true; // nada que validar
+            if (!/^[1-9]\d*$/.test(hidden.value)) {
+                alert("Ingrese un monto válido (sólo números, mayor que 0).");
+                return false; // evita envío
+            }
+            return true;
+        }
+
+        /* ---------- FUNCIONES EXISTENTES (adaptadas) ---------- */
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
+            filas.forEach((fila, index) => {
+                if (index === 0) return; // Saltar encabezado
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+
+        function editarAdelanto(id, fecha, cantidad, estado) {
+            document.getElementById("edit-id").value = id;
+            // cantidad puede venir como número; ponemos display y hidden
+            setDisplayDesdeRaw(cantidad, "edit-cantidad-display", "edit-cnt-hidden");
+            document.getElementById("edit-estado").value = estado || "";
+            document.getElementById("edit-form").classList.add('show');
+        }
+
+        function eliminarAdelanto(id) {
+            if (confirm("¿Seguro que deseas eliminar este adelanto?")) {
+                fetch("/adelantos/eliminar/" + id, {method: "DELETE"})
+                    .then((response) => response.text())
+                    .then((data) => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch((error) => console.error("Error:", error));
+            }
+        }
+
+        function mostrarFormularioCreacion() {
+            document.getElementById("create-form").classList.add('show');
+        }
+
+        function ocultarYResetCrear() {
+            const form = document.getElementById("form-crear");
+            form.reset();
+            // limpiar display y hidden manualmente
+            document.getElementById("create-cantidad-display").value = "";
+            document.getElementById("create-cnt-hidden").value = "";
+            document.getElementById("create-form").classList.remove('show');
+        }
+
+        function cancelarEdicion() {
+            const form = document.getElementById("form-editar");
+            form.reset();
+            document.getElementById("edit-cantidad-display").value = "";
+            document.getElementById("edit-cnt-hidden").value = "";
+            document.getElementById("edit-form").classList.remove('show');
+        }
+    </script>
+</head>
+<body>
+<h2>Lista de Adelantos</h2>
+
+<button onclick="mostrarFormularioCreacion()">Nuevo Adelanto</button>
+
+<br/>
+
+<div id="create-form" class="modal">
+
+    <div class="modal-content">
+        <h3>Registrar Nuevo Adelanto</h3>
+        <!-- nota: onsubmit llama a prepararAntesDeEnviar para validar el hidden -->
+        <form id="form-crear" action="/adelantos/crear" method="post" onsubmit="return prepararAntesDeEnviar(this)">
+            <label>Monto del Adelanto:</label>
+            <!-- input visible: sin 'name' para que no participe en validación nativa -->
+            <input
+                    type="text"
+                    id="create-cantidad-display"
+                    placeholder="0"
+                    required
+                    oninput="actualizarDisplayYHidden('create-cantidad-display','create-cnt-hidden')"
+            />
+            <!-- input hidden que será el que realmente se envía -->
+            <input type="hidden" id="create-cnt-hidden" name="CNT_ADELANTO" value=""/>
+
+            <br/>
+
+            <label>Fecha del Adelanto:</label>
+            <input type="date" name="FECHA_ADELANTO" required/>
+            <br/>
+
+            <label>Estado:</label>
+            <input
+                    type="text"
+                    name="ESTADO_ADELANTO"
+                    pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
+                    title="Digite un estado válido"
+                    required
+            />
+            <br/>
+
+            <label>Empleado:</label>
+            <input list="empleadoList" name="empleado.ID_EMPLEADO" required/>
+            <datalist id="empleadoList">
+                <option
+                        th:each="emp : ${empleados}"
+                        th:value="${emp.ID_EMPLEADO}"
+                        th:text="${emp.NOMBRE_EMPLEADO}"
+                ></option>
+            </datalist>
+            <br/>
+
+            <div class="modal-actions">
+                <button type="submit">Guardar</button>
+                <!-- usar botón normal que llama a la función para ocultar y resetear -->
+                <button type="button" onclick="ocultarYResetCrear()">Cancelar</button>
+            </div>
+        </form>
+        <br/>
+
+    </div>
+</div>
+
+<div class="grid-2">
+    <div id="filtroContainer">
+        <input type="text" id="filtro" onkeyup="filtrarTabla()" placeholder="Buscar..."
+               style="width: 80%; padding: 5px; margin-right: 60px;">
+    </div>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
+        <tr>
+            <th>Fecha</th>
+            <th>Empleado</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="adelanto : ${adelantos}">
+            <td th:text="${adelanto.FECHA_ADELANTO}"></td>
+            <td th:text="${adelanto.empleado != null} ? ${adelanto.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td th:text="${#numbers.formatCurrency(adelanto.CNT_ADELANTO)}"></td>
+            <td th:text="${adelanto.ESTADO_ADELANTO}"></td>
+            <td>
+                <!-- pasar cantidad sin formatear (viene del DB como número) -->
+                <button th:attr="onclick=|editarAdelanto('${adelanto.ID_ADELANTO}', '${adelanto.FECHA_ADELANTO}', '${adelanto.CNT_ADELANTO}', '${adelanto.ESTADO_ADELANTO}')|">
+                    Editar
+                </button>
+                <button th:attr="onclick=|eliminarAdelanto('${adelanto.ID_ADELANTO}')|">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- FORMULARIO EDICIÓN -->
+<div id="edit-form" class="modal">
+    <div class="modal-content">
+
+        <form id="form-editar" th:action="@{/adelantos/editar}" method="post" onsubmit="return prepararAntesDeEnviar(this)">
+        <h3>Editar Adelanto</h3>
+
+        <input type="hidden" id="edit-id" name="ID_ADELANTO"/>
+
+        <label>Cantidad:</label>
+        <!-- input visible de edición -->
+        <input
+                type="text"
+                id="edit-cantidad-display"
+                placeholder="0"
+                oninput="actualizarDisplayYHidden('edit-cantidad-display','edit-cnt-hidden')"
+                required
+        />
+        <!-- hidden que se enviará -->
+        <input type="hidden" id="edit-cnt-hidden" name="CNT_ADELANTO" value=""/>
+
+        <br/>
+
+        <label>Estado:</label>
+        <input
+                type="text"
+                id="edit-estado"
+                name="ESTADO_ADELANTO"
+                pattern="^[a-zA-Z\u00C0-\u017F\s]+$"
+                title="Digite un estado válido"
+        />
+        <br/>
+
+        <div class="modal-actions">
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+        </div>
+    </form>
+
+    </div>
+</div>
+
+<br/>
+<a href="/main/main">
+    <button>Volver al Inicio</button>
+</a>
+</body>
+</html>

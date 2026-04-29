@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista De Comisiones</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        function filtrarTabla() {
+            const filtro = document.getElementById("filtro").value.toUpperCase();
+            const filas = document.querySelectorAll("table tr");
+
+            filas.forEach((fila, index) => {
+                if (index === 0) return;
+                const celdas = fila.getElementsByTagName("td");
+                let coincide = false;
+
+                for (let i = 0; i < celdas.length; i++) {
+                    if (celdas[i].textContent.toUpperCase().includes(filtro)) {
+                        coincide = true;
+                        break;
+                    }
+                }
+
+                fila.style.display = coincide ? "" : "none";
+            });
+        }
+
+        function exportarExcel() {
+            const tabla = document.querySelector("table");
+            const wb = XLSX.utils.table_to_book(tabla, { sheet: "Comisiones" });
+            XLSX.writeFile(wb, "lista_comisiones.xlsx");
+        }
+
+        function actualizarEstado(id, nuevoEstado) {
+            const formData = new FormData();
+            formData.append("ID_COMISIONES", id);
+            formData.append("ESTADO", nuevoEstado);
+
+            fetch("/pagoComisiones/actualizarEstado", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.text())
+                .then(text => {
+                    alert(text);
+
+                    // Actualiza directamente el texto del estado en la tabla
+                    const fila = document.querySelector(`button[onclick*="${id}"]`).closest("tr");
+                    if (fila) {
+                        fila.querySelector("td:nth-child(5)").textContent = nuevoEstado;
+                    }
+                })
+                .catch(() => alert("Error al conectar con el servidor"));
+        }
+    </script>
+</head>
+<body>
+<h2>Lista De Comisiones</h2>
+
+<div class="grid-3">
+    <div id="filtroContainer">
+        <input
+                type="text"
+                id="filtro"
+                onkeyup="filtrarTabla()"
+                placeholder="Buscar..."
+                style="width: 250px;"
+        />
+    </div>
+
+    <form action="/pagoComisiones/generar" method="post" class="sin-borde">
+        <button type="submit">Generar Comisiones</button>
+    </form>
+
+    <button onclick="exportarExcel()">
+        Exportar a Excel
+    </button>
+</div>
+
+<div id="tabla-container" class="tabla-scroll">
+    <table border="1">
+        <tr>
+            <th>Fecha</th>
+            <th>Comisión
+            <span class="info-icon" title="Ganancias obtenidas por el vendedor.">i</span>
+            </th>
+            <th>Adelantos
+            <span class="info-icon" title="Anticipos de pago generados por el vendedor, se descuentan al generar nuevas comisiones.">i</span>
+            </th>
+            <th>Saldo
+            <span class="info-icon" title="Comsión final por pagar al vendedor.">i</span>
+            </th>
+            <th>Estado
+                <span class="info-icon" title="Estado de la comsión, es decir paga al vendedor o pendiente, puede ajustar el estado en el apartado de acciones.">i</span>
+            </th>
+            <th>Vendedor</th>
+            <th>Documento</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="pagoComision : ${pagoComisiones}">
+            <td th:text="${pagoComision.FECHA}"></td>
+            <td th:text="${pagoComision.COMISION}"></td>
+            <td
+                    th:text="${pagoComision.adelantos != null} ? ${pagoComision.adelantos.CNT_ADELANTO} : 'N/A'">
+            </td>
+            <td th:text="${pagoComision.SALDO}"></td>
+            <td th:text="${pagoComision.ESTADO}"></td>
+            <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.NOMBRE_EMPLEADO} : 'N/A'"></td>
+            <td th:text="${pagoComision.empleado != null} ? ${pagoComision.empleado.N_DOCUMENTO} : 'N/A'"></td>
+            <td>
+                <button
+                        type="button"
+                        style="background-color: green; color: white;"
+                        th:onclick="'actualizarEstado(' + ${pagoComision.ID_COMISIONES} + ', \'CANCELADO\')'">
+                    PAGO
+                </button>
+                <button
+                        type="button"
+                        style="background-color: orange; color: white;"
+                        th:onclick="'actualizarEstado(' + ${pagoComision.ID_COMISIONES} + ', \'PENDIENTE\')'">
+                    POR PAGAR
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<br>
+<a href="/main/main">
+    <button>Volver al Inicio</button>
+</a>
+</body>
+</html>
+

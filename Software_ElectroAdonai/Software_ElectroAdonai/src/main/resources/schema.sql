@@ -1,0 +1,1 @@
+/* Consultas de estructura (DDL: DataDefinitionLanguage) */
